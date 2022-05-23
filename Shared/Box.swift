@@ -4,6 +4,26 @@ import NutritionLabelClassifier
 import TabularData
 import SwiftUISugar
 
+extension DataFrame {
+    func rowWhereValue1IsFromRecognizedText(with id: UUID) -> DataFrame.Rows.Element? {
+        rows.first(where: {
+            guard let valueWithId = $0["value1"] as? ValueWithId else { return false }
+            return valueWithId.observationId == id
+        })
+    }
+    func rowWhereValue2IsFromRecognizedText(with id: UUID) -> DataFrame.Rows.Element? {
+        rows.first(where: {
+            guard let valueWithId = $0["value2"] as? ValueWithId else { return false }
+            return valueWithId.observationId == id
+        })
+    }
+    func rowWhereAttributeIsFromRecognizedText(with id: UUID) -> DataFrame.Rows.Element? {
+        rows.first(where: {
+            guard let attributeWithId = $0["attribute"] as? AttributeWithId else { return false }
+            return attributeWithId.observationId == id
+        })
+    }
+}
 class Box: ObservableObject {
     var id: UUID
     var boundingBox: CGRect
@@ -12,9 +32,9 @@ class Box: ObservableObject {
     var recognizedTextWithLC: RecognizedText?
     var recognizedTextWithoutLC: RecognizedText?
 
-    let attribute: Attribute?
-    let value1: Value?
-    let value2: Value?
+    var attribute: Attribute?
+    var value1: Value?
+    var value2: Value?
     
     @Published var color: Color
     
@@ -25,20 +45,60 @@ class Box: ObservableObject {
         self.rect = recognizedTextWithLC.rect
         self.recognizedTextWithoutLC = nil
 
-        if let row = nutrientsDataFrame.rows.first(where: {
-            guard let valueWithId = $0["value1"] as? ValueWithId else { return false }
-            return valueWithId.observationId == recognizedTextWithLC.id
-        }), let valueWithId = row["value1"] as? ValueWithId
+        self.value1 = nil
+        self.value2 = nil
+        self.attribute = nil
+        self.color = .gray
+        
+        self.setup(dataFrame: nutrientsDataFrame, id: recognizedTextWithLC.id)
+//        if let row = nutrientsDataFrame.rowWhereValue1IsFromRecognizedText(with: id), let valueWithId = row["value1"] as? ValueWithId
+//        {
+//            value1 = valueWithId.value
+//            value2 = nil
+//            color = .green
+//        }
+//        else if let row = nutrientsDataFrame.rowWhereValue2IsFromRecognizedText(with: id), let valueWithId = row["value2"] as? ValueWithId
+//        {
+//            value1 = nil
+//            value2 = valueWithId.value
+//            color = .green
+//        }
+//        else if let row = nutrientsDataFrame.rowWhereAttributeIsFromRecognizedText(with: id), let attributeWithId = row["attribute"] as? AttributeWithId
+//        {
+//            value1 = nil
+//            value2 = nil
+//            attribute = attributeWithId.attribute
+//            color = .cyan
+//        } else {
+//            value1 = nil
+//            value2 = nil
+//            attribute = nil
+//            color = .gray
+//        }
+    }
+    
+    func setup(dataFrame: DataFrame, id: UUID) {
+        if let row = dataFrame.rowWhereValue1IsFromRecognizedText(with: id), let valueWithId = row["value1"] as? ValueWithId
         {
             value1 = valueWithId.value
-            value2 = nil
-            color = .green
-        } else {
-            value1 = nil
-            value2 = nil
-            color = .cyan
+            color = .blue
         }
-        attribute = nil
+        
+        if let row = dataFrame.rowWhereValue2IsFromRecognizedText(with: id), let valueWithId = row["value2"] as? ValueWithId
+        {
+            value2 = valueWithId.value
+            color = .blue
+        }
+        
+        if let row = dataFrame.rowWhereAttributeIsFromRecognizedText(with: id), let attributeWithId = row["attribute"] as? AttributeWithId
+        {
+            attribute = attributeWithId.attribute
+            if value1 != nil || value2 != nil {
+                color = .blue
+            } else {
+                color = .cyan
+            }
+        }
     }
 
     init(recognizedTextWithoutLC: RecognizedText, nutrientsDataFrame: DataFrame) {
