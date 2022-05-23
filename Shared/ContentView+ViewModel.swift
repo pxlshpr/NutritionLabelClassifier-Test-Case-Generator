@@ -9,8 +9,12 @@ extension ContentView {
     class ViewModel: ObservableObject {
         @Published var pickedImage: UIImage? = nil
         @Published var isPresentingImagePicker = false
-        @Published var recognizedTexts: [RecognizedText]? = nil
-        @Published var nutrientsDataFrame: DataFrame? = nil
+
+//        @Published var recognizedTexts: [RecognizedText]? = nil
+//        @Published var nutrientsDataFrame: DataFrame? = nil
+        
+        @Published var boxes: [Box] = []
+        
         @Published var imagePickerDelegate: ImagePickerView.Delegate? = nil
         var contentSize: CGSize = .zero
         var observations: [VNRecognizedTextObservation]? = nil
@@ -46,8 +50,10 @@ extension ContentView.ViewModel {
         let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: recognizedTexts)
         
         DispatchQueue.main.async {
-            self.nutrientsDataFrame = nutrientsDataFrame
-            self.recognizedTexts = recognizedTexts
+            self.boxes = []
+            for recognizedText in recognizedTexts {
+                self.boxes.append(Box(recognizedText: recognizedText, nutrientsDataFrame: nutrientsDataFrame))
+            }
         }
     }
 

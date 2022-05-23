@@ -2,11 +2,14 @@ import SwiftUI
 import SwiftUISugar
 import VisionSugar
 import NutritionLabelClassifier
+import BottomSheet
+import SwiftHaptics
 
 struct ContentView: View {
 
     @StateObject var vm: ViewModel = ViewModel()
     @State var isPresentingImagePicker = false
+    @State var selectedBox: Box? = nil
     
     var body: some View {
         NavigationView {
@@ -34,6 +37,12 @@ struct ContentView: View {
             .navigationTitle("Test Case Generator")
             .navigationBarTitleDisplayMode(.inline)
         }
+        .bottomSheet(item: $selectedBox,
+                     prefersGrabberVisible: true,
+                     prefersScrollingExpandsWhenScrolledToEdge: false)
+        {
+            MenuView(box: $selectedBox, vm: vm)
+        }
         .sheet(isPresented: $isPresentingImagePicker) {
             imagePickerView
         }
@@ -44,46 +53,38 @@ struct ContentView: View {
     
     @ViewBuilder
     var boxesLayer: some View {
-        if let recognizedTexts = vm.recognizedTexts {
-            ZStack(alignment: .topLeading) {
-                ForEach(recognizedTexts, id: \.self) { recognizedText in
-                    Button {
-    //                    Haptics.feedback(style: .rigid)
-    //                    lastTappedRecognizedText = recognizedText
-    //                    let pasteBoard = UIPasteboard.general
-    //                    pasteBoard.string = recognizedText.string
-                    } label: {
-                        recognizedTextView(for: recognizedText)
-                    }
-                    .offset(x: recognizedText.rect.minX, y: recognizedText.rect.minY)
+        ZStack(alignment: .topLeading) {
+            ForEach(vm.boxes, id: \.self) { box in
+                Button {
+                    Haptics.feedback(style: .rigid)
+                    selectedBox = box
+                } label: {
+                    boxView(for: box)
                 }
+                .offset(x: box.recognizedText.rect.minX, y: box.recognizedText.rect.minY)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
     @ViewBuilder
-    func color(for recognizedText: RecognizedText) -> some View {
-        if let dataFrame = vm.nutrientsDataFrame, dataFrame.rows.contains(where: { row in
-            guard let valueWithId = row["value1"] as? ValueWithId else {
-                return false
-            }
-            return valueWithId.observationId == recognizedText.id
-        }) {
-            Color.green
-        } else {
-            Color.purple
-        }
-    }
-    
-    @ViewBuilder
-    func recognizedTextView(for recognizedText: RecognizedText) -> some View {
+    func boxView(for box: Box) -> some View {
         HStack {
             VStack(alignment: .leading) {
-                color(for: recognizedText)
+                Group {
+                    if let selectedBox = selectedBox {
+                        if box == selectedBox {
+                            Color.yellow
+                        } else {
+                            Color.white
+                        }
+                    } else {
+                        box.color
+                    }
+                }
                     .cornerRadius(6.0)
                     .opacity(0.4)
-                    .frame(width: recognizedText.rect.width, height: recognizedText.rect.height)
+                    .frame(width: box.recognizedText.rect.width, height: box.recognizedText.rect.height)
                 Spacer()
             }
             Spacer()

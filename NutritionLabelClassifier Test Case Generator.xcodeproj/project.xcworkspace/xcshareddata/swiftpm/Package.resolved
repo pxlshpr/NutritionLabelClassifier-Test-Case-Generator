@@ -1,6 +1,15 @@
 {
   "pins" : [
     {
+      "identity" : "bottomsheet",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/adamfootdev/BottomSheet.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "0e6db002eeb5e3ba402e94dfe6a120f78b5a64df"
+      }
+    },
+    {
       "identity" : "nutritionlabelclassifier",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pxlshpr/NutritionLabelClassifier.git",
@@ -41,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pxlshpr/VisionSugar",
       "state" : {
-        "revision" : "0d1ee1385e35f85ff194d58c1ec1d08647b97fb7",
-        "version" : "0.0.33"
+        "revision" : "2ef9e0ef2453f2e0e730f4944c49e2bbfdaa3b08",
+        "version" : "0.0.34"
       }
     }
   ],
