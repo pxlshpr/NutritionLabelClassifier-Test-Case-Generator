@@ -37,6 +37,7 @@ struct ContentView: View {
             .navigationTitle("Test Case Generator")
             .navigationBarTitleDisplayMode(.inline)
         }
+        .toolbar { bottomToolbarContent }
         .bottomSheet(item: $selectedBox,
                      prefersGrabberVisible: true,
                      prefersScrollingExpandsWhenScrolledToEdge: false)
@@ -48,6 +49,24 @@ struct ContentView: View {
         }
         .onAppear {
             setImagePickerDelegate()
+        }
+    }
+    
+    var bottomToolbarContent: some ToolbarContent {
+        ToolbarItemGroup(placement: .bottomBar) {
+            Button {
+                vm.boxes = []
+                vm.pickedImage = nil
+                self.isPresentingImagePicker = true
+            } label: {
+                Image(systemName: "photo")
+            }
+            Spacer()
+            Button {
+                
+            } label: {
+                Image(systemName: "square.and.arrow.up")
+            }
         }
     }
     

@@ -2,6 +2,7 @@ import SwiftUI
 import VisionSugar
 import NutritionLabelClassifier
 import TabularData
+import SwiftUISugar
 
 class Box: ObservableObject {
     var id: UUID
@@ -69,6 +70,7 @@ class Box: ObservableObject {
     
     func croppedImage(from image: UIImage, for contentSize: CGSize, completion: @escaping (UIImage) -> Void) {
         let cropRect = boundingBox.rectForSize(image.size)
+        let image = image.fixOrientationIfNeeded()
         DispatchQueue.global(qos: .utility).async {
             let croppedImage = self.cropImage(imageToCrop: image, toRect: cropRect)
             DispatchQueue.main.async {

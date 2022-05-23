@@ -63,6 +63,9 @@ struct BoxDetailsView: View {
                 HStack {
                     Spacer()
                     Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxHeight: 150)
                     Spacer()
                 }
             }
