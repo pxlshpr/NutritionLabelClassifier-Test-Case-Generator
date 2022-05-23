@@ -3,12 +3,14 @@ import NutritionLabelClassifier
 import VisionSugar
 import Vision
 import SwiftUISugar
+import TabularData
 
 extension ContentView {
     class ViewModel: ObservableObject {
         @Published var pickedImage: UIImage? = nil
         @Published var isPresentingImagePicker = false
-        @Published var recognizedTexts: [RecognizedText] = []
+        @Published var recognizedTexts: [RecognizedText]? = nil
+        @Published var nutrientsDataFrame: DataFrame? = nil
         @Published var imagePickerDelegate: ImagePickerView.Delegate? = nil
         var contentSize: CGSize = .zero
         var observations: [VNRecognizedTextObservation]? = nil
@@ -41,15 +43,10 @@ extension ContentView.ViewModel {
         guard let observations = observations else { return }
         
         let recognizedTexts = VisionSugar.recognizedTexts(of: observations, for: image, inContentSize: self.contentSize)
-        let dataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: recognizedTexts)
-        
-        for row in dataFrame.rows {
-            if let valueWithId = row["value1"] as  {
-                print(valueWithId)
-            }
-        }
+        let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: recognizedTexts)
         
         DispatchQueue.main.async {
+            self.nutrientsDataFrame = nutrientsDataFrame
             self.recognizedTexts = recognizedTexts
         }
     }

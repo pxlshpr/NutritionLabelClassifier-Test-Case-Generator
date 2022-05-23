@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftUISugar
 import VisionSugar
+import NutritionLabelClassifier
 
 struct ContentView: View {
 
@@ -41,28 +42,45 @@ struct ContentView: View {
         }
     }
     
+    @ViewBuilder
     var boxesLayer: some View {
-        ZStack(alignment: .topLeading) {
-            ForEach(vm.recognizedTexts, id: \.self) { recognizedText in
-                Button {
-//                    Haptics.feedback(style: .rigid)
-//                    lastTappedRecognizedText = recognizedText
-//                    let pasteBoard = UIPasteboard.general
-//                    pasteBoard.string = recognizedText.string
-                } label: {
-                    recognizedTextView(for: recognizedText)
+        if let recognizedTexts = vm.recognizedTexts {
+            ZStack(alignment: .topLeading) {
+                ForEach(recognizedTexts, id: \.self) { recognizedText in
+                    Button {
+    //                    Haptics.feedback(style: .rigid)
+    //                    lastTappedRecognizedText = recognizedText
+    //                    let pasteBoard = UIPasteboard.general
+    //                    pasteBoard.string = recognizedText.string
+                    } label: {
+                        recognizedTextView(for: recognizedText)
+                    }
+                    .offset(x: recognizedText.rect.minX, y: recognizedText.rect.minY)
                 }
-                .offset(x: recognizedText.rect.minX, y: recognizedText.rect.minY)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    @ViewBuilder
+    func color(for recognizedText: RecognizedText) -> some View {
+        if let dataFrame = vm.nutrientsDataFrame, dataFrame.rows.contains(where: { row in
+            guard let valueWithId = row["value1"] as? ValueWithId else {
+                return false
+            }
+            return valueWithId.observationId == recognizedText.id
+        }) {
+            Color.green
+        } else {
+            Color.purple
+        }
     }
     
     @ViewBuilder
     func recognizedTextView(for recognizedText: RecognizedText) -> some View {
         HStack {
             VStack(alignment: .leading) {
-                Color.purple
+                color(for: recognizedText)
                     .cornerRadius(6.0)
                     .opacity(0.4)
                     .frame(width: recognizedText.rect.width, height: recognizedText.rect.height)
