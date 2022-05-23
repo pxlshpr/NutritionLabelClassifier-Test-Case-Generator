@@ -38,9 +38,9 @@ class Box: ObservableObject {
     }
     
     func croppedImage(from image: UIImage, for contentSize: CGSize, completion: @escaping (UIImage) -> Void) {
-        let cropRect = self.recognizedText.boundingBox
+        let cropRect = recognizedText.boundingBox.rectForSize(image.size)
         DispatchQueue.global(qos: .utility).async {
-            let croppedImage = self.cropImage(imageToCrop: image, toRect: self.recognizedText.rect)
+            let croppedImage = self.cropImage(imageToCrop: image, toRect: cropRect)
             DispatchQueue.main.async {
                 completion(croppedImage)
             }
