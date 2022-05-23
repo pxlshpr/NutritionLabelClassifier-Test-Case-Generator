@@ -15,6 +15,10 @@
 		E29BE0F2283B64AD00B20427 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DD283B64AC00B20427 /* ContentView.swift */; };
 		E29BE0F5283B64AD00B20427 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E29BE0DF283B64AD00B20427 /* Assets.xcassets */; };
 		E29BE0F6283B64AD00B20427 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E29BE0DF283B64AD00B20427 /* Assets.xcassets */; };
+		E29BE101283B65E200B20427 /* SwiftUISugar in Frameworks */ = {isa = PBXBuildFile; productRef = E29BE100283B65E200B20427 /* SwiftUISugar */; };
+		E29BE104283B699500B20427 /* NutritionLabelClassifier in Frameworks */ = {isa = PBXBuildFile; productRef = E29BE103283B699500B20427 /* NutritionLabelClassifier */; };
+		E29BE106283B6A0300B20427 /* ContentView+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE105283B6A0300B20427 /* ContentView+ViewModel.swift */; };
+		E29BE107283B6A0300B20427 /* ContentView+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE105283B6A0300B20427 /* ContentView+ViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +29,7 @@
 		E29BE0E4283B64AD00B20427 /* NutritionLabelClassifier Test Case Generator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NutritionLabelClassifier Test Case Generator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E29BE0EA283B64AD00B20427 /* NutritionLabelClassifier Test Case Generator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NutritionLabelClassifier Test Case Generator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E29BE0EC283B64AD00B20427 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
+		E29BE105283B6A0300B20427 /* ContentView+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView+ViewModel.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +37,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E29BE101283B65E200B20427 /* SwiftUISugar in Frameworks */,
+				E29BE104283B699500B20427 /* NutritionLabelClassifier in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,6 +66,7 @@
 			children = (
 				E29BE0DC283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift */,
 				E29BE0DD283B64AC00B20427 /* ContentView.swift */,
+				E29BE105283B6A0300B20427 /* ContentView+ViewModel.swift */,
 				E29BE0DF283B64AD00B20427 /* Assets.xcassets */,
 				E29BE0DA283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld */,
 			);
@@ -98,6 +106,10 @@
 			dependencies = (
 			);
 			name = "NutritionLabelClassifier Test Case Generator (iOS)";
+			packageProductDependencies = (
+				E29BE100283B65E200B20427 /* SwiftUISugar */,
+				E29BE103283B699500B20427 /* NutritionLabelClassifier */,
+			);
 			productName = "NutritionLabelClassifier Test Case Generator (iOS)";
 			productReference = E29BE0E4283B64AD00B20427 /* NutritionLabelClassifier Test Case Generator.app */;
 			productType = "com.apple.product-type.application";
@@ -146,6 +158,10 @@
 				Base,
 			);
 			mainGroup = E29BE0D4283B64AC00B20427;
+			packageReferences = (
+				E29BE0FF283B65E200B20427 /* XCRemoteSwiftPackageReference "SwiftUISugar" */,
+				E29BE102283B699500B20427 /* XCRemoteSwiftPackageReference "NutritionLabelClassifier" */,
+			);
 			productRefGroup = E29BE0E5283B64AD00B20427 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -183,6 +199,7 @@
 				E29BE0EF283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift in Sources */,
 				E29BE0ED283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */,
 				E29BE0F1283B64AD00B20427 /* ContentView.swift in Sources */,
+				E29BE106283B6A0300B20427 /* ContentView+ViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,6 +210,7 @@
 				E29BE0F0283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift in Sources */,
 				E29BE0EE283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */,
 				E29BE0F2283B64AD00B20427 /* ContentView.swift in Sources */,
+				E29BE107283B6A0300B20427 /* ContentView+ViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -456,6 +474,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E29BE0FF283B65E200B20427 /* XCRemoteSwiftPackageReference "SwiftUISugar" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pxlshpr/SwiftUISugar";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.0.99;
+			};
+		};
+		E29BE102283B699500B20427 /* XCRemoteSwiftPackageReference "NutritionLabelClassifier" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pxlshpr/NutritionLabelClassifier.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E29BE100283B65E200B20427 /* SwiftUISugar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E29BE0FF283B65E200B20427 /* XCRemoteSwiftPackageReference "SwiftUISugar" */;
+			productName = SwiftUISugar;
+		};
+		E29BE103283B699500B20427 /* NutritionLabelClassifier */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E29BE102283B699500B20427 /* XCRemoteSwiftPackageReference "NutritionLabelClassifier" */;
+			productName = NutritionLabelClassifier;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		E29BE0DA283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld */ = {
