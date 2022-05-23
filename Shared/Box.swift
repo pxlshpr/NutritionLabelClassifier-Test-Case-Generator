@@ -4,27 +4,7 @@ import NutritionLabelClassifier
 import TabularData
 import SwiftUISugar
 
-extension DataFrame {
-    func rowWhereValue1IsFromRecognizedText(with id: UUID) -> DataFrame.Rows.Element? {
-        rows.first(where: {
-            guard let valueWithId = $0["value1"] as? ValueWithId else { return false }
-            return valueWithId.observationId == id
-        })
-    }
-    func rowWhereValue2IsFromRecognizedText(with id: UUID) -> DataFrame.Rows.Element? {
-        rows.first(where: {
-            guard let valueWithId = $0["value2"] as? ValueWithId else { return false }
-            return valueWithId.observationId == id
-        })
-    }
-    func rowWhereAttributeIsFromRecognizedText(with id: UUID) -> DataFrame.Rows.Element? {
-        rows.first(where: {
-            guard let attributeWithId = $0["attribute"] as? AttributeWithId else { return false }
-            return attributeWithId.observationId == id
-        })
-    }
-}
-class Box: ObservableObject {
+class Box: ObservableObject, Identifiable {
     var id: UUID
     var boundingBox: CGRect
     var rect: CGRect
@@ -158,5 +138,26 @@ extension Box: Hashable, Equatable {
     
     static func ==(lhs: Box, rhs: Box) -> Bool {
         lhs.hashValue == rhs.hashValue
+    }
+}
+
+extension DataFrame {
+    func rowWhereValue1IsFromRecognizedText(with id: UUID) -> DataFrame.Rows.Element? {
+        rows.first(where: {
+            guard let valueWithId = $0["value1"] as? ValueWithId else { return false }
+            return valueWithId.observationId == id
+        })
+    }
+    func rowWhereValue2IsFromRecognizedText(with id: UUID) -> DataFrame.Rows.Element? {
+        rows.first(where: {
+            guard let valueWithId = $0["value2"] as? ValueWithId else { return false }
+            return valueWithId.observationId == id
+        })
+    }
+    func rowWhereAttributeIsFromRecognizedText(with id: UUID) -> DataFrame.Rows.Element? {
+        rows.first(where: {
+            guard let attributeWithId = $0["attribute"] as? AttributeWithId else { return false }
+            return attributeWithId.observationId == id
+        })
     }
 }
