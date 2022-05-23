@@ -23,8 +23,8 @@
 		E29BE10A283B76F600B20427 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE108283B76F600B20427 /* Box.swift */; };
 		E29BE10D283B7BD200B20427 /* BottomSheet in Frameworks */ = {isa = PBXBuildFile; productRef = E29BE10C283B7BD200B20427 /* BottomSheet */; };
 		E29BE110283B7C3200B20427 /* SwiftHaptics in Frameworks */ = {isa = PBXBuildFile; productRef = E29BE10F283B7C3200B20427 /* SwiftHaptics */; };
-		E29BE112283B7D2D00B20427 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE111283B7D2D00B20427 /* MenuView.swift */; };
-		E29BE113283B7D2D00B20427 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE111283B7D2D00B20427 /* MenuView.swift */; };
+		E29BE112283B7D2D00B20427 /* BoxDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE111283B7D2D00B20427 /* BoxDetailsView.swift */; };
+		E29BE113283B7D2D00B20427 /* BoxDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE111283B7D2D00B20427 /* BoxDetailsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,12 +32,12 @@
 		E29BE0DC283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionLabelClassifier_Test_Case_GeneratorApp.swift; sourceTree = "<group>"; };
 		E29BE0DD283B64AC00B20427 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E29BE0DF283B64AD00B20427 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		E29BE0E4283B64AD00B20427 /* NutritionLabelClassifier Test Case Generator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NutritionLabelClassifier Test Case Generator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E29BE0E4283B64AD00B20427 /* Test Cases.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Test Cases.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E29BE0EA283B64AD00B20427 /* NutritionLabelClassifier Test Case Generator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NutritionLabelClassifier Test Case Generator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E29BE0EC283B64AD00B20427 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
 		E29BE105283B6A0300B20427 /* ContentView+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView+ViewModel.swift"; sourceTree = "<group>"; };
 		E29BE108283B76F600B20427 /* Box.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
-		E29BE111283B7D2D00B20427 /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
+		E29BE111283B7D2D00B20427 /* BoxDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoxDetailsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,7 +76,7 @@
 			children = (
 				E29BE0DC283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift */,
 				E29BE0DD283B64AC00B20427 /* ContentView.swift */,
-				E29BE111283B7D2D00B20427 /* MenuView.swift */,
+				E29BE111283B7D2D00B20427 /* BoxDetailsView.swift */,
 				E29BE108283B76F600B20427 /* Box.swift */,
 				E29BE105283B6A0300B20427 /* ContentView+ViewModel.swift */,
 				E29BE0DF283B64AD00B20427 /* Assets.xcassets */,
@@ -88,7 +88,7 @@
 		E29BE0E5283B64AD00B20427 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E29BE0E4283B64AD00B20427 /* NutritionLabelClassifier Test Case Generator.app */,
+				E29BE0E4283B64AD00B20427 /* Test Cases.app */,
 				E29BE0EA283B64AD00B20427 /* NutritionLabelClassifier Test Case Generator.app */,
 			);
 			name = Products;
@@ -125,7 +125,7 @@
 				E29BE10F283B7C3200B20427 /* SwiftHaptics */,
 			);
 			productName = "NutritionLabelClassifier Test Case Generator (iOS)";
-			productReference = E29BE0E4283B64AD00B20427 /* NutritionLabelClassifier Test Case Generator.app */;
+			productReference = E29BE0E4283B64AD00B20427 /* Test Cases.app */;
 			productType = "com.apple.product-type.application";
 		};
 		E29BE0E9283B64AD00B20427 /* NutritionLabelClassifier Test Case Generator (macOS) */ = {
@@ -213,7 +213,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E29BE0EF283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift in Sources */,
-				E29BE112283B7D2D00B20427 /* MenuView.swift in Sources */,
+				E29BE112283B7D2D00B20427 /* BoxDetailsView.swift in Sources */,
 				E29BE0ED283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */,
 				E29BE0F1283B64AD00B20427 /* ContentView.swift in Sources */,
 				E29BE106283B6A0300B20427 /* ContentView+ViewModel.swift in Sources */,
@@ -226,7 +226,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E29BE0F0283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift in Sources */,
-				E29BE113283B7D2D00B20427 /* MenuView.swift in Sources */,
+				E29BE113283B7D2D00B20427 /* BoxDetailsView.swift in Sources */,
 				E29BE0EE283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */,
 				E29BE0F2283B64AD00B20427 /* ContentView.swift in Sources */,
 				E29BE107283B6A0300B20427 /* ContentView+ViewModel.swift in Sources */,
@@ -368,7 +368,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pxlshpr.NutritionLabelClassifier-Test-Case-Generator";
-				PRODUCT_NAME = "NutritionLabelClassifier Test Case Generator";
+				PRODUCT_NAME = "Test Cases";
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -398,7 +398,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pxlshpr.NutritionLabelClassifier-Test-Case-Generator";
-				PRODUCT_NAME = "NutritionLabelClassifier Test Case Generator";
+				PRODUCT_NAME = "Test Cases";
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

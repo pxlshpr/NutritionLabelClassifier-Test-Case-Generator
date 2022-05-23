@@ -41,7 +41,7 @@ struct ContentView: View {
                      prefersGrabberVisible: true,
                      prefersScrollingExpandsWhenScrolledToEdge: false)
         {
-            MenuView(box: $selectedBox, vm: vm)
+            BoxDetailsView(box: $selectedBox, vm: vm)
         }
         .sheet(isPresented: $isPresentingImagePicker) {
             imagePickerView
@@ -61,7 +61,7 @@ struct ContentView: View {
                 } label: {
                     boxView(for: box)
                 }
-                .offset(x: box.recognizedText.rect.minX, y: box.recognizedText.rect.minY)
+                .offset(x: box.rect.minX, y: box.rect.minY)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -84,7 +84,7 @@ struct ContentView: View {
                 }
                     .cornerRadius(6.0)
                     .opacity(0.4)
-                    .frame(width: box.recognizedText.rect.width, height: box.recognizedText.rect.height)
+                    .frame(width: box.rect.width, height: box.rect.height)
                 Spacer()
             }
             Spacer()

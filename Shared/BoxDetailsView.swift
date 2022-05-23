@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct MenuView: View {
+struct BoxDetailsView: View {
     
     var box: Binding<Box?>
     @ObservedObject var vm: ContentView.ViewModel
@@ -9,14 +9,8 @@ struct MenuView: View {
     var body: some View {
         NavigationView {
             Form {
-                imageSection
+                recognizedTextsSection
                 Section {
-                    Button {
-                        
-                    } label: {
-                        Label("Mark as Valid", systemImage: "app.badge.checkmark")
-                            .foregroundColor(.green)
-                    }
                 }
                 sectionForClassifierResult
                 Section("Expected Result") {
@@ -40,6 +34,12 @@ struct MenuView: View {
                     Button {
                         
                     } label: {
+                        Label("Mark as Valid", systemImage: "app.badge.checkmark")
+                            .foregroundColor(.green)
+                    }
+                    Button {
+                        
+                    } label: {
                         Label("Mark as Irrelevant", systemImage: "xmark.bin")
                             .foregroundColor(.red)
                     }
@@ -57,13 +57,29 @@ struct MenuView: View {
     }
     
     @ViewBuilder
-    var imageSection: some View {
-        if let image = boxImage {
-            Section {
+    var recognizedTextsSection: some View {
+        Section("Recognized Text") {
+            if let image = boxImage {
                 HStack {
                     Spacer()
                     Image(uiImage: image)
                     Spacer()
+                }
+            }
+            if let recognizedText = box.wrappedValue?.recognizedTextWithLC {
+                HStack {
+                    Text("With LC")
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Text(recognizedText.string)
+                }
+            }
+            if let recognizedText = box.wrappedValue?.recognizedTextWithoutLC {
+                HStack {
+                    Text("Without LC")
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Text(recognizedText.string)
                 }
             }
         }
@@ -72,7 +88,7 @@ struct MenuView: View {
     @ViewBuilder
     var sectionForClassifierResult: some View {
         if box.wrappedValue?.hasClassifierResult == true {
-            Section {
+            Section("Classifier Output") {
                 if let attribute = box.wrappedValue?.attribute {
                     HStack {
                         Text("Attribute:")
@@ -83,7 +99,7 @@ struct MenuView: View {
                 }
                 if let value1 = box.wrappedValue?.value1 {
                     HStack {
-                        Text("Value 1:")
+                        Text("Value 1")
                             .foregroundColor(.secondary)
                         Spacer()
                         Text(value1.description)
@@ -91,7 +107,7 @@ struct MenuView: View {
                 }
                 if let value2 = box.wrappedValue?.value2 {
                     HStack {
-                        Text("Value 2:")
+                        Text("Value 2")
                             .foregroundColor(.secondary)
                         Spacer()
                         Text(value2.description)

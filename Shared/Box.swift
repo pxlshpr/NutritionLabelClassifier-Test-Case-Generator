@@ -4,22 +4,29 @@ import NutritionLabelClassifier
 import TabularData
 
 class Box: ObservableObject {
-    var id: UUID { recognizedText.id }
-    let recognizedText: RecognizedText
-    
+    var id: UUID
+    var boundingBox: CGRect
+    var rect: CGRect
+
+    var recognizedTextWithLC: RecognizedText?
+    var recognizedTextWithoutLC: RecognizedText?
+
     let attribute: Attribute?
     let value1: Value?
     let value2: Value?
     
     @Published var color: Color
     
-    init(recognizedText: RecognizedText, nutrientsDataFrame: DataFrame) {
-        
-        self.recognizedText = recognizedText
-        
+    init(recognizedTextWithLC: RecognizedText, nutrientsDataFrame: DataFrame) {
+        self.id = UUID()
+        self.recognizedTextWithLC = recognizedTextWithLC
+        self.boundingBox = recognizedTextWithLC.boundingBox
+        self.rect = recognizedTextWithLC.rect
+        self.recognizedTextWithoutLC = nil
+
         if let row = nutrientsDataFrame.rows.first(where: {
             guard let valueWithId = $0["value1"] as? ValueWithId else { return false }
-            return valueWithId.observationId == recognizedText.id
+            return valueWithId.observationId == recognizedTextWithLC.id
         }), let valueWithId = row["value1"] as? ValueWithId
         {
             value1 = valueWithId.value
@@ -32,13 +39,36 @@ class Box: ObservableObject {
         }
         attribute = nil
     }
-    
+
+    init(recognizedTextWithoutLC: RecognizedText, nutrientsDataFrame: DataFrame) {
+        self.id = UUID()
+        self.recognizedTextWithoutLC = recognizedTextWithoutLC
+        self.boundingBox = recognizedTextWithoutLC.boundingBox
+        self.rect = recognizedTextWithoutLC.rect
+        self.recognizedTextWithLC = nil
+
+        if let row = nutrientsDataFrame.rows.first(where: {
+            guard let valueWithId = $0["value1"] as? ValueWithId else { return false }
+            return valueWithId.observationId == recognizedTextWithoutLC.id
+        }), let valueWithId = row["value1"] as? ValueWithId
+        {
+            value1 = valueWithId.value
+            value2 = nil
+            color = .indigo
+        } else {
+            value1 = nil
+            value2 = nil
+            color = .mint
+        }
+        attribute = nil
+    }
+
     var hasClassifierResult: Bool {
         attribute != nil || value1 != nil || value2 != nil
     }
     
     func croppedImage(from image: UIImage, for contentSize: CGSize, completion: @escaping (UIImage) -> Void) {
-        let cropRect = recognizedText.boundingBox.rectForSize(image.size)
+        let cropRect = boundingBox.rectForSize(image.size)
         DispatchQueue.global(qos: .utility).async {
             let croppedImage = self.cropImage(imageToCrop: image, toRect: cropRect)
             DispatchQueue.main.async {
@@ -57,7 +87,8 @@ class Box: ObservableObject {
 extension Box: Hashable, Equatable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
-        hasher.combine(recognizedText)
+        hasher.combine(recognizedTextWithLC)
+        hasher.combine(recognizedTextWithoutLC)
         hasher.combine(attribute)
         hasher.combine(value1)
         hasher.combine(value2)
