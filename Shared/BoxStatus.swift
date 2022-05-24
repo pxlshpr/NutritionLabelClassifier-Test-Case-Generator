@@ -1,4 +1,4 @@
-import Foundation
+import SwiftUI
 
 enum BoxStatus: Int, CaseIterable {
     case unmarked
@@ -29,6 +29,19 @@ enum BoxStatus: Int, CaseIterable {
             return "xmark"
         case .irrelevant:
             return "trash"
+        }
+    }
+    
+    var color: Color {
+        switch self {
+        case .unmarked:
+            return .orange
+        case .valid:
+            return .green
+        case .invalid:
+            return .red
+        case .irrelevant:
+            return .gray
         }
     }
 }

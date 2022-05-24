@@ -90,9 +90,9 @@ struct ListView: View {
             ForEach(BoxType.allCases, id: \.self) { boxType in
                 if vm.filteredBoxes.contains(where: { $0.type == boxType }) {
                     Section("\(boxType.description)") {
-                        ForEach(vm.filteredBoxes) { box in
-                            if box.type == boxType {
-                                cell(for: box)
+                        ForEach(vm.filteredBoxes.indices, id: \.self) { index in
+                            if vm.filteredBoxes[index].type == boxType {
+                                cell(for: index)
                             }
                         }
                     }
@@ -104,23 +104,28 @@ struct ListView: View {
     }
     
     @ViewBuilder
-    func cell(for box: Box) -> some View {
-        navigationLink(for: box)
-    }
-    
-    @ViewBuilder
-    func navigationLink(for box: Box) -> some View {
-        if let index = vm.boxes.firstIndex(where: { $0.id == box.id }) {
+    func cell(for index: Int) -> some View {
+//        if let index = vm.filteredBoxes.firstIndex(where: { $0.id == box.id }) {
             NavigationLink {
-                BoxDetailsView(box: $vm.boxes[index], vm: vm)
+                BoxDetailsView(box: $vm.filteredBoxes[index], vm: vm)
             } label: {
-                HStack {
-                    Text(box.cellTitle)
-                    Spacer()
-                    Image(systemName: "\(box.status.systemImage).square")
-                        .renderingMode(.original)
-                }
+                BoxCell(box: $vm.filteredBoxes[index])
+                    .id(vm.refreshBool)
             }
+//        }
+    }
+}
+
+struct BoxCell: View {
+    @Binding var box: Box
+    
+    var body: some View {
+        HStack {
+            Text(box.cellTitle)
+            Spacer()
+            Image(systemName: "\(box.status.systemImage).square")
+                .foregroundColor(box.status.color)
+//                .renderingMode(.original)
         }
     }
 }

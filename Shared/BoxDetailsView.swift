@@ -8,13 +8,27 @@ extension Attribute: SelectionOption {
     }
 }
 
+extension NutritionUnit: SelectionOption {
+    public var optionId: String {
+        rawValue
+    }
+}
+
 extension BoxDetailsView: FieldContentProvider {
     func menuTitle(for option: SelectionOption, isPlural: Bool) -> String? {
-        option.optionId
+        if let option = option as? CustomStringConvertible {
+            return option.description
+        } else {
+            return option.optionId
+        }
     }
     
     func title(for option: SelectionOption, isPlural: Bool) -> String? {
-        option.optionId
+        if let option = option as? CustomStringConvertible {
+            return option.description
+        } else {
+            return option.optionId
+        }
     }
 }
 struct BoxDetailsView: View {
@@ -24,7 +38,7 @@ struct BoxDetailsView: View {
     @State var boxImage: UIImage? = nil
     
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
-
+    
     var body: some View {
         Form {
             recognizedTextsSection
@@ -44,26 +58,24 @@ struct BoxDetailsView: View {
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: backButton)
         .navigationBarItems(trailing: statusMenu)
-
-//        .onDisappear {
-//            NotificationCenter.default.post(name: .resetZoomableScrollViewScale, object: nil)
-//        }
+        
+        //        .onDisappear {
+        //            NotificationCenter.default.post(name: .resetZoomableScrollViewScale, object: nil)
+        //        }
     }
-
-    @State var refreshBool = false
     
     var markSection: some View {
         Section {
             Button {
                 box.status = .valid
-                refreshBool.toggle()
+                refreshAndPop()
             } label: {
                 Label("Mark as Valid", systemImage: "checkmark")
                     .foregroundColor(.green)
             }
-            
             Button {
-                
+                box.status = .irrelevant
+                refreshAndPop()
             } label: {
                 Label("Mark as Irrelevant", systemImage: "trash")
                     .foregroundColor(.red)
@@ -71,60 +83,97 @@ struct BoxDetailsView: View {
         }
     }
     
+    func refreshAndPop() {
+        vm.refreshBool.toggle()
+        popNavigationView()
+    }
+    
     @State var expectedAttribute: SelectionOption = Attribute.energy
     
     var expectedResultSection: some View {
-        Section("Mark as Invalid (Specify expected result)") {
-            Field(label: "Attribute",
-                  units: .constant(Attribute.allCases),
-                  selectedUnit: $expectedAttribute,
-                  contentProvider: self)
-            { selection in
-//                guard let unit = selection as? VolumeTeaspoonUserUnit else { return }
-//                Store.setDefaultVolumeTeaspoonUnit(unit)
-//                Haptics.feedback(style: .medium)
-            }
-            Button {
-                
-            } label: {
-                Label("Value 1", systemImage: "rectangle.and.pencil.and.ellipsis")
-            }
-            Button {
-                
-            } label: {
-                Label("Value 2", systemImage: "rectangle.and.pencil.and.ellipsis")
-            }
+        Section(header: Text("Expected Result"), footer: Text("Setting this will mark this as invalid")) {
+            attributeField
+            value1Field
+            value2Field
+        }
+    }
+    
+    @State var expectedValue1: String = ""
+    @State var expectedValue1Unit: SelectionOption = NutritionUnit.g
+    @State var expectedValue2: String = ""
+    @State var expectedValue2Unit: SelectionOption = NutritionUnit.g
+    
+    var attributeField: some View {
+        Field(label: "Attribute",
+              units: .constant(Attribute.allCases),
+              selectedUnit: $expectedAttribute,
+              selectorStyle: .prominent,
+              contentProvider: self)
+        { selection in
+            //                guard let unit = selection as? VolumeTeaspoonUserUnit else { return }
+            //                Store.setDefaultVolumeTeaspoonUnit(unit)
+            //                Haptics.feedback(style: .medium)
+        }
+    }
+    var value1Field: some View {
+        Field(label: "Value 1",
+              value: $expectedValue1,
+              units: .constant(NutritionUnit.allCases),
+              selectedUnit: $expectedValue1Unit,
+              keyboardType: .decimalPad,
+              selectorStyle: .prominent,
+              contentProvider: self
+        ) { selectedOption in
+        }
+    }
+    
+    var value2Field: some View {
+        Field(label: "Value 2",
+              value: $expectedValue2,
+              units: .constant(NutritionUnit.allCases),
+              selectedUnit: $expectedValue2Unit,
+              keyboardType: .decimalPad,
+              selectorStyle: .prominent,
+              contentProvider: self
+        ) { selectedOption in
         }
     }
     
     @ViewBuilder
     var statusMenu: some View {
-        Menu {
-            ForEach(BoxStatus.allCases.filter({ $0 != .unmarked }), id: \.self) { status in
-                Button {
-                    box.status = status
-                    if let index = vm.filteredBoxes.firstIndex(where: { $0.id == box.id }) {
-                        vm.filteredBoxes[index].status = status
-                    }
-                    refreshBool.toggle()
-                } label: {
-                    Label(status.description, systemImage: status.systemImage)
-                }
-            }
-        } label: {
-            Image(systemName: box.status.systemImage)
-                .renderingMode(.original)
-        }
-        .id(refreshBool)
+        Image(systemName: box.status.systemImage)
+            .foregroundColor(box.status.color)
+            .id(vm.refreshBool)
+//        Menu {
+//            ForEach(BoxStatus.allCases.filter({ $0 != .unmarked }), id: \.self) { status in
+//                Button {
+//                    box.status = status
+//                    if let index = vm.filteredBoxes.firstIndex(where: { $0.id == box.id }) {
+//                        vm.filteredBoxes[index].status = status
+//                    }
+//                    vm.refreshBool.toggle()
+//                } label: {
+//                    Label(status.description, systemImage: status.systemImage)
+//                }
+//            }
+//        } label: {
+//            Image(systemName: box.status.systemImage)
+//                .renderingMode(.original)
+//        }
+//        .id(vm.refreshBool)
     }
     
     var backButton: some View {
         Button(action : {
-            NotificationCenter.default.post(name: .resetZoomableScrollViewScale, object: nil)
-            self.mode.wrappedValue.dismiss()
+            popNavigationView()
         }){
             Image(systemName: "arrow.left")
         }
+    }
+    
+    func popNavigationView() {
+        NotificationCenter.default.post(name: .resetZoomableScrollViewScale, object: nil)
+        self.mode.wrappedValue.dismiss()
     }
     
     @ViewBuilder

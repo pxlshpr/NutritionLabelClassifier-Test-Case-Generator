@@ -11,6 +11,7 @@ extension ContentView {
         @Published var isPresentingImagePicker = false
 
         @Published var selectedBox: Box? = nil
+        @Published var refreshBool = false
 
 //        @Published var recognizedTexts: [RecognizedText]? = nil
 //        @Published var nutrientsDataFrame: DataFrame? = nil
