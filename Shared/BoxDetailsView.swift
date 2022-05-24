@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftUISugar
 import NutritionLabelClassifier
+import SwiftHaptics
 
 extension Attribute: SelectionOption {
     public var optionId: String {
@@ -43,7 +44,7 @@ struct BoxDetailsView: View {
         Form {
             recognizedTextsSection
             sectionForClassifierResult
-            markSection
+//            markSection
             expectedResultSection
         }
         .navigationTitle("Recognized Text")
@@ -58,30 +59,47 @@ struct BoxDetailsView: View {
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: backButton)
         .navigationBarItems(trailing: statusMenu)
+        .toolbar { bottomToolbarContent }
         
         //        .onDisappear {
         //            NotificationCenter.default.post(name: .resetZoomableScrollViewScale, object: nil)
         //        }
     }
     
-    var markSection: some View {
-        Section {
+    var bottomToolbarContent: some ToolbarContent {
+        ToolbarItemGroup(placement: .bottomBar) {
             Button {
                 box.status = .valid
+                Haptics.feedback(style: .rigid)
                 refreshAndPop()
             } label: {
-                Label("Mark as Valid", systemImage: "checkmark")
-                    .foregroundColor(.green)
+                Image(systemName: BoxStatus.valid.systemImage)
+                    .foregroundColor(BoxStatus.valid.color)
             }
-            Button {
-                box.status = .irrelevant
-                refreshAndPop()
-            } label: {
-                Label("Mark as Irrelevant", systemImage: "trash")
-                    .foregroundColor(.red)
-            }
+            Spacer()
         }
     }
+    
+//    var markSection: some View {
+//        Section {
+//            Button {
+//                box.status = .valid
+//                Haptics.feedback(style: .rigid)
+//                refreshAndPop()
+//            } label: {
+//                Label("Mark as Valid", systemImage: "checkmark")
+//                    .foregroundColor(.green)
+//            }
+//            Button {
+//                box.status = .irrelevant
+//                Haptics.feedback(style: .heavy)
+//                refreshAndPop()
+//            } label: {
+//                Label("Mark as Irrelevant", systemImage: "trash")
+//                    .foregroundColor(.red)
+//            }
+//        }
+//    }
     
     func refreshAndPop() {
         vm.refreshBool.toggle()
@@ -211,13 +229,13 @@ struct BoxDetailsView: View {
     @ViewBuilder
     var sectionForClassifierResult: some View {
         if box.hasClassifierResult {
-            Section("Classifier Output") {
+            Section("Classifier Result") {
                 if let attribute = box.attribute {
                     HStack {
-                        Text("Attribute:")
+                        Text("Attribute")
                             .foregroundColor(.secondary)
                         Spacer()
-                        Text(attribute.rawValue)
+                        Text(attribute.description)
                     }
                 }
                 if let value1 = box.value1 {

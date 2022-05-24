@@ -41,7 +41,7 @@ enum BoxStatus: Int, CaseIterable {
         case .invalid:
             return .red
         case .irrelevant:
-            return .gray
+            return .red
         }
     }
 }
