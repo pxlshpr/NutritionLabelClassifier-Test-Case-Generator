@@ -17,6 +17,33 @@ class Box: ObservableObject, Identifiable {
     var value2: Value?
     
     @Published var color: Color
+    @Published var status: BoxStatus = .unmarked
+    
+    var type: BoxType {
+        if attribute != nil {
+            if value1 != nil {
+                if value2 != nil {
+                    return .attributeValue1Value2
+                } else {
+                    return .attributeValue1
+                }
+            } else if value2 != nil {
+                return .attributeValue2
+            } else {
+                return .attribute
+            }
+        } else if value1 != nil {
+            if value2 != nil {
+                return .value1value2
+            } else {
+                return .value1
+            }
+        } else if value2 != nil {
+            return .value2
+        } else {
+            return .unrecognized
+        }
+    }
     
     init(recognizedTextWithLC: RecognizedText, nutrientsDataFrame: DataFrame) {
         self.id = UUID()

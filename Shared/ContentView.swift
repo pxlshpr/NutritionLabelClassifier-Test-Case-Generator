@@ -4,6 +4,7 @@ import VisionSugar
 import NutritionLabelClassifier
 import BottomSheet
 import SwiftHaptics
+import SwiftHaptics
 
 extension Notification.Name {
     static var resetZoomableScrollViewScale: Notification.Name { return .init("resetZoomableScrollViewScale") }
@@ -14,9 +15,62 @@ extension Notification.Name {
 extension Notification {
     struct Keys {
         static let rect = "rect"
+        static let boundingBox = "boundingBox"
+        static let imageSize = "imageSize"
     }
 }
 
+enum BoxType: Int, CaseIterable {
+    case unrecognized
+    case attribute
+    case value1
+    case value2
+    case value1value2
+    case attributeValue1
+    case attributeValue2
+    case attributeValue1Value2
+    
+    var description: String {
+        switch self {
+        case .unrecognized:
+            return "Unrecognized"
+        case .attribute:
+            return "Attribute"
+        case .value1:
+            return "Value 1"
+        case .value2:
+            return "Value 2"
+        case .value1value2:
+            return "Value 1 & 2"
+        case .attributeValue1:
+            return "Attribute & Value 1"
+        case .attributeValue2:
+            return "Attribute & Value 2"
+        case .attributeValue1Value2:
+            return "Attribute & Value 1 & 2"
+        }
+    }
+}
+
+enum BoxStatus: Int, CaseIterable {
+    case unmarked
+    case valid
+    case invalid
+    case irrelevant
+    
+    var description: String {
+        switch self {
+        case .unmarked:
+            return "Unmarked"
+        case .valid:
+            return "Valid"
+        case .invalid:
+            return "Invalid"
+        case .irrelevant:
+            return "Irrelevant"
+        }
+    }
+}
 struct ContentView: View {
 
     @StateObject var vm: ViewModel = ViewModel()
@@ -92,16 +146,61 @@ struct ContentView: View {
     
     var list: some View {
         List {
-            ForEach(vm.boxes) { box in
+            ForEach(vm.filteredBoxes) { box in
                 Button {
                     guard let image = vm.pickedImage else { return }
-                    let rect = box.boundingBox.rectForSize(image.size)
-                    let userInfo = [Notification.Keys.rect: rect]
+                    let userInfo: [String: Any] = [
+                        Notification.Keys.boundingBox: box.boundingBox,
+                        Notification.Keys.imageSize: image.size,
+                    ]
                     NotificationCenter.default.post(name: .scrollZoomableScrollViewToRect, object: nil, userInfo: userInfo)
+                    selectedBox = box
                 } label: {
                     Text(box.recognizedTextWithLC?.string ?? "")
                 }
             }
+        }
+    }
+    
+    var filtersMenu: some View {
+        Menu {
+            ForEach(BoxStatus.allCases, id: \.self) { status in
+                if vm.boxes.contains(where: { $0.status == status }) {
+                    Button {
+                        if vm.statusFilter == status {
+                            vm.statusFilter = nil
+                        } else {
+                            vm.statusFilter = status
+                        }
+                    } label: {
+                        if vm.statusFilter == status {
+                            Label(status.description, systemImage: "checkmark")
+                        } else {
+                            Text(status.description)
+                        }
+                    }
+                }
+            }
+            Divider()
+            ForEach(BoxType.allCases, id: \.self) { type in
+                if vm.boxes.contains(where: { $0.type == type }) {
+                    Button {
+                        if vm.typeFilter == type {
+                            vm.typeFilter = nil
+                        } else {
+                            vm.typeFilter = type
+                        }
+                    } label: {
+                        if vm.typeFilter == type {
+                            Label(type.description, systemImage: "checkmark")
+                        } else {
+                            Text(type.description)
+                        }
+                    }
+                }
+            }
+        } label: {
+            Image(systemName: "line.3.horizontal.decrease.circle\(vm.statusFilter != nil || vm.typeFilter != nil ? ".fill" : "")")
         }
     }
     
@@ -121,6 +220,7 @@ struct ContentView: View {
             } label: {
                 Image(systemName: isShowingList ? "list.bullet.circle.fill" : "list.bullet.circle")
             }
+            filtersMenu
             Spacer()
             Button {
                 
@@ -133,7 +233,7 @@ struct ContentView: View {
     @ViewBuilder
     var boxesLayer: some View {
         ZStack(alignment: .topLeading) {
-            ForEach(vm.boxes, id: \.self) { box in
+            ForEach(vm.filteredBoxes, id: \.self) { box in
                 Button {
                     Haptics.feedback(style: .rigid)
                     selectedBox = box
@@ -223,11 +323,95 @@ public struct ZoomableScrollView<Content: View>: UIViewRepresentable {
         }
         
         NotificationCenter.default.addObserver(forName: .scrollZoomableScrollViewToRect, object: nil, queue: .main) { notification in
-            guard let rect = notification.userInfo?[Notification.Keys.rect] as? CGRect else {
+            guard let boundingBox = notification.userInfo?[Notification.Keys.boundingBox] as? CGRect,
+                  let imageSize = notification.userInfo?[Notification.Keys.imageSize] as? CGSize
+            else {
                 return
             }
-            let zoomRect = scrollView.zoomRectForScale(5, withCenter: CGPoint(x: rect.midX, y: rect.midY))
-            scrollView.zoom(to: zoomRect, animated: true)
+
+            /// We have a `boundingBox` (y-value to bottom), and the original `imageSize`
+            
+            /// First determine the current size and x or y-padding of the image given the current contentSize of the `scrollView`
+            let paddingLeft: CGFloat?
+            let paddingTop: CGFloat?
+            let width: CGFloat
+            let height: CGFloat
+            
+//            let scrollViewSize: CGSize = CGSize(width: 428, height: 376)
+            let scrollViewSize: CGSize = scrollView.frame.size
+//            let scrollViewSize: CGSize
+//            if let view = scrollView.delegate?.viewForZooming?(in: scrollView) {
+//                scrollViewSize = view.frame.size
+//            } else {
+//                scrollViewSize = scrollView.contentSize
+//            }
+            
+            if imageSize.widthToHeightRatio < scrollView.frame.size.widthToHeightRatio {
+                /// height would be the same as `scrollView.frame.size.height`
+                height = scrollViewSize.height
+                width = (imageSize.width * height) / imageSize.height
+                paddingLeft = (scrollViewSize.width - width) / 2.0
+                paddingTop = nil
+            } else {
+                /// width would be the same as `scrollView.frame.size.width`
+                width = scrollViewSize.width
+                height = (imageSize.height * width) / imageSize.width
+                paddingLeft = nil
+                paddingTop = (scrollViewSize.height - height) / 2.0
+            }
+
+            let newImageSize = CGSize(width: width, height: height)
+
+            if let paddingLeft = paddingLeft {
+                print("paddingLeft: \(paddingLeft)")
+            } else {
+                print("paddingLeft: nil")
+            }
+            if let paddingTop = paddingTop {
+                print("paddingTop: \(paddingTop)")
+            } else {
+                print("paddingTop: nil")
+            }
+            print("newImageSize: \(newImageSize)")
+            
+            var newBox = boundingBox.rectForSize(newImageSize)
+            if let paddingLeft = paddingLeft {
+                newBox.origin.x += paddingLeft
+            }
+            if let paddingTop = paddingTop {
+                newBox.origin.y += paddingTop
+            }
+            print("newBox: \(newBox)")
+            /// If the box is longer than it is tall
+            if newBox.size.widthToHeightRatio > 1 {
+                /// Add 10% padding to its horizontal side
+                let padding = newBox.size.width * 0.1
+                newBox.origin.x -= (padding / 2.0)
+                newBox.size.width += padding
+            } else {
+                /// Add 10% padding to its vertical side
+                let padding = newBox.size.height * 0.1
+                newBox.origin.y -= (padding / 2.0)
+                newBox.size.height += padding
+            }
+            print("newBox (padded): \(newBox)")
+            
+            /// Now determine the box we want to zoom into, given the image's dimensions
+            /// Now if the image's width/height ratio is less than the scrollView's
+            ///     we'll have padding on the x-axis, so determine what this would be based on the scrollView's frame's ratio and the current zoom scale
+            ///     Add this to the box's x-axis to determine its true rect within the scrollview
+            /// Or if the image's width/height ratio is greater than the scrollView's
+            ///     we'll have y-axis padding, determine this
+            ///     Add this to box's y-axis to determine its true rect
+            /// Now zoom to this rect
+            
+            
+//            print("contentSize: \(scrollView.contentSize)")
+//            print("contentOffset: \(scrollView.contentOffset)")
+//            print("viewForZooming.frame.size: \(scrollView.delegate!.viewForZooming!(in: scrollView)!.frame.size)")
+
+//            let zoomRect = CGRect(x: 147, y: 129, width: 134, height: 118)
+            scrollView.zoom(to: newBox, animated: true)
         }
 
         return scrollView

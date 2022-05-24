@@ -14,8 +14,23 @@ extension ContentView {
 //        @Published var nutrientsDataFrame: DataFrame? = nil
         
         @Published var boxes: [Box] = []
-        
+        @Published var boxesToDisplay: [Box] = []
+        @Published var filteredBoxes: [Box] = []
+
         @Published var imagePickerDelegate: ImagePickerView.Delegate? = nil
+
+        @Published var typeFilter: BoxType? = nil {
+            didSet {
+                setFilteredBoxes()
+            }
+        }
+        
+        @Published var statusFilter: BoxStatus? = nil {
+            didSet {
+                setFilteredBoxes()
+            }
+        }
+        
         var contentSize: CGSize = .zero
         var observationsWithLC: [VNRecognizedTextObservation] = []
         var observationsWithoutLC: [VNRecognizedTextObservation] = []
@@ -23,6 +38,22 @@ extension ContentView {
 }
 
 extension ContentView.ViewModel {
+
+    func setFilteredBoxes() {
+        filteredBoxes = boxes.filter({ box in
+            if let statusFilter = statusFilter {
+                if box.status != statusFilter {
+                    return false
+                }
+            }
+            if let typeFilter = typeFilter {
+                if box.type != typeFilter {
+                    return false
+                }
+            }
+            return true
+        })
+    }
     
     func didPickImage(_ image: UIImage) {
         print("Got an image with size: \(image.size)")
@@ -71,6 +102,7 @@ extension ContentView.ViewModel {
         
         DispatchQueue.main.async {
             self.boxes = boxes
+            self.filteredBoxes = boxes
         }
     }
 
