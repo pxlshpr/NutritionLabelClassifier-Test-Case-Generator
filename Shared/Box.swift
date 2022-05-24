@@ -45,6 +45,10 @@ class Box: ObservableObject, Identifiable {
         }
     }
     
+    var cellTitle: String {
+        recognizedTextWithLC?.string ?? recognizedTextWithoutLC?.string ?? ""
+    }
+    
     init(recognizedTextWithLC: RecognizedText, nutrientsDataFrame: DataFrame) {
         self.id = UUID()
         self.recognizedTextWithLC = recognizedTextWithLC
@@ -161,6 +165,7 @@ extension Box: Hashable, Equatable {
         hasher.combine(attribute)
         hasher.combine(value1)
         hasher.combine(value2)
+        hasher.combine(status)
     }
     
     static func ==(lhs: Box, rhs: Box) -> Bool {

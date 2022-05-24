@@ -10,6 +10,8 @@ extension ContentView {
         @Published var pickedImage: UIImage? = nil
         @Published var isPresentingImagePicker = false
 
+        @Published var selectedBox: Box? = nil
+
 //        @Published var recognizedTexts: [RecognizedText]? = nil
 //        @Published var nutrientsDataFrame: DataFrame? = nil
         
@@ -39,6 +41,15 @@ extension ContentView {
 
 extension ContentView.ViewModel {
 
+    func sendZoomNotification(for box: Box) {
+        guard let image = pickedImage else { return }
+        
+        let userInfo: [String: Any] = [
+            Notification.Keys.boundingBox: box.boundingBox,
+            Notification.Keys.imageSize: image.size,
+        ]
+        NotificationCenter.default.post(name: .scrollZoomableScrollViewToRect, object: nil, userInfo: userInfo)
+    }
     func setFilteredBoxes() {
         filteredBoxes = boxes.filter({ box in
             if let statusFilter = statusFilter {
@@ -76,6 +87,38 @@ extension ContentView.ViewModel {
             }
         }
     }
+
+    func recalculateBoxes(for image: UIImage) {
+        let recognizedTextsWithLC = VisionSugar.recognizedTexts(
+            of: observationsWithLC,
+            for: image, inContentSize: self.contentSize)
+
+        let recognizedTextsWithoutLC = VisionSugar.recognizedTexts(
+            of: observationsWithoutLC,
+            for: image, inContentSize: self.contentSize)
+        
+        for box in boxes {
+            if let recognizedText = recognizedTextsWithLC.first(where: { $0.id == box.recognizedTextWithLC?.id }) {
+                box.recognizedTextWithLC = recognizedText
+                box.rect = recognizedText.rect
+            }
+            if let recognizedText = recognizedTextsWithoutLC.first(where: { $0.id == box.recognizedTextWithoutLC?.id }) {
+                box.recognizedTextWithoutLC = recognizedText
+                box.rect = recognizedText.rect
+            }
+        }
+        
+        for box in filteredBoxes {
+            if let recognizedText = recognizedTextsWithLC.first(where: { $0.id == box.recognizedTextWithLC?.id }) {
+                box.recognizedTextWithLC = recognizedText
+                box.rect = recognizedText.rect
+            }
+            if let recognizedText = recognizedTextsWithoutLC.first(where: { $0.id == box.recognizedTextWithoutLC?.id }) {
+                box.recognizedTextWithoutLC = recognizedText
+                box.rect = recognizedText.rect
+            }
+        }
+    }
     
     func calculateBoxes(in image: UIImage) {
         let recognizedTextsWithLC = VisionSugar.recognizedTexts(
@@ -98,6 +141,11 @@ extension ContentView.ViewModel {
             } else {
                 boxes.append(Box(recognizedTextWithoutLC: recognizedText, nutrientsDataFrame: nutrientsDataFrame))
             }
+        }
+        
+        /// Remove boxes that have no recognized text (either with or without lanugage correction)
+        boxes = boxes.filter {
+            !$0.cellTitle.isEmpty
         }
         
         DispatchQueue.main.async {
