@@ -40,6 +40,36 @@ struct BoxDetailsView: View {
     
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
     
+    @State var expectedAttribute: SelectionOption = Attribute.energy
+    @State var expectedValue1: String = ""
+    @State var expectedValue1Unit: SelectionOption = NutritionUnit.g
+    @State var expectedValue2: String = ""
+    @State var expectedValue2Unit: SelectionOption = NutritionUnit.g
+    
+    init(box: Binding<Box>, vm: ContentView.ViewModel) {
+        self._box = box
+        self.vm = vm
+        self.fillFields()
+    }
+    
+    func fillFields() {
+        if let expectedAttribute = box.expectedAttribute {
+            self.expectedAttribute = expectedAttribute
+        }
+        if let expectedValue1 = box.expectedValue1 {
+            self.expectedValue1 = expectedValue1
+        }
+        if let expectedValue1Unit = box.expectedValue1Unit {
+            self.expectedValue1Unit = expectedValue1Unit
+        }
+        if let expectedValue2 = box.expectedValue2 {
+            self.expectedValue2 = expectedValue2
+        }
+        if let expectedValue2Unit = box.expectedValue2Unit {
+            self.expectedValue2Unit = expectedValue2Unit
+        }
+    }
+    
     var body: some View {
         Form {
             recognizedTextsSection
@@ -55,6 +85,7 @@ struct BoxDetailsView: View {
                 self.boxImage = $0
             }
             vm.sendZoomNotification(for: box)
+            fillFields()
         }
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: backButton)
@@ -66,15 +97,41 @@ struct BoxDetailsView: View {
         //        }
     }
     
+    func markAsValid() {
+        box.status = .valid
+        
+        if let attribute = box.attribute {
+            box.expectedAttribute = attribute
+            expectedAttribute = attribute
+        }
+        if let value1 = box.value1 {
+            box.expectedValue1 = value1.amount.clean
+            box.expectedValue1Unit = value1.unit
+            expectedValue1 = value1.amount.clean
+            if let unit = value1.unit {
+                expectedValue1Unit = unit
+            }
+        }
+        if let value2 = box.value2 {
+            box.expectedValue2 = value2.amount.clean
+            box.expectedValue2Unit = value2.unit
+            expectedValue2 = value2.amount.clean
+            if let unit = value2.unit {
+                expectedValue2Unit = unit
+            }
+        }
+
+        Haptics.feedback(style: .rigid)
+        refreshAndPop()
+    }
+    
     var bottomToolbarContent: some ToolbarContent {
         ToolbarItemGroup(placement: .bottomBar) {
             Button {
-                box.status = .valid
-                Haptics.feedback(style: .rigid)
-                refreshAndPop()
+                markAsValid()
             } label: {
                 Image(systemName: BoxStatus.valid.systemImage)
-                    .foregroundColor(BoxStatus.valid.color)
+                    .disabled(box.status == .valid)
             }
             Spacer()
         }
@@ -106,8 +163,6 @@ struct BoxDetailsView: View {
         popNavigationView()
     }
     
-    @State var expectedAttribute: SelectionOption = Attribute.energy
-    
     var expectedResultSection: some View {
         Section(header: Text("Expected Result"), footer: Text("Setting this will mark this as invalid")) {
             attributeField
@@ -115,11 +170,6 @@ struct BoxDetailsView: View {
             value2Field
         }
     }
-    
-    @State var expectedValue1: String = ""
-    @State var expectedValue1Unit: SelectionOption = NutritionUnit.g
-    @State var expectedValue2: String = ""
-    @State var expectedValue2Unit: SelectionOption = NutritionUnit.g
     
     var attributeField: some View {
         Field(label: "Attribute",

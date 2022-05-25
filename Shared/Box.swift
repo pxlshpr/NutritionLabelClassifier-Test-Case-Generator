@@ -19,6 +19,12 @@ class Box: ObservableObject, Identifiable {
     @Published var color: Color
     @Published var status: BoxStatus = .unmarked
     
+    var expectedAttribute: Attribute? = nil
+    var expectedValue1: String? = nil
+    var expectedValue1Unit: NutritionUnit? = nil
+    var expectedValue2: String? = nil
+    var expectedValue2Unit: NutritionUnit? = nil
+
     var type: BoxType {
         if attribute != nil {
             if value1 != nil {
@@ -166,6 +172,11 @@ extension Box: Hashable, Equatable {
         hasher.combine(value1)
         hasher.combine(value2)
         hasher.combine(status)
+        hasher.combine(expectedAttribute)
+        hasher.combine(expectedValue1)
+        hasher.combine(expectedValue1Unit)
+        hasher.combine(expectedValue2)
+        hasher.combine(expectedValue2Unit)
     }
     
     static func ==(lhs: Box, rhs: Box) -> Bool {

@@ -185,6 +185,7 @@ struct ContentView: View {
     
     func setImagePickerDelegate() {
         vm.imagePickerDelegate = ImagePickerView.Delegate(isPresented: $isPresentingImagePicker, didCancel: { (phPickerViewController) in
+            print("didCancel")
         }, didSelect: { (result) in
             guard let image = result.images.first else {
                 fatalError("Couldn't get picked image")
