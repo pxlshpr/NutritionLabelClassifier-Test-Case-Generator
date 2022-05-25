@@ -19,6 +19,7 @@ extension ContentView {
         @Published var boxes: [Box] = []
         @Published var boxesToDisplay: [Box] = []
         @Published var filteredBoxes: [Box] = []
+        @Published var classifierOutput: Output? = nil
 
         @Published var imagePickerDelegate: ImagePickerView.Delegate? = nil
 
@@ -130,7 +131,9 @@ extension ContentView.ViewModel {
             of: observationsWithoutLC,
             for: image, inContentSize: self.contentSize)
                 
-        let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: [recognizedTextsWithLC, recognizedTextsWithoutLC])
+        let arrayOfRecognizedTexts = [recognizedTextsWithLC, recognizedTextsWithoutLC]
+        let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: arrayOfRecognizedTexts)
+        let classifierOutput = NutritionLabelClassifier.classify(arrayOfRecognizedTexts)
         
         var boxes: [Box] = []
         for recognizedText in recognizedTextsWithLC {
@@ -152,6 +155,7 @@ extension ContentView.ViewModel {
         DispatchQueue.main.async {
             self.boxes = boxes
             self.filteredBoxes = boxes
+            self.classifierOutput = classifierOutput
         }
     }
 

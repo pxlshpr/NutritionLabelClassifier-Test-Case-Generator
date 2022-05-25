@@ -1,9 +1,14 @@
 import SwiftUI
 
+enum ListType: String, CaseIterable {
+    case texts = "Recognized Texts"
+    case output = "Classifier Output"
+}
 struct ListView: View {
     
     @ObservedObject var vm: ContentView.ViewModel
-
+    @State var listType: ListType = .texts
+    
     var body: some View {
         NavigationView {
             list
@@ -17,12 +22,15 @@ struct ListView: View {
     var navigationTitleContent: some ToolbarContent {
         ToolbarItemGroup(placement: .principal) {
             Menu {
-                Text("Recognized Texts")
-                    .disabled(true)
-                Text("Classifier Output")
+                ForEach(ListType.allCases, id: \.self) { listType in
+                    Button(listType.rawValue) {
+                        self.listType = listType
+                    }
+                    .disabled(self.listType == listType)
+                }
             } label: {
                 HStack {
-                    Text("Recognized Texts")
+                    Text(listType.rawValue)
                     Image(systemName: "arrowtriangle.down.fill")
                         .scaleEffect(0.5)
                         .offset(x: -5, y: 0)
@@ -85,7 +93,7 @@ struct ListView: View {
         }
     }
     
-    var list: some View {
+    var recognizedTextsList: some View {
         List {
             ForEach(BoxType.allCases, id: \.self) { boxType in
                 if vm.filteredBoxes.contains(where: { $0.type == boxType }) {
@@ -101,6 +109,52 @@ struct ListView: View {
             }
         }
         .listStyle(.plain)
+    }
+    
+    var classifierOutputList: some View {
+        List {
+            servingSection
+            nutrientsSection
+        }
+        .listStyle(.plain)
+    }
+    
+    @ViewBuilder
+    var servingSection: some View {
+        if let output = vm.classifierOutput {
+            Section("Serving") {
+                if let servingsPerContainer = output.serving?.perContainer {
+                    HStack {
+                        if let name = servingsPerContainer.nameWithId {
+                            Text("Servings per \(name.containerName.rawValue)")
+                        } else {
+                            Text("Servings per container")
+                        }
+                        Spacer()
+                    }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    var nutrientsSection: some View {
+        if let output = vm.classifierOutput {
+            Section("Nutrients") {
+                
+            }
+        }
+    }
+
+    var list: some View {
+        Group {
+            switch listType {
+            case .texts:
+                recognizedTextsList
+            case .output:
+                classifierOutputList
+            }
+        }
     }
     
     @ViewBuilder
