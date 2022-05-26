@@ -9,8 +9,8 @@ import SwiftHaptics
 struct ContentView: View {
 
     @StateObject var vm: ViewModel = ViewModel()
-    @State var isPresentingImagePicker = false
-    @State var isPresentingList: Bool = false
+//    @State var isPresentingImagePicker = false
+//    @State var isPresentingList: Bool = false
     @State var shrinkImageView: Bool = false
 
     @State var isHidingBoxes: Bool = false
@@ -22,7 +22,7 @@ struct ContentView: View {
                     zoomableScrollView(with: image)
                 } else {
                     Button("Choose Image") {
-                        isPresentingImagePicker = true
+                        vm.isPresentingImagePicker = true
                     }
                 }
             }
@@ -30,11 +30,13 @@ struct ContentView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
         .toolbar { bottomToolbarContent }
-        .bottomSheet(isPresented: $isPresentingList,
+        .bottomSheet(isPresented: $vm.isPresentingList,
+                     largestUndimmedDetentIdentifier: .medium,
+//                     detents: [.large()],
                      prefersGrabberVisible: true,
                      prefersScrollingExpandsWhenScrolledToEdge: false)
         {
-            ListView(vm: vm)
+            ListView(contentVM: vm)
         }
         .bottomSheet(item: $vm.selectedBox,
                      prefersGrabberVisible: true,
@@ -46,7 +48,7 @@ struct ContentView: View {
                 }
             }
         }
-        .sheet(isPresented: $isPresentingImagePicker) {
+        .sheet(isPresented: $vm.isPresentingImagePicker) {
             imagePickerView
         }
         .onAppear {
@@ -78,8 +80,8 @@ struct ContentView: View {
             .onChange(of: vm.selectedBox) { newValue in
                 updateSize(for: proxy.size, reduceSize: newValue != nil)
             }
-            .onChange(of: isPresentingList) { newValue in
-                updateSize(for: proxy.size, reduceSize: isPresentingList)
+            .onChange(of: vm.isPresentingList) { newValue in
+                updateSize(for: proxy.size, reduceSize: vm.isPresentingList)
             }
         }
     }
@@ -108,17 +110,15 @@ struct ContentView: View {
     var bottomToolbarContent: some ToolbarContent {
         ToolbarItemGroup(placement: .bottomBar) {
             Button {
-                vm.boxes = []
-                vm.pickedImage = nil
-                self.isPresentingImagePicker = true
+                vm.isPresentingImagePicker = true
             } label: {
                 Image(systemName: "photo")
             }
             if vm.pickedImage != nil {
                 Button {
-                    isPresentingList = true
+                    vm.isPresentingList = true
                 } label: {
-                    Image(systemName: isPresentingList ? "list.bullet.circle.fill" : "list.bullet.circle")
+                    Image(systemName: vm.isPresentingList ? "list.bullet.circle.fill" : "list.bullet.circle")
                 }
             }
             Spacer()
@@ -184,7 +184,7 @@ struct ContentView: View {
     }
     
     func setImagePickerDelegate() {
-        vm.imagePickerDelegate = ImagePickerView.Delegate(isPresented: $isPresentingImagePicker, didCancel: { (phPickerViewController) in
+        vm.imagePickerDelegate = ImagePickerView.Delegate(isPresented: $vm.isPresentingImagePicker, didCancel: { (phPickerViewController) in
             print("didCancel")
         }, didSelect: { (result) in
             guard let image = result.images.first else {

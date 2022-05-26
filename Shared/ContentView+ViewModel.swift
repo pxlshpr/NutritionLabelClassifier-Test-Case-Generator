@@ -9,6 +9,7 @@ extension ContentView {
     class ViewModel: ObservableObject {
         @Published var pickedImage: UIImage? = nil
         @Published var isPresentingImagePicker = false
+        @Published var isPresentingList: Bool = false
 
         @Published var selectedBox: Box? = nil
         @Published var refreshBool = false
@@ -69,11 +70,17 @@ extension ContentView.ViewModel {
     }
     
     func didPickImage(_ image: UIImage) {
-        print("Got an image with size: \(image.size)")
-        DispatchQueue.main.async {
-            self.pickedImage = image
+        boxes = []
+        filteredBoxes = []
+        classifierOutput = nil
+        
+        pickedImage = image
+        DispatchQueue.global(qos: .userInteractive).async {
+            self.recognizeTextsInImage(image)
         }
-        self.recognizeTextsInImage(image)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            self.isPresentingList = true
+        }
     }
     
     func recognizeTextsInImage(_ image: UIImage) {
