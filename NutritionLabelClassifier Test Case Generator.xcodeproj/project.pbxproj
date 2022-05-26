@@ -11,14 +11,14 @@
 		E29BE0EE283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DA283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld */; };
 		E29BE0EF283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DC283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift */; };
 		E29BE0F0283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DC283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift */; };
-		E29BE0F1283B64AD00B20427 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DD283B64AC00B20427 /* ContentView.swift */; };
-		E29BE0F2283B64AD00B20427 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DD283B64AC00B20427 /* ContentView.swift */; };
+		E29BE0F1283B64AD00B20427 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DD283B64AC00B20427 /* ImageView.swift */; };
+		E29BE0F2283B64AD00B20427 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DD283B64AC00B20427 /* ImageView.swift */; };
 		E29BE0F5283B64AD00B20427 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E29BE0DF283B64AD00B20427 /* Assets.xcassets */; };
 		E29BE0F6283B64AD00B20427 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E29BE0DF283B64AD00B20427 /* Assets.xcassets */; };
 		E29BE101283B65E200B20427 /* SwiftUISugar in Frameworks */ = {isa = PBXBuildFile; productRef = E29BE100283B65E200B20427 /* SwiftUISugar */; };
 		E29BE104283B699500B20427 /* NutritionLabelClassifier in Frameworks */ = {isa = PBXBuildFile; productRef = E29BE103283B699500B20427 /* NutritionLabelClassifier */; };
-		E29BE106283B6A0300B20427 /* ContentView+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE105283B6A0300B20427 /* ContentView+ViewModel.swift */; };
-		E29BE107283B6A0300B20427 /* ContentView+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE105283B6A0300B20427 /* ContentView+ViewModel.swift */; };
+		E29BE106283B6A0300B20427 /* ImageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE105283B6A0300B20427 /* ImageController.swift */; };
+		E29BE107283B6A0300B20427 /* ImageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE105283B6A0300B20427 /* ImageController.swift */; };
 		E29BE109283B76F600B20427 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE108283B76F600B20427 /* Box.swift */; };
 		E29BE10A283B76F600B20427 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE108283B76F600B20427 /* Box.swift */; };
 		E29BE10D283B7BD200B20427 /* BottomSheet in Frameworks */ = {isa = PBXBuildFile; productRef = E29BE10C283B7BD200B20427 /* BottomSheet */; };
@@ -42,12 +42,12 @@
 /* Begin PBXFileReference section */
 		E29BE0DB283B64AC00B20427 /* Shared.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Shared.xcdatamodel; sourceTree = "<group>"; };
 		E29BE0DC283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionLabelClassifier_Test_Case_GeneratorApp.swift; sourceTree = "<group>"; };
-		E29BE0DD283B64AC00B20427 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		E29BE0DD283B64AC00B20427 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		E29BE0DF283B64AD00B20427 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E29BE0E4283B64AD00B20427 /* Test Cases.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Test Cases.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E29BE0EA283B64AD00B20427 /* NutritionLabelClassifier Test Case Generator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NutritionLabelClassifier Test Case Generator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E29BE0EC283B64AD00B20427 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
-		E29BE105283B6A0300B20427 /* ContentView+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView+ViewModel.swift"; sourceTree = "<group>"; };
+		E29BE105283B6A0300B20427 /* ImageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageController.swift; sourceTree = "<group>"; };
 		E29BE108283B76F600B20427 /* Box.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
 		E29BE111283B7D2D00B20427 /* BoxDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoxDetailsView.swift; sourceTree = "<group>"; };
 		E29BE114283CF6FF00B20427 /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
@@ -93,12 +93,11 @@
 			isa = PBXGroup;
 			children = (
 				E2BC0277283FDA54008EA066 /* App */,
-				E29BE0DC283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift */,
+				E2BC0279283FDA87008EA066 /* Controllers */,
 				E2BC0275283FDA14008EA066 /* Enums */,
+				E2BC027A283FDA91008EA066 /* Models */,
 				E2BC0276283FDA19008EA066 /* Views */,
-				E29BE105283B6A0300B20427 /* ContentView+ViewModel.swift */,
-				E29BE114283CF6FF00B20427 /* Notification.swift */,
-				E29BE108283B76F600B20427 /* Box.swift */,
+				E2BC0278283FDA7C008EA066 /* ViewModels */,
 				E29BE0DF283B64AD00B20427 /* Assets.xcassets */,
 				E29BE0DA283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld */,
 			);
@@ -136,7 +135,7 @@
 			children = (
 				E2BC0272283FD9BD008EA066 /* BoxCell.swift */,
 				E29BE111283B7D2D00B20427 /* BoxDetailsView.swift */,
-				E29BE0DD283B64AC00B20427 /* ContentView.swift */,
+				E29BE0DD283B64AC00B20427 /* ImageView.swift */,
 				E29BE120283CF83E00B20427 /* ListView.swift */,
 				E29BE11D283CF74100B20427 /* ZoomableScrollView.swift */,
 			);
@@ -146,8 +145,33 @@
 		E2BC0277283FDA54008EA066 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				E29BE0DC283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift */,
+				E29BE114283CF6FF00B20427 /* Notification.swift */,
 			);
 			path = App;
+			sourceTree = "<group>";
+		};
+		E2BC0278283FDA7C008EA066 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		E2BC0279283FDA87008EA066 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				E29BE105283B6A0300B20427 /* ImageController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		E2BC027A283FDA91008EA066 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				E29BE108283B76F600B20427 /* Box.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -267,10 +291,10 @@
 				E29BE0ED283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */,
 				E29BE118283CF70C00B20427 /* BoxType.swift in Sources */,
 				E29BE115283CF6FF00B20427 /* Notification.swift in Sources */,
-				E29BE0F1283B64AD00B20427 /* ContentView.swift in Sources */,
+				E29BE0F1283B64AD00B20427 /* ImageView.swift in Sources */,
 				E29BE121283CF83E00B20427 /* ListView.swift in Sources */,
 				E2BC0273283FD9BD008EA066 /* BoxCell.swift in Sources */,
-				E29BE106283B6A0300B20427 /* ContentView+ViewModel.swift in Sources */,
+				E29BE106283B6A0300B20427 /* ImageController.swift in Sources */,
 				E29BE109283B76F600B20427 /* Box.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -286,10 +310,10 @@
 				E29BE0EE283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */,
 				E29BE119283CF70C00B20427 /* BoxType.swift in Sources */,
 				E29BE116283CF6FF00B20427 /* Notification.swift in Sources */,
-				E29BE0F2283B64AD00B20427 /* ContentView.swift in Sources */,
+				E29BE0F2283B64AD00B20427 /* ImageView.swift in Sources */,
 				E29BE122283CF83E00B20427 /* ListView.swift in Sources */,
 				E2BC0274283FD9BD008EA066 /* BoxCell.swift in Sources */,
-				E29BE107283B6A0300B20427 /* ContentView+ViewModel.swift in Sources */,
+				E29BE107283B6A0300B20427 /* ImageController.swift in Sources */,
 				E29BE10A283B76F600B20427 /* Box.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

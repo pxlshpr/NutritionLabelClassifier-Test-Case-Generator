@@ -35,7 +35,7 @@ extension BoxDetailsView: FieldContentProvider {
 struct BoxDetailsView: View {
     
     @Binding var box: Box
-    @ObservedObject var vm: ContentView.ViewModel
+    @ObservedObject var imageController: ImageController
     @State var boxImage: UIImage? = nil
     
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
@@ -46,9 +46,9 @@ struct BoxDetailsView: View {
     @State var expectedValue2: String = ""
     @State var expectedValue2Unit: SelectionOption = NutritionUnit.g
     
-    init(box: Binding<Box>, vm: ContentView.ViewModel) {
+    init(box: Binding<Box>, imageController: ImageController) {
         self._box = box
-        self.vm = vm
+        self.imageController = imageController
         self.fillFields()
     }
     
@@ -80,11 +80,11 @@ struct BoxDetailsView: View {
         .navigationTitle("Recognized Text")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            guard let image = vm.pickedImage else { return }
-            box.croppedImage(from: image, for: vm.contentSize) {
+            guard let image = imageController.pickedImage else { return }
+            box.croppedImage(from: image, for: imageController.contentSize) {
                 self.boxImage = $0
             }
-            vm.sendZoomNotification(for: box)
+            imageController.sendZoomNotification(for: box)
             fillFields()
         }
         .navigationBarBackButtonHidden(true)
@@ -159,7 +159,7 @@ struct BoxDetailsView: View {
 //    }
     
     func refreshAndPop() {
-        vm.refreshBool.toggle()
+        imageController.refreshBool.toggle()
         popNavigationView()
     }
     
@@ -211,15 +211,15 @@ struct BoxDetailsView: View {
     var statusMenu: some View {
         Image(systemName: box.status.systemImage)
             .foregroundColor(box.status.color)
-            .id(vm.refreshBool)
+            .id(imageController.refreshBool)
 //        Menu {
 //            ForEach(BoxStatus.allCases.filter({ $0 != .unmarked }), id: \.self) { status in
 //                Button {
 //                    box.status = status
-//                    if let index = vm.filteredBoxes.firstIndex(where: { $0.id == box.id }) {
-//                        vm.filteredBoxes[index].status = status
+//                    if let index = imageController.filteredBoxes.firstIndex(where: { $0.id == box.id }) {
+//                        imageController.filteredBoxes[index].status = status
 //                    }
-//                    vm.refreshBool.toggle()
+//                    imageController.refreshBool.toggle()
 //                } label: {
 //                    Label(status.description, systemImage: status.systemImage)
 //                }
@@ -228,7 +228,7 @@ struct BoxDetailsView: View {
 //            Image(systemName: box.status.systemImage)
 //                .renderingMode(.original)
 //        }
-//        .id(vm.refreshBool)
+//        .id(imageController.refreshBool)
     }
     
     var backButton: some View {

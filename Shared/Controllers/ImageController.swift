@@ -5,45 +5,60 @@ import Vision
 import SwiftUISugar
 import TabularData
 
-extension ContentView {
-    class ViewModel: ObservableObject {
-        @Published var pickedImage: UIImage? = nil
-        @Published var isPresentingImagePicker = false
-        @Published var isPresentingList: Bool = false
+class ImageController: ObservableObject {
+    @Published var pickedImage: UIImage? = nil
+    @Published var isPresentingImagePicker = false
+    @Published var isPresentingList: Bool = false
+    @Published var listTypeBeingPresented: ListType = .output
 
-        @Published var selectedBox: Box? = nil
-        @Published var refreshBool = false
+    @Published var selectedBox: Box? = nil
+    @Published var refreshBool = false
 
 //        @Published var recognizedTexts: [RecognizedText]? = nil
 //        @Published var nutrientsDataFrame: DataFrame? = nil
-        
-        @Published var boxes: [Box] = []
-        @Published var boxesToDisplay: [Box] = []
-        @Published var filteredBoxes: [Box] = []
-        @Published var classifierOutput: Output? = nil
+    
+    @Published var boxes: [Box] = []
+    @Published var boxesToDisplay: [Box] = []
+    @Published var filteredBoxes: [Box] = []
+    @Published var classifierOutput: Output? = nil
 
-        @Published var imagePickerDelegate: ImagePickerView.Delegate? = nil
+    @Published var imagePickerDelegate: ImagePickerView.Delegate? = nil
 
-        @Published var typeFilter: BoxType? = nil {
-            didSet {
-                setFilteredBoxes()
-            }
+    @Published var typeFilter: BoxType? = nil {
+        didSet {
+            setFilteredBoxes()
         }
-        
-        @Published var statusFilter: BoxStatus? = nil {
-            didSet {
-                setFilteredBoxes()
-            }
-        }
-        
-        var contentSize: CGSize = .zero
-        var observationsWithLC: [VNRecognizedTextObservation] = []
-        var observationsWithoutLC: [VNRecognizedTextObservation] = []
     }
+    
+    @Published var statusFilter: BoxStatus? = nil {
+        didSet {
+            setFilteredBoxes()
+        }
+    }
+    
+    var contentSize: CGSize = .zero
+    var observationsWithLC: [VNRecognizedTextObservation] = []
+    var observationsWithoutLC: [VNRecognizedTextObservation] = []
 }
 
-extension ContentView.ViewModel {
+extension ImageController {
 
+    var filtersDescription: String {
+        let status = statusFilter?.description
+        let type = typeFilter?.description
+        if let status = status {
+            if let type = type {
+                return "\(status.description), \(type.description)"
+            } else {
+                return status.description
+            }
+        } else if let type = type {
+            return type.description
+        } else {
+            return ""
+        }
+    }
+    
     func sendZoomNotification(for box: Box) {
         guard let image = pickedImage else { return }
         
@@ -79,6 +94,9 @@ extension ContentView.ViewModel {
             self.recognizeTextsInImage(image)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            self.listTypeBeingPresented = .output
+            self.statusFilter = nil
+            self.typeFilter = nil
             self.isPresentingList = true
         }
     }

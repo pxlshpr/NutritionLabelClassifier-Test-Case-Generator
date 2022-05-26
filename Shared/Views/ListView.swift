@@ -12,8 +12,7 @@ class ListViewModel: ObservableObject {
 
 struct ListView: View {
     
-    @ObservedObject var contentVM: ContentView.ViewModel
-    @State var listType: ListType = .output
+    @ObservedObject var imageController: ImageController
     @State var isPresentingImagePicker = false
     
     @StateObject var listViewModel = ListViewModel()
@@ -41,7 +40,7 @@ struct ListView: View {
             guard let image = result.images.first else {
                 fatalError("Couldn't get picked image")
             }
-            contentVM.didPickImage(image)
+            imageController.didPickImage(image)
         }, didFail: { (imagePickerError) in
             let phPickerViewController = imagePickerError.picker
             let error = imagePickerError.error
@@ -52,19 +51,26 @@ struct ListView: View {
     
     var navigationTitleContent: some ToolbarContent {
         ToolbarItemGroup(placement: .principal) {
-            Menu {
-                ForEach(ListType.allCases, id: \.self) { listType in
-                    Button(listType.rawValue) {
-                        self.listType = listType
+            HStack {
+                Menu {
+                    ForEach(ListType.allCases, id: \.self) { listType in
+                        Button(listType.rawValue) {
+                            imageController.listTypeBeingPresented = listType
+                        }
+                        .disabled(imageController.listTypeBeingPresented == listType)
                     }
-                    .disabled(self.listType == listType)
+                } label: {
+                    HStack {
+                        Text(imageController.listTypeBeingPresented.rawValue)
+                        Image(systemName: "arrowtriangle.down.fill")
+                            .scaleEffect(0.5)
+                            .offset(x: -5, y: 0)
+                    }
                 }
-            } label: {
-                HStack {
-                    Text(listType.rawValue)
-                    Image(systemName: "arrowtriangle.down.fill")
-                        .scaleEffect(0.5)
-                        .offset(x: -5, y: 0)
+                Spacer()
+                if imageController.listTypeBeingPresented == .texts {
+                    Text(imageController.filtersDescription)
+                        .font(.footnote)
                 }
             }
         }
@@ -81,15 +87,14 @@ struct ListView: View {
     var recognizedTextsList: some View {
         List {
             ForEach(BoxType.allCases, id: \.self) { boxType in
-                if contentVM.filteredBoxes.contains(where: { $0.type == boxType }) {
+                if imageController.filteredBoxes.contains(where: { $0.type == boxType }) {
                     Section("\(boxType.description)") {
-                        ForEach(contentVM.filteredBoxes.indices, id: \.self) { index in
-                            if contentVM.filteredBoxes[index].type == boxType {
+                        ForEach(imageController.filteredBoxes.indices, id: \.self) { index in
+                            if imageController.filteredBoxes[index].type == boxType {
                                 cell(for: index)
                             }
                         }
                     }
-
                 }
             }
         }
@@ -106,7 +111,7 @@ struct ListView: View {
     
     @ViewBuilder
     var servingSection: some View {
-        if let output = contentVM.classifierOutput {
+        if let output = imageController.classifierOutput {
             Section("Serving") {
                 if let servingsPerContainer = output.serving?.perContainer {
                     HStack {
@@ -145,7 +150,7 @@ struct ListView: View {
 
     @ViewBuilder
     var nutrientsSection: some View {
-        if let output = contentVM.classifierOutput {
+        if let output = imageController.classifierOutput {
             Section("Nutrients") {
                 ForEach(output.nutrients.rows, id: \.attributeWithId.id) { row in
                     HStack {
@@ -183,7 +188,7 @@ struct ListView: View {
 
     var list: some View {
         Group {
-            switch listType {
+            switch imageController.listTypeBeingPresented {
             case .texts:
                 recognizedTextsList
             case .output:
@@ -196,10 +201,12 @@ struct ListView: View {
     func cell(for index: Int) -> some View {
 //        if let index = vm.filteredBoxes.firstIndex(where: { $0.id == box.id }) {
             NavigationLink {
-                BoxDetailsView(box: $contentVM.filteredBoxes[index], vm: contentVM)
+                BoxDetailsView(
+                    box: $imageController.filteredBoxes[index],
+                    imageController: imageController)
             } label: {
-                BoxCell(box: $contentVM.filteredBoxes[index])
-                    .id(contentVM.refreshBool)
+                BoxCell(box: $imageController.filteredBoxes[index])
+                    .id(imageController.refreshBool)
             }
 //        }
     }
@@ -211,10 +218,13 @@ extension ListView {
     
     var bottomToolbarContent: some ToolbarContent {
         ToolbarItemGroup(placement: .bottomBar) {
-            choosePhotoButton
-            filtersMenu
+            imageController.listButton
+            if imageController.listTypeBeingPresented == .texts {
+                imageController.filtersMenu
+            }
             Spacer()
-            shareButton
+            choosePhotoButton
+            imageController.shareButton
         }
     }
     
@@ -222,49 +232,7 @@ extension ListView {
         Button {
             self.isPresentingImagePicker = true
         } label: {
-            Image(systemName: "photo")
-        }
-    }
-
-    var filtersMenu: some View {
-        Menu {
-            ForEach(BoxStatus.allCases, id: \.self) { status in
-                if contentVM.boxes.contains(where: { $0.status == status }) {
-                    Button {
-                        if contentVM.statusFilter == status {
-                            contentVM.statusFilter = nil
-                        } else {
-                            contentVM.statusFilter = status
-                        }
-                    } label: {
-                        if contentVM.statusFilter == status {
-                            Label(status.description, systemImage: "checkmark")
-                        } else {
-                            Text(status.description)
-                        }
-                    }
-                }
-            }
-            Divider()
-            ForEach(BoxType.allCases, id: \.self) { type in
-                if contentVM.boxes.contains(where: { $0.type == type }) {
-                    Button {
-                        if contentVM.typeFilter == type {
-                            contentVM.typeFilter = nil
-                        } else {
-                            contentVM.typeFilter = type
-                        }
-                    } label: {
-                        if contentVM.typeFilter == type {
-                            Label(type.description, systemImage: "checkmark")
-                        } else {
-                            Text(type.description)
-                        }
-                    }
-                }
-            }
-        } label: {
-            Image(systemName: "line.3.horizontal.decrease.circle\(contentVM.statusFilter != nil || contentVM.typeFilter != nil ? ".fill" : "")")
+            Image(systemName: "photo.fill")
         }
     }
     
@@ -273,6 +241,90 @@ extension ListView {
             
         } label: {
             Image(systemName: "square.and.arrow.up")
+        }
+    }
+}
+
+extension ImageController {
+    
+    @ViewBuilder
+    var filtersMenu: some View {
+        if pickedImage != nil {
+            Menu {
+                ForEach(BoxStatus.allCases, id: \.self) { status in
+                    if self.boxes.contains(where: { $0.status == status }) {
+                        Button {
+                            self.statusFilter = status
+                        } label: {
+                            if self.statusFilter == status {
+                                Label(status.description, systemImage: "checkmark")
+                            } else {
+                                Text(status.description)
+                            }
+                        }
+                        .disabled(self.statusFilter == status)
+                    }
+                }
+                Button {
+                    self.statusFilter = nil
+                } label: {
+                    if self.statusFilter == nil {
+                        Label("All Statuses", systemImage: "checkmark")
+                    } else {
+                        Text("All Statuses")
+                    }
+                }
+                .disabled(self.statusFilter == nil)
+                Divider()
+                ForEach(BoxType.allCases, id: \.self) { type in
+                    if self.boxes.contains(where: { $0.type == type }) {
+                        Button {
+                            self.typeFilter = type
+                        } label: {
+                            if self.typeFilter == type {
+                                Label(type.description, systemImage: "checkmark")
+                            } else {
+                                Text(type.description)
+                            }
+                        }
+                        .disabled(self.typeFilter == type)
+                    }
+                }
+                Button {
+                    self.typeFilter = nil
+                } label: {
+                    if self.typeFilter == nil {
+                        Label("All Types", systemImage: "checkmark")
+                    } else {
+                        Text("All Types")
+                    }
+                }
+                .disabled(self.typeFilter == nil)
+            } label: {
+                Image(systemName: "line.3.horizontal.decrease.circle\(statusFilter != nil || typeFilter != nil ? ".fill" : "")")
+            }
+        }
+    }
+    
+    @ViewBuilder
+    var listButton: some View {
+        if pickedImage != nil {
+            Button {
+                self.isPresentingList.toggle()
+            } label: {
+                Image(systemName: isPresentingList ? "list.bullet.circle.fill" : "list.bullet.circle")
+            }
+        }
+    }
+    
+    @ViewBuilder
+    var shareButton: some View {
+        if pickedImage != nil {
+            Button {
+                
+            } label: {
+                Image(systemName: "square.and.arrow.up")
+            }
         }
     }
 

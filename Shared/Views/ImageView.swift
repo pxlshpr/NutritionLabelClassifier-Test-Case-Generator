@@ -6,9 +6,9 @@ import BottomSheet
 import SwiftHaptics
 import SwiftHaptics
 
-struct ContentView: View {
+struct ImageView: View {
 
-    @StateObject var vm: ViewModel = ViewModel()
+    @StateObject var imageController = ImageController()
 //    @State var isPresentingImagePicker = false
 //    @State var isPresentingList: Bool = false
     @State var shrinkImageView: Bool = false
@@ -18,11 +18,11 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                if let image = vm.pickedImage {
+                if let image = imageController.pickedImage {
                     zoomableScrollView(with: image)
                 } else {
                     Button("Choose Image") {
-                        vm.isPresentingImagePicker = true
+                        imageController.isPresentingImagePicker = true
                     }
                 }
             }
@@ -30,25 +30,25 @@ struct ContentView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
         .toolbar { bottomToolbarContent }
-        .bottomSheet(isPresented: $vm.isPresentingList,
+        .bottomSheet(isPresented: $imageController.isPresentingList,
                      largestUndimmedDetentIdentifier: .medium,
 //                     detents: [.large()],
                      prefersGrabberVisible: true,
                      prefersScrollingExpandsWhenScrolledToEdge: false)
         {
-            ListView(contentVM: vm)
+            ListView(imageController: imageController)
         }
-        .bottomSheet(item: $vm.selectedBox,
+        .bottomSheet(item: $imageController.selectedBox,
                      prefersGrabberVisible: true,
                      prefersScrollingExpandsWhenScrolledToEdge: false)
         {
-            if let box = vm.selectedBox, let index = vm.boxes.firstIndex(where: { $0.id == box.id }) {
+            if let box = imageController.selectedBox, let index = imageController.boxes.firstIndex(where: { $0.id == box.id }) {
                 NavigationView {
-                    BoxDetailsView(box: $vm.boxes[index], vm: vm)
+                    BoxDetailsView(box: $imageController.boxes[index], imageController: imageController)
                 }
             }
         }
-        .sheet(isPresented: $vm.isPresentingImagePicker) {
+        .sheet(isPresented: $imageController.isPresentingImagePicker) {
             imagePickerView
         }
         .onAppear {
@@ -74,20 +74,20 @@ struct ContentView: View {
                 imageView(with: image)
             }
             .onAppear {
-                vm.contentSize = proxy.size
+                imageController.contentSize = proxy.size
             }
             .frame(maxHeight: shrinkImageView ? proxy.size.height / 2.0 : proxy.size.height)
-            .onChange(of: vm.selectedBox) { newValue in
+            .onChange(of: imageController.selectedBox) { newValue in
                 updateSize(for: proxy.size, reduceSize: newValue != nil)
             }
-            .onChange(of: vm.isPresentingList) { newValue in
-                updateSize(for: proxy.size, reduceSize: vm.isPresentingList)
+            .onChange(of: imageController.isPresentingList) { newValue in
+                updateSize(for: proxy.size, reduceSize: imageController.isPresentingList)
             }
         }
     }
     
     func updateSize(for size: CGSize, reduceSize: Bool) {
-        guard let image = vm.pickedImage else { return }
+        guard let image = imageController.pickedImage else { return }
         
         isHidingBoxes = true
         NotificationCenter.default.post(name: .resetZoomableScrollViewScale, object: nil)
@@ -96,8 +96,8 @@ struct ContentView: View {
         if reduceSize {
             contentSize.height = size.height / 2.0
         }
-        vm.contentSize = contentSize
-        vm.recalculateBoxes(for: image)
+        imageController.contentSize = contentSize
+        imageController.recalculateBoxes(for: image)
         
         withAnimation {
             shrinkImageView = reduceSize
@@ -107,40 +107,15 @@ struct ContentView: View {
         }
     }
     
-    var bottomToolbarContent: some ToolbarContent {
-        ToolbarItemGroup(placement: .bottomBar) {
-            Button {
-                vm.isPresentingImagePicker = true
-            } label: {
-                Image(systemName: "photo")
-            }
-            if vm.pickedImage != nil {
-                Button {
-                    vm.isPresentingList = true
-                } label: {
-                    Image(systemName: vm.isPresentingList ? "list.bullet.circle.fill" : "list.bullet.circle")
-                }
-            }
-            Spacer()
-            if vm.pickedImage != nil {
-                Button {
-                    
-                } label: {
-                    Image(systemName: "square.and.arrow.up")
-                }
-            }
-        }
-    }
-    
     @ViewBuilder
     var boxesLayer: some View {
         ZStack(alignment: .topLeading) {
-            ForEach(vm.filteredBoxes, id: \.self) { box in
+            ForEach(imageController.filteredBoxes, id: \.self) { box in
                 Button {
                     Haptics.feedback(style: .rigid)
-//                    vm.selectedBox = box
+//                    imageController.selectedBox = box
 //                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-//                        vm.sendZoomNotification(for: box)
+//                        imageController.sendZoomNotification(for: box)
 //                    }
                 } label: {
                     boxView(for: box)
@@ -156,7 +131,7 @@ struct ContentView: View {
         HStack {
             VStack(alignment: .leading) {
                 Group {
-                    if let selectedBox = vm.selectedBox {
+                    if let selectedBox = imageController.selectedBox {
                         if box.id == selectedBox.id {
                             Color.yellow
                         } else {
@@ -177,24 +152,67 @@ struct ContentView: View {
     
     @ViewBuilder
     var imagePickerView: some View {
-        if let imagePickerDelegate = vm.imagePickerDelegate {
+        if let imagePickerDelegate = imageController.imagePickerDelegate {
             ImagePickerView(filter: .any(of: [.images, .livePhotos]), selectionLimit: 1, delegate: imagePickerDelegate)
                 .edgesIgnoringSafeArea(.bottom)
         }
     }
     
     func setImagePickerDelegate() {
-        vm.imagePickerDelegate = ImagePickerView.Delegate(isPresented: $vm.isPresentingImagePicker, didCancel: { (phPickerViewController) in
+        imageController.imagePickerDelegate = ImagePickerView.Delegate(isPresented: $imageController.isPresentingImagePicker, didCancel: { (phPickerViewController) in
             print("didCancel")
         }, didSelect: { (result) in
             guard let image = result.images.first else {
                 fatalError("Couldn't get picked image")
             }
-            vm.didPickImage(image)
+            imageController.didPickImage(image)
         }, didFail: { (imagePickerError) in
             let phPickerViewController = imagePickerError.picker
             let error = imagePickerError.error
             print("Did Fail with error: \(error) in \(phPickerViewController)")
         })
     }
+}
+
+extension ImageView {
+    var bottomToolbarContent: some ToolbarContent {
+        ToolbarItemGroup(placement: .bottomBar) {
+            imageController.listButton
+            imageController.filtersMenu
+            Spacer()
+            choosePhotoButton
+            imageController.shareButton
+        }
+    }
+    
+    @ViewBuilder
+    var choosePhotoButton: some View {
+        Button {
+            imageController.isPresentingImagePicker = true
+        } label: {
+            Image(systemName: "photo\(imageController.pickedImage == nil ? "" : ".fill")")
+        }
+    }
+    
+//    @ViewBuilder
+//    var listButton: some View {
+//        if imageController.pickedImage != nil {
+//            Button {
+//                imageController.isPresentingList = true
+//            } label: {
+//                Image(systemName: imageController.isPresentingList ? "list.bullet.circle.fill" : "list.bullet.circle")
+//            }
+//        }
+//    }
+    
+//    @ViewBuilder
+//    var shareButton: some View {
+//        if imageController.pickedImage != nil {
+//            Button {
+//                
+//            } label: {
+//                Image(systemName: "square.and.arrow.up")
+//            }
+//        }
+//    }
 }

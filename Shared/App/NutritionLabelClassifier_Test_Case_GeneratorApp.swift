@@ -12,7 +12,7 @@ struct NutritionLabelClassifier_Test_Case_GeneratorApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ImageView()
         }
     }
 }
