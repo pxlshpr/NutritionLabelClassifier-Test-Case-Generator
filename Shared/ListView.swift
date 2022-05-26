@@ -126,11 +126,32 @@ struct ListView: View {
                 if let servingsPerContainer = output.serving?.perContainer {
                     HStack {
                         if let name = servingsPerContainer.nameWithId {
-                            Text("Servings per \(name.containerName.rawValue)")
+                            Button {
+                                
+                            } label: {
+                                Text("Servings per \(name.containerName.rawValue)")
+                                    .padding(3)
+                                    .background(Color(.secondarySystemBackground))
+                            }
+                            .buttonStyle(BorderlessButtonStyle())
                         } else {
-                            Text("Servings per container")
+                            Button {
+                            } label: {
+                                Text("Servings per container")
+                                    .padding(5)
+                                    .background(Color(.secondarySystemBackground))
+                                    .cornerRadius(5)
+                            }
+                            .buttonStyle(BorderlessButtonStyle())
                         }
                         Spacer()
+                        Button(servingsPerContainer.valueWithId.double.clean) {
+                            
+                        }
+                        .padding(5)
+                        .background(Color(.secondarySystemBackground))
+                        .cornerRadius(5)
+                        .buttonStyle(BorderlessButtonStyle())
                     }
                 }
             }
@@ -141,7 +162,36 @@ struct ListView: View {
     var nutrientsSection: some View {
         if let output = vm.classifierOutput {
             Section("Nutrients") {
-                
+                ForEach(output.nutrients.rows, id: \.attributeWithId.id) { row in
+                    HStack {
+                        Button(row.attributeWithId.attribute.description) {
+                            
+                        }
+                        .padding(5)
+                        .background(Color(.secondarySystemBackground))
+                        .cornerRadius(5)
+                        .buttonStyle(BorderlessButtonStyle())
+                        Spacer()
+                        if let value1WithId = row.value1WithId {
+                            Button(value1WithId.value.description) {
+                                
+                            }
+                            .padding(5)
+                            .background(Color(.secondarySystemBackground))
+                            .cornerRadius(5)
+                            .buttonStyle(BorderlessButtonStyle())
+                        }
+                        if let value2WithId = row.value2WithId {
+                            Button(value2WithId.value.description) {
+                                
+                            }
+                            .padding(5)
+                            .background(Color(.secondarySystemBackground))
+                            .cornerRadius(5)
+                            .buttonStyle(BorderlessButtonStyle())
+                        }
+                    }
+                }
             }
         }
     }
