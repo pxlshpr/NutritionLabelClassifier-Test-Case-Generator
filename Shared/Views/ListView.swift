@@ -115,11 +115,11 @@ struct ListView: View {
             Section("Serving") {
                 if let servingsPerContainer = output.serving?.perContainer {
                     HStack {
-                        if let name = servingsPerContainer.nameWithId {
+                        if let identifiableName = servingsPerContainer.identifiableName {
                             Button {
                                 
                             } label: {
-                                Text("Servings per \(name.containerName.rawValue)")
+                                Text("Servings per \(identifiableName.string)")
                                     .padding(3)
                                     .background(Color(.secondarySystemBackground))
                             }
@@ -135,7 +135,7 @@ struct ListView: View {
                             .buttonStyle(BorderlessButtonStyle())
                         }
                         Spacer()
-                        Button(servingsPerContainer.valueWithId.double.clean) {
+                        Button(servingsPerContainer.identifiableAmount.double.clean) {
                             
                         }
                         .padding(5)
@@ -152,9 +152,9 @@ struct ListView: View {
     var nutrientsSection: some View {
         if let output = imageController.classifierOutput {
             Section("Nutrients") {
-                ForEach(output.nutrients.rows, id: \.attributeWithId.id) { row in
+                ForEach(output.nutrients.rows, id: \.attributeId) { row in
                     HStack {
-                        Button(row.attributeWithId.attribute.description) {
+                        Button(row.identifiableAttribute.attribute.description) {
                             
                         }
                         .padding(5)
@@ -162,8 +162,8 @@ struct ListView: View {
                         .cornerRadius(5)
                         .buttonStyle(BorderlessButtonStyle())
                         Spacer()
-                        if let value1WithId = row.value1WithId {
-                            Button(value1WithId.value.description) {
+                        if let identifiableValue1 = row.identifiableValue1 {
+                            Button(identifiableValue1.value.description) {
                                 
                             }
                             .padding(5)
@@ -171,8 +171,8 @@ struct ListView: View {
                             .cornerRadius(5)
                             .buttonStyle(BorderlessButtonStyle())
                         }
-                        if let value2WithId = row.value2WithId {
-                            Button(value2WithId.value.description) {
+                        if let identifiableValue2 = row.identifiableValue2 {
+                            Button(identifiableValue2.value.description) {
                                 
                             }
                             .padding(5)
