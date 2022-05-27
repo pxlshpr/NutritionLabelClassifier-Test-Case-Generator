@@ -5,6 +5,7 @@ import Introspect
 
 enum ListType: String, CaseIterable {
     case output = "Classifier Output"
+    case expectations = "Expectations"
     case texts = "Recognized Texts"
 }
 
@@ -87,27 +88,26 @@ struct ListView: View {
                 listTypeSegmentedButton
 //                listTypeMenu
                 Spacer()
-                if classifierController.listTypeBeingPresented == .texts {
-                    Text(classifierController.filtersDescription)
-                        .font(.footnote)
-                }
-                if classifierController.listTypeBeingPresented == .output {
-                    Menu {
-                        Button {
-                            
-                        } label: {
-                            Label("Validate All", systemImage: "checkmark")
-                        }
-                        Button(role: .destructive) {
-                            
-                        } label: {
-                            Label("Invalidate All", systemImage: "xmark")
-                        }
+//                if classifierController.listTypeBeingPresented == .texts {
+//                    Text(classifierController.filtersDescription)
+//                        .font(.footnote)
+//                }
+                Menu {
+                    Button {
+                        
                     } label: {
-                        Image(systemName: "\(classifierController.status.systemImage).square")
-                            .foregroundColor(classifierController.status.color)
+                        Label("Validate All", systemImage: "checkmark")
                     }
+                    Button(role: .destructive) {
+                        
+                    } label: {
+                        Label("Invalidate All", systemImage: "xmark")
+                    }
+                } label: {
+                    Image(systemName: "\(classifierController.status.systemImage).square")
+                        .foregroundColor(classifierController.status.color)
                 }
+                .opacity(classifierController.listTypeBeingPresented == .output ? 1.0 : 0.0)
             }
         }
     }
@@ -115,10 +115,11 @@ struct ListView: View {
     var listTypeSegmentedButton: some View {
         Picker("", selection: $classifierController.listTypeBeingPresented) {
             Text("Output").tag(ListType.output)
+            Text("Expectations").tag(ListType.expectations)
             Text("Texts").tag(ListType.texts)
         }
         .pickerStyle(.segmented)
-        .scaledToFit()
+//        .scaledToFit()
         .labelsHidden()
     }
     
@@ -168,15 +169,15 @@ struct ListView: View {
     var classifierOutputList: some View {
         List {
             servingSection
-            nutrientsColumnHeadersSection
-            nutrientsRowsSection
+            columnHeadersSection
+            nutrientsSection
         }
         .listStyle(.plain)
     }
     
     @ViewBuilder
     var servingSection: some View {
-        if let output = classifierController.classifierOutput {
+        if let output = classifierController.classifierOutput, output.containsServingAttributes {
             Section("Serving") {
                 if let servingsPerContainer = output.serving?.perContainer {
                     HStack {
@@ -209,84 +210,25 @@ struct ListView: View {
                         .buttonStyle(BorderlessButtonStyle())
                     }
                 }
-                Menu {
-                    ForEach(Attribute.allCases.filter { $0.isServingAttribute }, id: \.self) { attribute in
-                        Button(attribute.description) {
-                            
-                        }
-                    }
-                } label: {
-                    Label("Add Expected Serving Attribute", systemImage: "plus")
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(.accentColor)
-                }
-//                Button {
-//                    isPresentingAddServingAttribute = true
-//                } label: {
-//                    Label("Add Serving Attribute", systemImage: "plus")
-//                        .multilineTextAlignment(.center)
-//                        .foregroundColor(.accentColor)
-//                }
-                .frame(maxWidth: .infinity)
-                .buttonStyle(BorderlessButtonStyle())
             }
         }
     }
 
     @ViewBuilder
-    var nutrientsColumnHeadersSection: some View {
-        Section("Nutrients: Column Headers") {
-            if !classifierController.hasBothColumnHeaders {
-                Menu {
-                    ForEach(Attribute.allCases.filter { $0.isColumnAttribute }, id: \.self) { attribute in
-                        Button(attribute.description) {
-                            
-                        }
-                    }
-                } label: {
-                    Label("Add Expected Column Header", systemImage: "plus")
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(.accentColor)
-                }
-//                Button {
-//                } label: {
-//                    Label("Add Column Header", systemImage: "plus")
-//                        .multilineTextAlignment(.center)
-//                        .foregroundColor(.accentColor)
-//                }
-                .frame(maxWidth: .infinity)
-                .buttonStyle(BorderlessButtonStyle())
+    var columnHeadersSection: some View {
+        if classifierController.hasAnyColumnHeaders {
+            Section("Column Headers") {
             }
         }
     }
 
     @ViewBuilder
-    var nutrientsRowsSection: some View {
+    var nutrientsSection: some View {
         if let output = classifierController.classifierOutput {
-            Section("Nutrients: Rows") {
+            Section("Nutrients") {
                 ForEach(output.nutrients.rows, id: \.attributeId) { row in
                     cell(for: row)
                 }
-                Menu {
-                    ForEach(Attribute.allCases.filter {
-                        $0.isNutrientAttribute
-                        && classifierController.shouldAllowAdding($0)
-                    }, id: \.self) { attribute in
-                        Button(attribute.description) {
-                            
-                        }
-                    }
-                } label: {
-                    Label("Add Expected Nutrient", systemImage: "plus")
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(.accentColor)
-                }
-//                Button {
-//                } label: {
-//                    Label("Add Nutrient", systemImage: "plus")
-//                        .multilineTextAlignment(.center)
-//                        .foregroundColor(.accentColor)
-//                }
                 .frame(maxWidth: .infinity)
                 .buttonStyle(BorderlessButtonStyle())
             }
@@ -307,8 +249,8 @@ struct ListView: View {
                 if let identifiableValue2 = row.identifiableValue2 {
                     Text(identifiableValue2.value.description)
                 }
-                Image(systemName: "\(classifierController.attributeStatuses[row.attribute]?.systemImage ?? "questionmark").square")
-                    .foregroundColor(classifierController.attributeStatuses[row.attribute]?.color ?? .orange)
+                Image(systemName: "\(classifierController.outputAttributeStatuses[row.attribute]?.systemImage ?? "questionmark").square")
+                    .foregroundColor(classifierController.outputAttributeStatuses[row.attribute]?.color ?? .orange)
             }
         }
         .buttonStyle(BorderlessButtonStyle())
@@ -392,6 +334,8 @@ struct ListView: View {
             switch classifierController.listTypeBeingPresented {
             case .texts:
                 recognizedTextsList
+            case .expectations:
+                expectationsList
             case .output:
                 classifierOutputList
             }

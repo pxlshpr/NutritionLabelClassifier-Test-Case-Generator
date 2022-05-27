@@ -12,6 +12,8 @@
 		E229AB292841228500F3A1EB /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = E229AB282841228500F3A1EB /* Introspect */; };
 		E229AB2B28412AC300F3A1EB /* OutputRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB2A28412AC300F3A1EB /* OutputRow.swift */; };
 		E229AB2C28412AC300F3A1EB /* OutputRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB2A28412AC300F3A1EB /* OutputRow.swift */; };
+		E229AB2E28414DEA00F3A1EB /* ListView+Expectations.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB2D28414DEA00F3A1EB /* ListView+Expectations.swift */; };
+		E229AB2F28414DEA00F3A1EB /* ListView+Expectations.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB2D28414DEA00F3A1EB /* ListView+Expectations.swift */; };
 		E29BE0ED283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DA283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld */; };
 		E29BE0EE283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DA283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld */; };
 		E29BE0EF283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DC283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift */; };
@@ -47,6 +49,7 @@
 /* Begin PBXFileReference section */
 		E229AB242840D14D00F3A1EB /* Box+Related.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Box+Related.swift"; sourceTree = "<group>"; };
 		E229AB2A28412AC300F3A1EB /* OutputRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputRow.swift; sourceTree = "<group>"; };
+		E229AB2D28414DEA00F3A1EB /* ListView+Expectations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ListView+Expectations.swift"; sourceTree = "<group>"; };
 		E29BE0DB283B64AC00B20427 /* Shared.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Shared.xcdatamodel; sourceTree = "<group>"; };
 		E29BE0DC283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionLabelClassifier_Test_Case_GeneratorApp.swift; sourceTree = "<group>"; };
 		E29BE0DD283B64AC00B20427 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
@@ -145,6 +148,7 @@
 				E29BE111283B7D2D00B20427 /* BoxDetailsView.swift */,
 				E29BE0DD283B64AC00B20427 /* ImageView.swift */,
 				E29BE120283CF83E00B20427 /* ListView.swift */,
+				E229AB2D28414DEA00F3A1EB /* ListView+Expectations.swift */,
 				E229AB2A28412AC300F3A1EB /* OutputRow.swift */,
 				E29BE11D283CF74100B20427 /* ZoomableScrollView.swift */,
 			);
@@ -297,6 +301,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E29BE11E283CF74100B20427 /* ZoomableScrollView.swift in Sources */,
+				E229AB2E28414DEA00F3A1EB /* ListView+Expectations.swift in Sources */,
 				E29BE0EF283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift in Sources */,
 				E29BE112283B7D2D00B20427 /* BoxDetailsView.swift in Sources */,
 				E29BE11B283CF71200B20427 /* BoxStatus.swift in Sources */,
@@ -318,6 +323,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E29BE11F283CF74100B20427 /* ZoomableScrollView.swift in Sources */,
+				E229AB2F28414DEA00F3A1EB /* ListView+Expectations.swift in Sources */,
 				E29BE0F0283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift in Sources */,
 				E29BE113283B7D2D00B20427 /* BoxDetailsView.swift in Sources */,
 				E29BE11C283CF71200B20427 /* BoxStatus.swift in Sources */,

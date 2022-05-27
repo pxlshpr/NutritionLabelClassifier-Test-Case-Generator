@@ -149,7 +149,7 @@ struct OutputRow: View {
         ToolbarItemGroup(placement: .bottomBar) {
             Button {
                 if let row = row {
-                    ClassifierController.shared.attributeStatuses[row.attribute] = .valid
+                    ClassifierController.shared.outputAttributeStatuses[row.attribute] = .valid
                 }
                 moveToNextRowOrDismiss()
             } label: {
@@ -159,7 +159,7 @@ struct OutputRow: View {
             Spacer()
             Button {
                 if let row = row {
-                    ClassifierController.shared.attributeStatuses[row.attribute] = .invalid
+                    ClassifierController.shared.outputAttributeStatuses[row.attribute] = .invalid
                 }
                 moveToNextRowOrDismiss()
             } label: {

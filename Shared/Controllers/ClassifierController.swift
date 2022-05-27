@@ -5,6 +5,8 @@ import Vision
 import SwiftUISugar
 import TabularData
 
+typealias AttributeRow = (value1: Value?, value2: Value?, double: Double?, string: String?)
+
 class ClassifierController: ObservableObject {
     
     static let shared = ClassifierController()
@@ -26,7 +28,8 @@ class ClassifierController: ObservableObject {
     @Published var boxesToDisplay: [Box] = []
     @Published var filteredBoxes: [Box] = []
     @Published var classifierOutput: Output? = nil
-    @Published var attributeStatuses: [Attribute: BoxStatus] = [:]
+    @Published var outputAttributeStatuses: [Attribute: BoxStatus] = [:]
+    @Published var expectedAttributes: [Attribute: AttributeRow] = [:]
 
     @Published var imagePickerDelegate: ImagePickerView.Delegate? = nil
 
@@ -43,8 +46,8 @@ class ClassifierController: ObservableObject {
     }
     
     var status: BoxStatus {
-        guard attributeStatuses.count > 0 else { return .unmarked }
-        for status in attributeStatuses.values {
+        guard outputAttributeStatuses.count > 0 else { return .unmarked }
+        for status in outputAttributeStatuses.values {
             if status == .invalid {
                 return .unmarked
             }
@@ -61,12 +64,16 @@ extension ClassifierController {
     var hasBothColumnHeaders: Bool {
         return false
     }
-    
+
+    var hasAnyColumnHeaders: Bool {
+        return false
+    }
+
     func shouldAllowAdding(_ attribute: Attribute) -> Bool {
         guard containsOutputAttributeFor(attribute) else {
             return true
         }
-        if let status = attributeStatuses[attribute] {
+        if let status = outputAttributeStatuses[attribute] {
             return status == .invalid
         }
         return false
@@ -129,7 +136,33 @@ extension ClassifierController {
         boxes = []
         filteredBoxes = []
         classifierOutput = nil
-        attributeStatuses = [:]
+        outputAttributeStatuses = [:]
+        expectedAttributes = [:]
+    }
+    
+    var containsServingAttributes: Bool {
+        guard let output = classifierOutput else { return false }
+        return output.containsServingAttributes
+    }
+    
+    var hasMissingServingAttributes: Bool {
+        //TODO:
+        return true
+    }
+
+    var missingNutrients: [Attribute] {
+        Attribute.allCases.filter {
+            $0.isNutrientAttribute
+            && shouldAllowAdding($0)
+        }
+    }
+    
+    var hasMissingNutrients: Bool {
+        missingNutrients.count > 0
+    }
+    
+    func add(_ attribute: Attribute) {
+        expectedAttributes[attribute] = AttributeRow(value1: nil, value2: nil, double: nil, string: nil)
     }
     
     func didPickImage(_ image: UIImage) {
@@ -229,4 +262,15 @@ extension ClassifierController {
         }
     }
 
+}
+
+extension Output {
+    var containsServingAttributes: Bool {
+        guard let serving = serving else { return false }
+        return serving.amount != nil
+        || serving.unit != nil
+        || serving.unitSizeName != nil
+        || serving.equivalentSize != nil
+        || serving.perContainer != nil
+    }
 }
