@@ -35,7 +35,7 @@ extension BoxDetailsView: FieldContentProvider {
 struct BoxDetailsView: View {
     
     @Binding var box: Box
-    @ObservedObject var imageController: ImageController
+//    @ObservedObject var classifierController: ClassifierController
     @State var boxImage: UIImage? = nil
     
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
@@ -46,9 +46,19 @@ struct BoxDetailsView: View {
     @State var expectedValue2: String = ""
     @State var expectedValue2Unit: SelectionOption = NutritionUnit.g
     
-    init(box: Binding<Box>, imageController: ImageController) {
+    init(box: Binding<Box>) {
         self._box = box
-        self.imageController = imageController
+//        self.classifierController = classifierController
+        self.fillFields()
+    }
+    
+    init(boxId: UUID) {
+        if let box = ClassifierController.shared.boxes.first(where: { $0.id == boxId }) {
+            self._box = .constant(box)
+        } else {
+            self._box = .constant(ClassifierController.shared.boxes[0])
+        }
+//        self.classifierController = classifierController
         self.fillFields()
     }
     
@@ -71,30 +81,33 @@ struct BoxDetailsView: View {
     }
     
     var body: some View {
-        Form {
-            recognizedTextsSection
-            sectionForClassifierResult
-//            markSection
-            expectedResultSection
-        }
-        .navigationTitle("Recognized Text")
-        .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
-            guard let image = imageController.pickedImage else { return }
-            box.croppedImage(from: image, for: imageController.contentSize) {
-                self.boxImage = $0
+        NavigationView {
+            Form {
+                recognizedTextsSection
+                sectionForClassifierResult
+    //            markSection
+                expectedResultSection
             }
-            imageController.sendZoomNotification(for: box)
-            fillFields()
+            .navigationTitle("Recognized Text")
+            .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                guard let image = ClassifierController.shared.pickedImage else { return }
+                box.croppedImage(from: image, for: ClassifierController.shared.contentSize) {
+                    self.boxImage = $0
+                }
+                DispatchQueue.main.async {
+                    ClassifierController.shared.focus(on: box)
+                }
+                fillFields()
+            }
+            .navigationBarBackButtonHidden(true)
+            .navigationBarItems(leading: dismissButton)
+            .navigationBarItems(trailing: statusMenu)
+            .toolbar { bottomToolbarContent }
+            .onDisappear {
+                ClassifierController.shared.resignBoxFocus()
+            }
         }
-        .navigationBarBackButtonHidden(true)
-        .navigationBarItems(leading: backButton)
-        .navigationBarItems(trailing: statusMenu)
-        .toolbar { bottomToolbarContent }
-        
-        //        .onDisappear {
-        //            NotificationCenter.default.post(name: .resetZoomableScrollViewScale, object: nil)
-        //        }
     }
     
     func markAsValid() {
@@ -159,8 +172,8 @@ struct BoxDetailsView: View {
 //    }
     
     func refreshAndPop() {
-        imageController.refreshBool.toggle()
-        popNavigationView()
+        ClassifierController.shared.refreshBool.toggle()
+        dismiss()
     }
     
     var expectedResultSection: some View {
@@ -211,15 +224,15 @@ struct BoxDetailsView: View {
     var statusMenu: some View {
         Image(systemName: box.status.systemImage)
             .foregroundColor(box.status.color)
-            .id(imageController.refreshBool)
+            .id(ClassifierController.shared.refreshBool)
 //        Menu {
 //            ForEach(BoxStatus.allCases.filter({ $0 != .unmarked }), id: \.self) { status in
 //                Button {
 //                    box.status = status
-//                    if let index = imageController.filteredBoxes.firstIndex(where: { $0.id == box.id }) {
-//                        imageController.filteredBoxes[index].status = status
+//                    if let index = classifierController.filteredBoxes.firstIndex(where: { $0.id == box.id }) {
+//                        classifierController.filteredBoxes[index].status = status
 //                    }
-//                    imageController.refreshBool.toggle()
+//                    classifierController.refreshBool.toggle()
 //                } label: {
 //                    Label(status.description, systemImage: status.systemImage)
 //                }
@@ -228,19 +241,19 @@ struct BoxDetailsView: View {
 //            Image(systemName: box.status.systemImage)
 //                .renderingMode(.original)
 //        }
-//        .id(imageController.refreshBool)
+//        .id(classifierController.refreshBool)
     }
     
-    var backButton: some View {
+    var dismissButton: some View {
         Button(action : {
-            popNavigationView()
+            dismiss()
         }){
-            Image(systemName: "arrow.left")
+            Image(systemName: "chevron.down")
         }
     }
     
-    func popNavigationView() {
-        NotificationCenter.default.post(name: .resetZoomableScrollViewScale, object: nil)
+    func dismiss() {
+        ClassifierController.shared.resignBoxFocus()
         self.mode.wrappedValue.dismiss()
     }
     
@@ -279,7 +292,7 @@ struct BoxDetailsView: View {
     @ViewBuilder
     var sectionForClassifierResult: some View {
         if box.hasClassifierResult {
-            Section("Classifier Result") {
+            Section("Classifier Output") {
                 if let attribute = box.attribute {
                     HStack {
                         Text("Attribute")
@@ -297,6 +310,39 @@ struct BoxDetailsView: View {
                     }
                 }
                 if let value2 = box.value2 {
+                    HStack {
+                        Text("Value 2")
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        Text(value2.description)
+                    }
+                }
+            }
+            relatedSection
+        }
+    }
+    
+    @ViewBuilder
+    var relatedSection: some View {
+        if box.hasRelatedFields {
+            Section("Related Texts") {
+                if let attribute = box.relatedAttribute {
+                    HStack {
+                        Text("Attribute")
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        Text(attribute.description)
+                    }
+                }
+                if let value1 = box.relatedValue1 {
+                    HStack {
+                        Text("Value 1")
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        Text(value1.description)
+                    }
+                }
+                if let value2 = box.relatedValue2 {
                     HStack {
                         Text("Value 2")
                             .foregroundColor(.secondary)

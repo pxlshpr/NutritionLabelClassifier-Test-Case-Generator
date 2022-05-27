@@ -8,7 +8,7 @@ import SwiftHaptics
 
 struct ImageView: View {
 
-    @StateObject var imageController = ImageController()
+    @StateObject var classifierController = ClassifierController.shared
 //    @State var isPresentingImagePicker = false
 //    @State var isPresentingList: Bool = false
     @State var shrinkImageView: Bool = false
@@ -18,11 +18,11 @@ struct ImageView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                if let image = imageController.pickedImage {
+                if let image = classifierController.pickedImage {
                     zoomableScrollView(with: image)
                 } else {
                     Button("Choose Image") {
-                        imageController.isPresentingImagePicker = true
+                        classifierController.isPresentingImagePicker = true
                     }
                 }
             }
@@ -30,25 +30,22 @@ struct ImageView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
         .toolbar { bottomToolbarContent }
-        .bottomSheet(isPresented: $imageController.isPresentingList,
+        .bottomSheet(isPresented: $classifierController.isPresentingList,
                      largestUndimmedDetentIdentifier: .medium,
-//                     detents: [.large()],
                      prefersGrabberVisible: true,
                      prefersScrollingExpandsWhenScrolledToEdge: false)
         {
-            ListView(imageController: imageController)
+            ListView(classifierController: classifierController)
         }
-        .bottomSheet(item: $imageController.selectedBox,
+        .bottomSheet(item: $classifierController.selectedBox,
                      prefersGrabberVisible: true,
                      prefersScrollingExpandsWhenScrolledToEdge: false)
         {
-            if let box = imageController.selectedBox, let index = imageController.boxes.firstIndex(where: { $0.id == box.id }) {
-                NavigationView {
-                    BoxDetailsView(box: $imageController.boxes[index], imageController: imageController)
-                }
+            if let box = classifierController.selectedBox, let index = classifierController.boxes.firstIndex(where: { $0.id == box.id }) {
+                BoxDetailsView(box: $classifierController.boxes[index])
             }
         }
-        .sheet(isPresented: $imageController.isPresentingImagePicker) {
+        .sheet(isPresented: $classifierController.isPresentingImagePicker) {
             imagePickerView
         }
         .onAppear {
@@ -74,30 +71,30 @@ struct ImageView: View {
                 imageView(with: image)
             }
             .onAppear {
-                imageController.contentSize = proxy.size
+                classifierController.contentSize = proxy.size
             }
             .frame(maxHeight: shrinkImageView ? proxy.size.height / 2.0 : proxy.size.height)
-            .onChange(of: imageController.selectedBox) { newValue in
+            .onChange(of: classifierController.selectedBox) { newValue in
                 updateSize(for: proxy.size, reduceSize: newValue != nil)
             }
-            .onChange(of: imageController.isPresentingList) { newValue in
-                updateSize(for: proxy.size, reduceSize: imageController.isPresentingList)
+            .onChange(of: classifierController.isPresentingList) { newValue in
+                updateSize(for: proxy.size, reduceSize: classifierController.isPresentingList)
             }
         }
     }
     
     func updateSize(for size: CGSize, reduceSize: Bool) {
-        guard let image = imageController.pickedImage else { return }
+        guard let image = classifierController.pickedImage else { return }
         
         isHidingBoxes = true
-        NotificationCenter.default.post(name: .resetZoomableScrollViewScale, object: nil)
+        ClassifierController.shared.resignBoxFocus()
         
         var contentSize = size
         if reduceSize {
             contentSize.height = size.height / 2.0
         }
-        imageController.contentSize = contentSize
-        imageController.recalculateBoxes(for: image)
+        classifierController.contentSize = contentSize
+        classifierController.recalculateBoxes(for: image)
         
         withAnimation {
             shrinkImageView = reduceSize
@@ -110,12 +107,12 @@ struct ImageView: View {
     @ViewBuilder
     var boxesLayer: some View {
         ZStack(alignment: .topLeading) {
-            ForEach(imageController.filteredBoxes, id: \.self) { box in
+            ForEach(classifierController.filteredBoxes, id: \.self) { box in
                 Button {
                     Haptics.feedback(style: .rigid)
-//                    imageController.selectedBox = box
+//                    classifierController.selectedBox = box
 //                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-//                        imageController.sendZoomNotification(for: box)
+//                        classifierController.sendZoomNotification(for: box)
 //                    }
                 } label: {
                     boxView(for: box)
@@ -131,14 +128,34 @@ struct ImageView: View {
         HStack {
             VStack(alignment: .leading) {
                 Group {
-                    if let selectedBox = imageController.selectedBox {
-                        if box.id == selectedBox.id {
-                            Color.yellow
+                    if let focusedBox = classifierController.focusedBox {
+                        if box.id == focusedBox.id {
+                            if box.status == .valid {
+                                Color.valid
+                            } else if box.status == .invalid {
+                                Color.invalid
+                            } else {
+                                Color.focused
+                            }
+                        } else if focusedBox.relatedBoxes.contains(where: { $0.id == box.id }) {
+                            if box.status == .valid {
+                                Color.validSupplementary
+                            } else if box.status == .invalid {
+                                Color.invalidSupplementary
+                            } else {
+                                Color.focusedSupplementary
+                            }
                         } else {
-                            Color.white
+                            Color.unfocused
                         }
                     } else {
-                        box.color
+                        if box.status == .valid {
+                            Color.valid
+                        } else if box.status == .invalid {
+                            Color.invalid
+                        } else {
+                            Color.unmarked
+                        }
                     }
                 }
                     .cornerRadius(6.0)
@@ -152,20 +169,20 @@ struct ImageView: View {
     
     @ViewBuilder
     var imagePickerView: some View {
-        if let imagePickerDelegate = imageController.imagePickerDelegate {
+        if let imagePickerDelegate = classifierController.imagePickerDelegate {
             ImagePickerView(filter: .any(of: [.images, .livePhotos]), selectionLimit: 1, delegate: imagePickerDelegate)
                 .edgesIgnoringSafeArea(.bottom)
         }
     }
     
     func setImagePickerDelegate() {
-        imageController.imagePickerDelegate = ImagePickerView.Delegate(isPresented: $imageController.isPresentingImagePicker, didCancel: { (phPickerViewController) in
+        classifierController.imagePickerDelegate = ImagePickerView.Delegate(isPresented: $classifierController.isPresentingImagePicker, didCancel: { (phPickerViewController) in
             print("didCancel")
         }, didSelect: { (result) in
             guard let image = result.images.first else {
                 fatalError("Couldn't get picked image")
             }
-            imageController.didPickImage(image)
+            classifierController.didPickImage(image)
         }, didFail: { (imagePickerError) in
             let phPickerViewController = imagePickerError.picker
             let error = imagePickerError.error
@@ -174,40 +191,74 @@ struct ImageView: View {
     }
 }
 
+extension Color {
+    static var valid: Color {
+        Color.green
+    }
+    
+    static var invalid: Color {
+        Color.red
+    }
+    
+    static var focused: Color {
+        Color.yellow
+    }
+    
+    static var validSupplementary: Color {
+        Color.valid.opacity(0.7)
+    }
+    
+    static var invalidSupplementary: Color {
+        Color.invalid.opacity(0.7)
+    }
+    
+    static var focusedSupplementary: Color {
+        Color.focused.opacity(0.7)
+    }
+    
+    static var unfocused: Color {
+        Color.white
+    }
+    
+    static var unmarked: Color {
+        Color.cyan
+    }
+}
+
 extension ImageView {
     var bottomToolbarContent: some ToolbarContent {
         ToolbarItemGroup(placement: .bottomBar) {
-            imageController.listButton
-            imageController.filtersMenu
+            classifierController.listButton
+            classifierController.filtersMenu
             Spacer()
             choosePhotoButton
-            imageController.shareButton
+            classifierController.shareButton
         }
     }
     
     @ViewBuilder
     var choosePhotoButton: some View {
         Button {
-            imageController.isPresentingImagePicker = true
+            classifierController.isPresentingImagePicker = true
         } label: {
-            Image(systemName: "photo\(imageController.pickedImage == nil ? "" : ".fill")")
+            Image(systemName: "photo\(classifierController.pickedImage == nil ? "" : ".fill")")
         }
     }
     
 //    @ViewBuilder
 //    var listButton: some View {
-//        if imageController.pickedImage != nil {
+//        if classifierController.pickedImage != nil {
 //            Button {
-//                imageController.isPresentingList = true
+//                classifierController.isPresentingList = true
 //            } label: {
-//                Image(systemName: imageController.isPresentingList ? "list.bullet.circle.fill" : "list.bullet.circle")
+//                Image(systemName: classifierController.isPresentingList ? "list.bullet.circle.fill" : "list.bullet.circle")
 //            }
 //        }
 //    }
     
 //    @ViewBuilder
 //    var shareButton: some View {
-//        if imageController.pickedImage != nil {
+//        if classifierController.pickedImage != nil {
 //            Button {
 //                
 //            } label: {

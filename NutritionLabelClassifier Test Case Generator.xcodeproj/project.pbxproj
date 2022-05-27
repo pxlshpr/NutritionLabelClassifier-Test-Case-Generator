@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E229AB252840D14D00F3A1EB /* Box+Related.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB242840D14D00F3A1EB /* Box+Related.swift */; };
+		E229AB262840D14D00F3A1EB /* Box+Related.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB242840D14D00F3A1EB /* Box+Related.swift */; };
 		E29BE0ED283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DA283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld */; };
 		E29BE0EE283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DA283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld */; };
 		E29BE0EF283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DC283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift */; };
@@ -17,8 +19,8 @@
 		E29BE0F6283B64AD00B20427 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E29BE0DF283B64AD00B20427 /* Assets.xcassets */; };
 		E29BE101283B65E200B20427 /* SwiftUISugar in Frameworks */ = {isa = PBXBuildFile; productRef = E29BE100283B65E200B20427 /* SwiftUISugar */; };
 		E29BE104283B699500B20427 /* NutritionLabelClassifier in Frameworks */ = {isa = PBXBuildFile; productRef = E29BE103283B699500B20427 /* NutritionLabelClassifier */; };
-		E29BE106283B6A0300B20427 /* ImageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE105283B6A0300B20427 /* ImageController.swift */; };
-		E29BE107283B6A0300B20427 /* ImageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE105283B6A0300B20427 /* ImageController.swift */; };
+		E29BE106283B6A0300B20427 /* ClassifierController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE105283B6A0300B20427 /* ClassifierController.swift */; };
+		E29BE107283B6A0300B20427 /* ClassifierController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE105283B6A0300B20427 /* ClassifierController.swift */; };
 		E29BE109283B76F600B20427 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE108283B76F600B20427 /* Box.swift */; };
 		E29BE10A283B76F600B20427 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE108283B76F600B20427 /* Box.swift */; };
 		E29BE10D283B7BD200B20427 /* BottomSheet in Frameworks */ = {isa = PBXBuildFile; productRef = E29BE10C283B7BD200B20427 /* BottomSheet */; };
@@ -40,6 +42,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E229AB242840D14D00F3A1EB /* Box+Related.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Box+Related.swift"; sourceTree = "<group>"; };
 		E29BE0DB283B64AC00B20427 /* Shared.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Shared.xcdatamodel; sourceTree = "<group>"; };
 		E29BE0DC283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionLabelClassifier_Test_Case_GeneratorApp.swift; sourceTree = "<group>"; };
 		E29BE0DD283B64AC00B20427 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
@@ -47,7 +50,7 @@
 		E29BE0E4283B64AD00B20427 /* Test Cases.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Test Cases.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E29BE0EA283B64AD00B20427 /* NutritionLabelClassifier Test Case Generator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NutritionLabelClassifier Test Case Generator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E29BE0EC283B64AD00B20427 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
-		E29BE105283B6A0300B20427 /* ImageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageController.swift; sourceTree = "<group>"; };
+		E29BE105283B6A0300B20427 /* ClassifierController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassifierController.swift; sourceTree = "<group>"; };
 		E29BE108283B76F600B20427 /* Box.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
 		E29BE111283B7D2D00B20427 /* BoxDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoxDetailsView.swift; sourceTree = "<group>"; };
 		E29BE114283CF6FF00B20427 /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
@@ -161,7 +164,7 @@
 		E2BC0279283FDA87008EA066 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				E29BE105283B6A0300B20427 /* ImageController.swift */,
+				E29BE105283B6A0300B20427 /* ClassifierController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -170,6 +173,7 @@
 			isa = PBXGroup;
 			children = (
 				E29BE108283B76F600B20427 /* Box.swift */,
+				E229AB242840D14D00F3A1EB /* Box+Related.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -290,11 +294,12 @@
 				E29BE11B283CF71200B20427 /* BoxStatus.swift in Sources */,
 				E29BE0ED283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */,
 				E29BE118283CF70C00B20427 /* BoxType.swift in Sources */,
+				E229AB252840D14D00F3A1EB /* Box+Related.swift in Sources */,
 				E29BE115283CF6FF00B20427 /* Notification.swift in Sources */,
 				E29BE0F1283B64AD00B20427 /* ImageView.swift in Sources */,
 				E29BE121283CF83E00B20427 /* ListView.swift in Sources */,
 				E2BC0273283FD9BD008EA066 /* BoxCell.swift in Sources */,
-				E29BE106283B6A0300B20427 /* ImageController.swift in Sources */,
+				E29BE106283B6A0300B20427 /* ClassifierController.swift in Sources */,
 				E29BE109283B76F600B20427 /* Box.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -309,11 +314,12 @@
 				E29BE11C283CF71200B20427 /* BoxStatus.swift in Sources */,
 				E29BE0EE283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */,
 				E29BE119283CF70C00B20427 /* BoxType.swift in Sources */,
+				E229AB262840D14D00F3A1EB /* Box+Related.swift in Sources */,
 				E29BE116283CF6FF00B20427 /* Notification.swift in Sources */,
 				E29BE0F2283B64AD00B20427 /* ImageView.swift in Sources */,
 				E29BE122283CF83E00B20427 /* ListView.swift in Sources */,
 				E2BC0274283FD9BD008EA066 /* BoxCell.swift in Sources */,
-				E29BE107283B6A0300B20427 /* ImageController.swift in Sources */,
+				E29BE107283B6A0300B20427 /* ClassifierController.swift in Sources */,
 				E29BE10A283B76F600B20427 /* Box.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -5,11 +5,16 @@ import Vision
 import SwiftUISugar
 import TabularData
 
-class ImageController: ObservableObject {
+class ClassifierController: ObservableObject {
+    
+    static let shared = ClassifierController()
+
     @Published var pickedImage: UIImage? = nil
     @Published var isPresentingImagePicker = false
     @Published var isPresentingList: Bool = false
     @Published var listTypeBeingPresented: ListType = .output
+
+    @Published var focusedBox: Box? = nil
 
     @Published var selectedBox: Box? = nil
     @Published var refreshBool = false
@@ -41,8 +46,8 @@ class ImageController: ObservableObject {
     var observationsWithoutLC: [VNRecognizedTextObservation] = []
 }
 
-extension ImageController {
-
+extension ClassifierController {
+    
     var filtersDescription: String {
         let status = statusFilter?.description
         let type = typeFilter?.description
@@ -59,14 +64,22 @@ extension ImageController {
         }
     }
     
-    func sendZoomNotification(for box: Box) {
+    func focus(on box: Box) {
         guard let image = pickedImage else { return }
         
+        focusedBox = box
+        
+        /// Send zoom notification
         let userInfo: [String: Any] = [
-            Notification.Keys.boundingBox: box.boundingBox,
+            Notification.Keys.boundingBox: box.boundingBoxIncludingRelatedFields,
             Notification.Keys.imageSize: image.size,
         ]
         NotificationCenter.default.post(name: .scrollZoomableScrollViewToRect, object: nil, userInfo: userInfo)
+    }
+    
+    func resignBoxFocus() {
+        focusedBox = nil
+        NotificationCenter.default.post(name: .resetZoomableScrollViewScale, object: nil)
     }
     func setFilteredBoxes() {
         filteredBoxes = boxes.filter({ box in

@@ -16,6 +16,8 @@ class Box: ObservableObject, Identifiable {
     var value1: Value?
     var value2: Value?
     
+    @Published var isFocused: Bool = false
+    @Published var isSupplementaryToFocused: Bool = false
     @Published var color: Color
     @Published var status: BoxStatus = .unmarked
     
@@ -56,7 +58,7 @@ class Box: ObservableObject, Identifiable {
     }
     
     init(recognizedTextWithLC: RecognizedText, nutrientsDataFrame: DataFrame) {
-        self.id = UUID()
+        self.id = recognizedTextWithLC.id
         self.recognizedTextWithLC = recognizedTextWithLC
         self.boundingBox = recognizedTextWithLC.boundingBox
         self.rect = recognizedTextWithLC.rect
@@ -119,7 +121,7 @@ class Box: ObservableObject, Identifiable {
     }
 
     init(recognizedTextWithoutLC: RecognizedText, nutrientsDataFrame: DataFrame) {
-        self.id = UUID()
+        self.id = recognizedTextWithoutLC.id
         self.recognizedTextWithoutLC = recognizedTextWithoutLC
         self.boundingBox = recognizedTextWithoutLC.boundingBox
         self.rect = recognizedTextWithoutLC.rect

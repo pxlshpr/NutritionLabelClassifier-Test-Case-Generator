@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftUISugar
+import NutritionLabelClassifier
 
 enum ListType: String, CaseIterable {
     case output = "Classifier Output"
@@ -12,7 +13,7 @@ class ListViewModel: ObservableObject {
 
 struct ListView: View {
     
-    @ObservedObject var imageController: ImageController
+    @ObservedObject var classifierController: ClassifierController
     @State var isPresentingImagePicker = false
     
     @StateObject var listViewModel = ListViewModel()
@@ -31,6 +32,15 @@ struct ListView: View {
         .onAppear {
             setImagePickerDelegate()
         }
+        .bottomSheet(item: $boxIdBeingPresented,
+                     largestUndimmedDetentIdentifier: .medium,
+                     prefersGrabberVisible: true,
+                     prefersScrollingExpandsWhenScrolledToEdge: false)
+        {
+            if let boxId = boxIdBeingPresented {
+                BoxDetailsView(boxId: boxId)
+            }
+        }
     }
     
     func setImagePickerDelegate() {
@@ -40,7 +50,7 @@ struct ListView: View {
             guard let image = result.images.first else {
                 fatalError("Couldn't get picked image")
             }
-            imageController.didPickImage(image)
+            classifierController.didPickImage(image)
         }, didFail: { (imagePickerError) in
             let phPickerViewController = imagePickerError.picker
             let error = imagePickerError.error
@@ -52,26 +62,41 @@ struct ListView: View {
     var navigationTitleContent: some ToolbarContent {
         ToolbarItemGroup(placement: .principal) {
             HStack {
-                Menu {
-                    ForEach(ListType.allCases, id: \.self) { listType in
-                        Button(listType.rawValue) {
-                            imageController.listTypeBeingPresented = listType
-                        }
-                        .disabled(imageController.listTypeBeingPresented == listType)
-                    }
-                } label: {
-                    HStack {
-                        Text(imageController.listTypeBeingPresented.rawValue)
-                        Image(systemName: "arrowtriangle.down.fill")
-                            .scaleEffect(0.5)
-                            .offset(x: -5, y: 0)
-                    }
-                }
+                listTypeSegmentedButton
+//                listTypeMenu
                 Spacer()
-                if imageController.listTypeBeingPresented == .texts {
-                    Text(imageController.filtersDescription)
+                if classifierController.listTypeBeingPresented == .texts {
+                    Text(classifierController.filtersDescription)
                         .font(.footnote)
                 }
+            }
+        }
+    }
+    
+    var listTypeSegmentedButton: some View {
+        Picker("", selection: $classifierController.listTypeBeingPresented) {
+            Text("Output").tag(ListType.output)
+            Text("Texts").tag(ListType.texts)
+        }
+        .pickerStyle(.segmented)
+        .scaledToFit()
+        .labelsHidden()
+    }
+    
+    var listTypeMenu: some View {
+        Menu {
+            ForEach(ListType.allCases, id: \.self) { listType in
+                Button(listType.rawValue) {
+                    classifierController.listTypeBeingPresented = listType
+                }
+                .disabled(classifierController.listTypeBeingPresented == listType)
+            }
+        } label: {
+            HStack {
+                Text(classifierController.listTypeBeingPresented.rawValue)
+                Image(systemName: "arrowtriangle.down.fill")
+                    .scaleEffect(0.5)
+                    .offset(x: -5, y: 0)
             }
         }
     }
@@ -87,10 +112,10 @@ struct ListView: View {
     var recognizedTextsList: some View {
         List {
             ForEach(BoxType.allCases, id: \.self) { boxType in
-                if imageController.filteredBoxes.contains(where: { $0.type == boxType }) {
+                if classifierController.filteredBoxes.contains(where: { $0.type == boxType }) {
                     Section("\(boxType.description)") {
-                        ForEach(imageController.filteredBoxes.indices, id: \.self) { index in
-                            if imageController.filteredBoxes[index].type == boxType {
+                        ForEach(classifierController.filteredBoxes.indices, id: \.self) { index in
+                            if classifierController.filteredBoxes[index].type == boxType {
                                 cell(for: index)
                             }
                         }
@@ -111,7 +136,7 @@ struct ListView: View {
     
     @ViewBuilder
     var servingSection: some View {
-        if let output = imageController.classifierOutput {
+        if let output = classifierController.classifierOutput {
             Section("Serving") {
                 if let servingsPerContainer = output.serving?.perContainer {
                     HStack {
@@ -150,45 +175,49 @@ struct ListView: View {
 
     @ViewBuilder
     var nutrientsSection: some View {
-        if let output = imageController.classifierOutput {
+        if let output = classifierController.classifierOutput {
             Section("Nutrients") {
                 ForEach(output.nutrients.rows, id: \.attributeId) { row in
-                    HStack {
-                        Button(row.identifiableAttribute.attribute.description) {
-                            
-                        }
-                        .padding(5)
-                        .background(Color(.secondarySystemBackground))
-                        .cornerRadius(5)
-                        .buttonStyle(BorderlessButtonStyle())
-                        Spacer()
-                        if let identifiableValue1 = row.identifiableValue1 {
-                            Button(identifiableValue1.value.description) {
-                                
-                            }
-                            .padding(5)
-                            .background(Color(.secondarySystemBackground))
-                            .cornerRadius(5)
-                            .buttonStyle(BorderlessButtonStyle())
-                        }
-                        if let identifiableValue2 = row.identifiableValue2 {
-                            Button(identifiableValue2.value.description) {
-                                
-                            }
-                            .padding(5)
-                            .background(Color(.secondarySystemBackground))
-                            .cornerRadius(5)
-                            .buttonStyle(BorderlessButtonStyle())
-                        }
-                    }
+                    cell(for: row)
                 }
+            }
+        }
+    }
+    
+    func cell(for row: Output.Nutrients.Row) -> some View {
+        HStack {
+            Button(row.identifiableAttribute.attribute.description) {
+                boxIdBeingPresented = row.identifiableAttribute.id
+            }
+            .padding(5)
+            .background(Color(.secondarySystemBackground))
+            .cornerRadius(5)
+            .buttonStyle(BorderlessButtonStyle())
+            Spacer()
+            if let identifiableValue1 = row.identifiableValue1 {
+                Button(identifiableValue1.value.description) {
+                    boxIdBeingPresented = row.identifiableValue1?.id
+                }
+                .padding(5)
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(5)
+                .buttonStyle(BorderlessButtonStyle())
+            }
+            if let identifiableValue2 = row.identifiableValue2 {
+                Button(identifiableValue2.value.description) {
+                    boxIdBeingPresented = row.identifiableValue2?.id
+                }
+                .padding(5)
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(5)
+                .buttonStyle(BorderlessButtonStyle())
             }
         }
     }
 
     var list: some View {
         Group {
-            switch imageController.listTypeBeingPresented {
+            switch classifierController.listTypeBeingPresented {
             case .texts:
                 recognizedTextsList
             case .output:
@@ -197,17 +226,25 @@ struct ListView: View {
         }
     }
     
+    @State var boxIdBeingPresented: UUID? = nil
+    
     @ViewBuilder
     func cell(for index: Int) -> some View {
 //        if let index = vm.filteredBoxes.firstIndex(where: { $0.id == box.id }) {
-            NavigationLink {
-                BoxDetailsView(
-                    box: $imageController.filteredBoxes[index],
-                    imageController: imageController)
-            } label: {
-                BoxCell(box: $imageController.filteredBoxes[index])
-                    .id(imageController.refreshBool)
-            }
+        Button {
+            boxIdBeingPresented = classifierController.filteredBoxes[index].id
+        } label: {
+            BoxCell(box: $classifierController.filteredBoxes[index])
+                .id(classifierController.refreshBool)
+        }
+//            NavigationLink {
+//                BoxDetailsView(
+//                    box: $classifierController.filteredBoxes[index],
+//                    classifierController: classifierController)
+//            } label: {
+//                BoxCell(box: $classifierController.filteredBoxes[index])
+//                    .id(classifierController.refreshBool)
+//            }
 //        }
     }
 }
@@ -218,13 +255,13 @@ extension ListView {
     
     var bottomToolbarContent: some ToolbarContent {
         ToolbarItemGroup(placement: .bottomBar) {
-            imageController.listButton
-            if imageController.listTypeBeingPresented == .texts {
-                imageController.filtersMenu
+            classifierController.listButton
+            if classifierController.listTypeBeingPresented == .texts {
+                classifierController.filtersMenu
             }
             Spacer()
             choosePhotoButton
-            imageController.shareButton
+            classifierController.shareButton
         }
     }
     
@@ -245,7 +282,7 @@ extension ListView {
     }
 }
 
-extension ImageController {
+extension ClassifierController {
     
     @ViewBuilder
     var filtersMenu: some View {
