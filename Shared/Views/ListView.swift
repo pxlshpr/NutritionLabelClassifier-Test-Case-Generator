@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftUISugar
 import NutritionLabelClassifier
+import Introspect
 
 enum ListType: String, CaseIterable {
     case output = "Classifier Output"
@@ -15,6 +16,9 @@ struct ListView: View {
     
     @ObservedObject var classifierController: ClassifierController
     @State var isPresentingImagePicker = false
+    
+    @State var rowBeingPresented: Output.Nutrients.Row? = nil
+    @State var boxIdBeingPresented: UUID? = nil
     
     @StateObject var listViewModel = ListViewModel()
     
@@ -32,6 +36,22 @@ struct ListView: View {
         .onAppear {
             setImagePickerDelegate()
         }
+        .bottomSheet(item: $rowBeingPresented,
+                     largestUndimmedDetentIdentifier: .medium,
+                     prefersGrabberVisible: true,
+                     prefersScrollingExpandsWhenScrolledToEdge: false)
+        {
+            if let row = rowBeingPresented {
+                OutputRow(row: row)
+            }
+        }
+        .bottomSheet(isPresented: $isPresentingAddServingAttribute,
+                     largestUndimmedDetentIdentifier: .medium,
+                     prefersGrabberVisible: true,
+                     prefersScrollingExpandsWhenScrolledToEdge: false)
+        {
+            OutputRow(attributeChoices: Attribute.allCases.filter { $0.isServingAttribute })
+        }
         .bottomSheet(item: $boxIdBeingPresented,
                      largestUndimmedDetentIdentifier: .medium,
                      prefersGrabberVisible: true,
@@ -42,6 +62,8 @@ struct ListView: View {
             }
         }
     }
+    
+    @State var isPresentingAddServingAttribute = false
     
     func setImagePickerDelegate() {
         listViewModel.imagePickerDelegate = ImagePickerView.Delegate(isPresented: $isPresentingImagePicker, didCancel: { (phPickerViewController) in
@@ -82,8 +104,8 @@ struct ListView: View {
                             Label("Invalidate All", systemImage: "xmark")
                         }
                     } label: {
-                        Image(systemName: "\(BoxStatus.unmarked.systemImage).square")
-                            .foregroundColor(BoxStatus.unmarked.color)
+                        Image(systemName: "\(classifierController.status.systemImage).square")
+                            .foregroundColor(classifierController.status.color)
                     }
                 }
             }
@@ -146,7 +168,8 @@ struct ListView: View {
     var classifierOutputList: some View {
         List {
             servingSection
-            nutrientsSection
+            nutrientsColumnHeadersSection
+            nutrientsRowsSection
         }
         .listStyle(.plain)
     }
@@ -186,12 +209,24 @@ struct ListView: View {
                         .buttonStyle(BorderlessButtonStyle())
                     }
                 }
-                Button {
+                Menu {
+                    ForEach(Attribute.allCases.filter { $0.isServingAttribute }, id: \.self) { attribute in
+                        Button(attribute.description) {
+                            
+                        }
+                    }
                 } label: {
-                    Label("Add Serving Attribute", systemImage: "plus")
+                    Label("Add Expected Serving Attribute", systemImage: "plus")
                         .multilineTextAlignment(.center)
                         .foregroundColor(.accentColor)
                 }
+//                Button {
+//                    isPresentingAddServingAttribute = true
+//                } label: {
+//                    Label("Add Serving Attribute", systemImage: "plus")
+//                        .multilineTextAlignment(.center)
+//                        .foregroundColor(.accentColor)
+//                }
                 .frame(maxWidth: .infinity)
                 .buttonStyle(BorderlessButtonStyle())
             }
@@ -199,18 +234,59 @@ struct ListView: View {
     }
 
     @ViewBuilder
-    var nutrientsSection: some View {
-        if let output = classifierController.classifierOutput {
-            Section("Nutrients") {
-                ForEach(output.nutrients.rows, id: \.attributeId) { row in
-                    cell(for: row)
-                }
-                Button {
+    var nutrientsColumnHeadersSection: some View {
+        Section("Nutrients: Column Headers") {
+            if !classifierController.hasBothColumnHeaders {
+                Menu {
+                    ForEach(Attribute.allCases.filter { $0.isColumnAttribute }, id: \.self) { attribute in
+                        Button(attribute.description) {
+                            
+                        }
+                    }
                 } label: {
-                    Label("Add Nutrient", systemImage: "plus")
+                    Label("Add Expected Column Header", systemImage: "plus")
                         .multilineTextAlignment(.center)
                         .foregroundColor(.accentColor)
                 }
+//                Button {
+//                } label: {
+//                    Label("Add Column Header", systemImage: "plus")
+//                        .multilineTextAlignment(.center)
+//                        .foregroundColor(.accentColor)
+//                }
+                .frame(maxWidth: .infinity)
+                .buttonStyle(BorderlessButtonStyle())
+            }
+        }
+    }
+
+    @ViewBuilder
+    var nutrientsRowsSection: some View {
+        if let output = classifierController.classifierOutput {
+            Section("Nutrients: Rows") {
+                ForEach(output.nutrients.rows, id: \.attributeId) { row in
+                    cell(for: row)
+                }
+                Menu {
+                    ForEach(Attribute.allCases.filter {
+                        $0.isNutrientAttribute
+                        && classifierController.shouldAllowAdding($0)
+                    }, id: \.self) { attribute in
+                        Button(attribute.description) {
+                            
+                        }
+                    }
+                } label: {
+                    Label("Add Expected Nutrient", systemImage: "plus")
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.accentColor)
+                }
+//                Button {
+//                } label: {
+//                    Label("Add Nutrient", systemImage: "plus")
+//                        .multilineTextAlignment(.center)
+//                        .foregroundColor(.accentColor)
+//                }
                 .frame(maxWidth: .infinity)
                 .buttonStyle(BorderlessButtonStyle())
             }
@@ -218,6 +294,27 @@ struct ListView: View {
     }
     
     func cell(for row: Output.Nutrients.Row) -> some View {
+        Button {
+            rowBeingPresented = row
+            focusOn(row)
+        } label: {
+            HStack {
+                Text(row.identifiableAttribute.attribute.description)
+                Spacer()
+                if let identifiableValue1 = row.identifiableValue1 {
+                    Text(identifiableValue1.value.description)
+                }
+                if let identifiableValue2 = row.identifiableValue2 {
+                    Text(identifiableValue2.value.description)
+                }
+                Image(systemName: "\(classifierController.attributeStatuses[row.attribute]?.systemImage ?? "questionmark").square")
+                    .foregroundColor(classifierController.attributeStatuses[row.attribute]?.color ?? .orange)
+            }
+        }
+        .buttonStyle(BorderlessButtonStyle())
+    }
+    
+    func cell_legacy(for row: Output.Nutrients.Row) -> some View {
         HStack {
             Button(row.identifiableAttribute.attribute.description) {
                 boxIdBeingPresented = row.identifiableAttribute.id
@@ -247,23 +344,46 @@ struct ListView: View {
             }
             Menu {
                 Button {
-                    
                 } label: {
                     Label("Validate", systemImage: "checkmark")
                 }
                 Button(role: .destructive) {
-                    
                 } label: {
                     Label("Invalidate", systemImage: "xmark")
                 }
             } label: {
                 Image(systemName: "\(BoxStatus.unmarked.systemImage).square")
                     .foregroundColor(BoxStatus.unmarked.color)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+//                    .simultaneousGesture(TapGesture().onEnded {
+                        toggleFocusOnRow(row)
+                    }
             }
+//            .contentShape(Rectangle())
+//            .simultaneousGesture(TapGesture().onEnded {
+//                toggleFocusOnRow(row)
+//            })
             .padding(5)
             .background(Color(.secondarySystemBackground))
             .cornerRadius(5)
             .buttonStyle(BorderlessButtonStyle())
+        }
+    }
+
+    func focusOn(_ row: Output.Nutrients.Row) {
+        guard let box = row.box else { return }
+        classifierController.focus(on: box)
+    }
+
+    func toggleFocusOnRow(_ row: Output.Nutrients.Row) {
+        /// Get the box for the `Output.Nutrients.Row`, which returns the box for its `Attribute`
+        guard let box = row.box else { return }
+        
+        if classifierController.focusedBox != nil {
+            classifierController.resignBoxFocus()
+        } else {
+            classifierController.focus(on: box)
         }
     }
 
@@ -277,8 +397,6 @@ struct ListView: View {
             }
         }
     }
-    
-    @State var boxIdBeingPresented: UUID? = nil
     
     @ViewBuilder
     func cell(for index: Int) -> some View {
@@ -412,9 +530,15 @@ extension ClassifierController {
             Button {
                 
             } label: {
-                Image(systemName: "square.and.arrow.up")
+                Image(systemName: "square.and.arrow.up\(status == .valid ? ".fill" : "")")
             }
         }
     }
 
+}
+
+extension Output.Nutrients.Row {
+    var box: Box? {
+        ClassifierController.shared.boxes.first(where: { $0.id == attributeId })
+    }
 }

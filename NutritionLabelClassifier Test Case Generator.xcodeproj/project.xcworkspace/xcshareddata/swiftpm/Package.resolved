@@ -15,7 +15,7 @@
       "location" : "https://github.com/pxlshpr/NutritionLabelClassifier.git",
       "state" : {
         "branch" : "main",
-        "revision" : "4b3778624c8743251b3558c513f9e898118bd9a6"
+        "revision" : "a4acbf726db87c4ff78a432dabda58c54210843d"
       }
     },
     {
@@ -34,6 +34,15 @@
       "state" : {
         "revision" : "32ed178f2751a7d97a84b63bb89f66b40cb78df6",
         "version" : "0.0.50"
+      }
+    },
+    {
+      "identity" : "swiftui-introspect",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/siteline/SwiftUI-Introspect",
+      "state" : {
+        "revision" : "f2616860a41f9d9932da412a8978fec79c06fe24",
+        "version" : "0.1.4"
       }
     },
     {

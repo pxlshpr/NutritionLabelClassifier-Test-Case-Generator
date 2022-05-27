@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		E229AB252840D14D00F3A1EB /* Box+Related.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB242840D14D00F3A1EB /* Box+Related.swift */; };
 		E229AB262840D14D00F3A1EB /* Box+Related.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB242840D14D00F3A1EB /* Box+Related.swift */; };
+		E229AB292841228500F3A1EB /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = E229AB282841228500F3A1EB /* Introspect */; };
+		E229AB2B28412AC300F3A1EB /* OutputRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB2A28412AC300F3A1EB /* OutputRow.swift */; };
+		E229AB2C28412AC300F3A1EB /* OutputRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB2A28412AC300F3A1EB /* OutputRow.swift */; };
 		E29BE0ED283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DA283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld */; };
 		E29BE0EE283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DA283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld */; };
 		E29BE0EF283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DC283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift */; };
@@ -43,6 +46,7 @@
 
 /* Begin PBXFileReference section */
 		E229AB242840D14D00F3A1EB /* Box+Related.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Box+Related.swift"; sourceTree = "<group>"; };
+		E229AB2A28412AC300F3A1EB /* OutputRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputRow.swift; sourceTree = "<group>"; };
 		E29BE0DB283B64AC00B20427 /* Shared.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Shared.xcdatamodel; sourceTree = "<group>"; };
 		E29BE0DC283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionLabelClassifier_Test_Case_GeneratorApp.swift; sourceTree = "<group>"; };
 		E29BE0DD283B64AC00B20427 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
@@ -68,6 +72,7 @@
 			files = (
 				E29BE101283B65E200B20427 /* SwiftUISugar in Frameworks */,
 				E29BE110283B7C3200B20427 /* SwiftHaptics in Frameworks */,
+				E229AB292841228500F3A1EB /* Introspect in Frameworks */,
 				E29BE10D283B7BD200B20427 /* BottomSheet in Frameworks */,
 				E29BE104283B699500B20427 /* NutritionLabelClassifier in Frameworks */,
 			);
@@ -140,6 +145,7 @@
 				E29BE111283B7D2D00B20427 /* BoxDetailsView.swift */,
 				E29BE0DD283B64AC00B20427 /* ImageView.swift */,
 				E29BE120283CF83E00B20427 /* ListView.swift */,
+				E229AB2A28412AC300F3A1EB /* OutputRow.swift */,
 				E29BE11D283CF74100B20427 /* ZoomableScrollView.swift */,
 			);
 			path = Views;
@@ -199,6 +205,7 @@
 				E29BE103283B699500B20427 /* NutritionLabelClassifier */,
 				E29BE10C283B7BD200B20427 /* BottomSheet */,
 				E29BE10F283B7C3200B20427 /* SwiftHaptics */,
+				E229AB282841228500F3A1EB /* Introspect */,
 			);
 			productName = "NutritionLabelClassifier Test Case Generator (iOS)";
 			productReference = E29BE0E4283B64AD00B20427 /* Test Cases.app */;
@@ -253,6 +260,7 @@
 				E29BE102283B699500B20427 /* XCRemoteSwiftPackageReference "NutritionLabelClassifier" */,
 				E29BE10B283B7BD200B20427 /* XCRemoteSwiftPackageReference "BottomSheet" */,
 				E29BE10E283B7C3200B20427 /* XCRemoteSwiftPackageReference "SwiftHaptics" */,
+				E229AB272841228500F3A1EB /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 			);
 			productRefGroup = E29BE0E5283B64AD00B20427 /* Products */;
 			projectDirPath = "";
@@ -293,6 +301,7 @@
 				E29BE112283B7D2D00B20427 /* BoxDetailsView.swift in Sources */,
 				E29BE11B283CF71200B20427 /* BoxStatus.swift in Sources */,
 				E29BE0ED283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */,
+				E229AB2B28412AC300F3A1EB /* OutputRow.swift in Sources */,
 				E29BE118283CF70C00B20427 /* BoxType.swift in Sources */,
 				E229AB252840D14D00F3A1EB /* Box+Related.swift in Sources */,
 				E29BE115283CF6FF00B20427 /* Notification.swift in Sources */,
@@ -313,6 +322,7 @@
 				E29BE113283B7D2D00B20427 /* BoxDetailsView.swift in Sources */,
 				E29BE11C283CF71200B20427 /* BoxStatus.swift in Sources */,
 				E29BE0EE283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */,
+				E229AB2C28412AC300F3A1EB /* OutputRow.swift in Sources */,
 				E29BE119283CF70C00B20427 /* BoxType.swift in Sources */,
 				E229AB262840D14D00F3A1EB /* Box+Related.swift in Sources */,
 				E29BE116283CF6FF00B20427 /* Notification.swift in Sources */,
@@ -586,6 +596,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		E229AB272841228500F3A1EB /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.4;
+			};
+		};
 		E29BE0FF283B65E200B20427 /* XCRemoteSwiftPackageReference "SwiftUISugar" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pxlshpr/SwiftUISugar";
@@ -621,6 +639,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		E229AB282841228500F3A1EB /* Introspect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E229AB272841228500F3A1EB /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = Introspect;
+		};
 		E29BE100283B65E200B20427 /* SwiftUISugar */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E29BE0FF283B65E200B20427 /* XCRemoteSwiftPackageReference "SwiftUISugar" */;

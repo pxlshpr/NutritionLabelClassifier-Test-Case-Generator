@@ -26,6 +26,7 @@ class ClassifierController: ObservableObject {
     @Published var boxesToDisplay: [Box] = []
     @Published var filteredBoxes: [Box] = []
     @Published var classifierOutput: Output? = nil
+    @Published var attributeStatuses: [Attribute: BoxStatus] = [:]
 
     @Published var imagePickerDelegate: ImagePickerView.Delegate? = nil
 
@@ -41,6 +42,15 @@ class ClassifierController: ObservableObject {
         }
     }
     
+    var status: BoxStatus {
+        guard attributeStatuses.count > 0 else { return .unmarked }
+        for status in attributeStatuses.values {
+            if status == .invalid {
+                return .unmarked
+            }
+        }
+        return .valid
+    }
     var contentSize: CGSize = .zero
     var observationsWithLC: [VNRecognizedTextObservation] = []
     var observationsWithoutLC: [VNRecognizedTextObservation] = []
@@ -48,6 +58,24 @@ class ClassifierController: ObservableObject {
 
 extension ClassifierController {
     
+    var hasBothColumnHeaders: Bool {
+        return false
+    }
+    
+    func shouldAllowAdding(_ attribute: Attribute) -> Bool {
+        guard containsOutputAttributeFor(attribute) else {
+            return true
+        }
+        if let status = attributeStatuses[attribute] {
+            return status == .invalid
+        }
+        return false
+    }
+    
+    func containsOutputAttributeFor(_ attribute: Attribute) -> Bool {
+        guard let output = classifierOutput else { return false }
+        return output.nutrients.rows.contains(where: { $0.attribute == attribute })
+    }
     var filtersDescription: String {
         let status = statusFilter?.description
         let type = typeFilter?.description
@@ -97,11 +125,15 @@ extension ClassifierController {
         })
     }
     
-    func didPickImage(_ image: UIImage) {
+    func reset() {
         boxes = []
         filteredBoxes = []
         classifierOutput = nil
-        
+        attributeStatuses = [:]
+    }
+    
+    func didPickImage(_ image: UIImage) {
+        reset()
         pickedImage = image
         DispatchQueue.global(qos: .userInteractive).async {
             self.recognizeTextsInImage(image)
