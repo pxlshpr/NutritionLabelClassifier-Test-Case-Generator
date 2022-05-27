@@ -12,9 +12,11 @@ struct ImageView: View {
 //    @State var isPresentingImagePicker = false
 //    @State var isPresentingList: Bool = false
     @State var shrinkImageView: Bool = false
-
     @State var isHidingBoxes: Bool = false
-
+    @State var listViewDetentIdentifier: UISheetPresentationController.Detent.Identifier? = nil
+    
+    let scrollZoomableScrollViewToRect = NotificationCenter.default.publisher(for: .scrollZoomableScrollViewToRect)
+    
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
@@ -30,10 +32,12 @@ struct ImageView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
         .toolbar { bottomToolbarContent }
+        .onReceive(scrollZoomableScrollViewToRect, perform: scrollZoomableScrollViewToRect)
         .bottomSheet(isPresented: $classifierController.isPresentingList,
                      largestUndimmedDetentIdentifier: .medium,
                      prefersGrabberVisible: true,
-                     prefersScrollingExpandsWhenScrolledToEdge: false)
+                     prefersScrollingExpandsWhenScrolledToEdge: false,
+                     selectedDetentIdentifier: $listViewDetentIdentifier)
         {
             ListView(classifierController: classifierController)
         }
@@ -51,6 +55,10 @@ struct ImageView: View {
         .onAppear {
             setImagePickerDelegate()
         }
+    }
+    
+    func scrollZoomableScrollViewToRect(notification: Notification) {
+        listViewDetentIdentifier = .medium
     }
     
     func imageView(with image: UIImage) -> some View {

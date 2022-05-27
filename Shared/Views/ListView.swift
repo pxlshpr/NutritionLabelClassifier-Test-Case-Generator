@@ -69,6 +69,23 @@ struct ListView: View {
                     Text(classifierController.filtersDescription)
                         .font(.footnote)
                 }
+                if classifierController.listTypeBeingPresented == .output {
+                    Menu {
+                        Button {
+                            
+                        } label: {
+                            Label("Validate All", systemImage: "checkmark")
+                        }
+                        Button(role: .destructive) {
+                            
+                        } label: {
+                            Label("Invalidate All", systemImage: "xmark")
+                        }
+                    } label: {
+                        Image(systemName: "\(BoxStatus.unmarked.systemImage).square")
+                            .foregroundColor(BoxStatus.unmarked.color)
+                    }
+                }
             }
         }
     }
@@ -169,6 +186,14 @@ struct ListView: View {
                         .buttonStyle(BorderlessButtonStyle())
                     }
                 }
+                Button {
+                } label: {
+                    Label("Add Serving Attribute", systemImage: "plus")
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.accentColor)
+                }
+                .frame(maxWidth: .infinity)
+                .buttonStyle(BorderlessButtonStyle())
             }
         }
     }
@@ -180,6 +205,14 @@ struct ListView: View {
                 ForEach(output.nutrients.rows, id: \.attributeId) { row in
                     cell(for: row)
                 }
+                Button {
+                } label: {
+                    Label("Add Nutrient", systemImage: "plus")
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.accentColor)
+                }
+                .frame(maxWidth: .infinity)
+                .buttonStyle(BorderlessButtonStyle())
             }
         }
     }
@@ -212,6 +245,25 @@ struct ListView: View {
                 .cornerRadius(5)
                 .buttonStyle(BorderlessButtonStyle())
             }
+            Menu {
+                Button {
+                    
+                } label: {
+                    Label("Validate", systemImage: "checkmark")
+                }
+                Button(role: .destructive) {
+                    
+                } label: {
+                    Label("Invalidate", systemImage: "xmark")
+                }
+            } label: {
+                Image(systemName: "\(BoxStatus.unmarked.systemImage).square")
+                    .foregroundColor(BoxStatus.unmarked.color)
+            }
+            .padding(5)
+            .background(Color(.secondarySystemBackground))
+            .cornerRadius(5)
+            .buttonStyle(BorderlessButtonStyle())
         }
     }
 
