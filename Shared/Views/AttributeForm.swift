@@ -7,7 +7,11 @@ struct AttributeForm: View {
     @Environment(\.dismiss) var dismiss
     
     @State var attribute: Attribute
-    
+
+    @State var columnHeaderType: SelectionOption
+    @State var columnHeaderName: String = ""
+    @State var showColumnNameField: Bool = false
+
     @State var nutritionUnit: SelectionOption = NutritionUnit.g
     @State var string: String = ""
     @State var doubleString: String = ""
@@ -17,7 +21,16 @@ struct AttributeForm: View {
     @State var value2String: String = ""
     @State var value2Unit: SelectionOption = NutritionUnit.g
 
-
+    init(attribute: Attribute) {
+        _attribute = State(initialValue: attribute)
+        if let type = ClassifierController.shared.availableColumnHeaderTypes.first {
+            _columnHeaderType = State(initialValue: type)
+            _showColumnNameField = State(initialValue: type != .per100g)
+        } else {
+            _columnHeaderType = State(initialValue: ColumnHeaderType.per100g)
+        }
+    }
+    
     var body: some View {
         NavigationView {
             Form {
@@ -68,17 +81,25 @@ struct AttributeForm: View {
             }
 
             expectation = Expectation(attribute: attribute, value1: value1, value2: value2)
-        } else if attribute.isColumnAttribute {
-            expectation = nil
-        } else if attribute.expectsDouble {
+        }
+        else if attribute.isColumnAttribute {
+            guard let type = columnHeaderType as? ColumnHeaderType else { return }
+            expectation = Expectation(attribute: attribute,
+                                      string: columnHeaderName,
+                                      columnHeaderType: type)
+        }
+        else if attribute.expectsDouble {
             guard let double = Double(doubleString) else { return }
             expectation = Expectation(attribute: attribute, double: double)
-        } else if attribute.expectsString {
+        }
+        else if attribute.expectsString {
             expectation = Expectation(attribute: attribute, string: string)
-        } else if attribute.expectsNutritionUnit {
+        }
+        else if attribute.expectsNutritionUnit {
             guard let unit = nutritionUnit as? NutritionUnit else { return }
             expectation = Expectation(attribute: attribute, unit: unit)
-        } else {
+        }
+        else {
             expectation = nil
         }
         
@@ -101,7 +122,12 @@ struct AttributeForm: View {
             }
             return isValid
         } else if attribute.isColumnAttribute {
-            return false
+            guard let type = columnHeaderType as? ColumnHeaderType else { return false }
+            if type == .perCustomSize {
+                return !columnHeaderName.isEmpty
+            } else {
+                return true
+            }
         } else if attribute.expectsDouble {
             return !doubleString.isEmpty && Double(doubleString) != nil
         } else if attribute.expectsString {
@@ -157,7 +183,18 @@ struct AttributeForm: View {
     
     var columnFieldSection: some View {
         Section {
-            
+            Field(label: "Type",
+                  units: .constant(ClassifierController.shared.availableColumnHeaderTypes),
+                  selectedUnit: $columnHeaderType,
+                  selectorStyle: .prominent,
+                  contentProvider: self)
+            { selection in
+                guard let type = selection as? ColumnHeaderType else { return }
+                showColumnNameField = type != .per100g
+            }
+            if showColumnNameField, let type = columnHeaderType as? ColumnHeaderType {
+                Field(label: type.stringFieldName, value: $columnHeaderName)
+            }
         }
     }
 
@@ -212,5 +249,11 @@ extension AttributeForm: FieldContentProvider {
         } else {
             return option.optionId
         }
+    }
+}
+
+extension ColumnHeaderType: SelectionOption {
+    public var optionId: String {
+        "\(rawValue)"
     }
 }

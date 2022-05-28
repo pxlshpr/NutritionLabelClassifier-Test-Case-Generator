@@ -25,6 +25,38 @@ extension ClassifierController {
     var unusedColumnHeaderAttributes: [Attribute] {
         Attribute.allCases.filter { $0.isColumnAttribute && shouldAllowAdding($0) }
     }
+    
+    var shouldShowServingExpectations: Bool {
+        unusedServingAttributes.count > 0 || servingExpectations.count > 0
+    }
+    
+    var shouldShowColumnHeaderExpectations: Bool {
+        unusedColumnHeaderAttributes.count > 0 || columnHeaderExpectations.count > 0
+    }
+    
+    var shouldShowNutrientExpectations: Bool {
+        unusedNutrientAttributes.count > 0 || nutrientExpectations.count > 0
+    }
+    
+    var availableColumnHeaderTypes: [ColumnHeaderType] {
+        ColumnHeaderType.allCases.filter { type in
+            guard let output = classifierOutput else {
+                return false
+            }
+            if let columnHeader1Type = output.nutrients.columnHeader1Type, type == columnHeader1Type {
+                return false
+            }
+            if let columnHeader2Type = output.nutrients.columnHeader2Type, type == columnHeader2Type {
+                return false
+            }
+            return !expectations.contains(where: {
+                if let columnHeaderType = $0.columnHeaderType, type == columnHeaderType {
+                    return true
+                }
+                return false
+            })
+        }
+    }
 }
 
 extension ClassifierController {
@@ -66,80 +98,84 @@ extension ListView {
                 .foregroundColor(.secondary)
             Spacer()
             Text(expectation.valueDescription)
+                .multilineTextAlignment(.trailing)
         }
     }
     
     @ViewBuilder
     var servingExpectationsSection: some View {
-        if classifierController.unusedServingAttributes.count > 0 {
+        if classifierController.shouldShowServingExpectations {
             Section("Serving Expectations") {
                 ForEach(classifierController.servingExpectations, id: \.self) { expectation in
                     cell(for: expectation)
                 }
                 .onDelete(perform: classifierController.deleteServingExpectation)
-                Menu {
-                    ForEach(classifierController.unusedServingAttributes, id: \.self) { attribute in
-                        Button(attribute.description) {
-                            newAttribute = attribute
+                if classifierController.unusedNutrientAttributes.count > 0 {
+                    Menu {
+                        ForEach(classifierController.unusedServingAttributes, id: \.self) { attribute in
+                            Button(attribute.description) {
+                                newAttribute = attribute
+                            }
                         }
+                    } label: {
+                        Label("Add Serving Expectation", systemImage: "plus")
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(.accentColor)
                     }
-                } label: {
-                    Label("Add Serving Expectation", systemImage: "plus")
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(.accentColor)
+                    .buttonStyle(BorderlessButtonStyle())
                 }
-//                .frame(maxWidth: .infinity)
-                .buttonStyle(BorderlessButtonStyle())
             }
         }
     }
     
     @ViewBuilder
     var columnHeaderExpectationsSection: some View {
-        if classifierController.unusedColumnHeaderAttributes.count > 0 {
+        if classifierController.shouldShowColumnHeaderExpectations {
             Section("Column Header Expectations") {
                 ForEach(classifierController.columnHeaderExpectations, id: \.self) { expectation in
                     cell(for: expectation)
                 }
                 .onDelete(perform: classifierController.deleteColumnHeaderExpectation)
-                Menu {
-                    ForEach(classifierController.unusedColumnHeaderAttributes, id: \.self) { attribute in
-                        Button(attribute.description) {
-                            newAttribute = attribute
+                if classifierController.unusedColumnHeaderAttributes.count > 0 {
+                    Menu {
+                        ForEach(classifierController.unusedColumnHeaderAttributes, id: \.self) { attribute in
+                            Button(attribute.description) {
+                                newAttribute = attribute
+                            }
                         }
+                    } label: {
+                        Label("Add Column Header Expectation", systemImage: "plus")
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(.accentColor)
                     }
-                } label: {
-                    Label("Add Column Header Expectation", systemImage: "plus")
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(.accentColor)
+                    .buttonStyle(BorderlessButtonStyle())
                 }
-//                .frame(maxWidth: .infinity)
-                .buttonStyle(BorderlessButtonStyle())
             }
         }
     }
 
     @ViewBuilder
     var nutrientExpectationsSection: some View {
-        if classifierController.unusedNutrientAttributes.count > 0 {
+        if classifierController.shouldShowNutrientExpectations {
             Section("Nutrient Expectations") {
                 ForEach(classifierController.nutrientExpectations, id: \.self) { expectation in
                     cell(for: expectation)
                 }
                 .onDelete(perform: classifierController.deleteNutrientExpectation)
-                Menu {
-                    ForEach(classifierController.unusedNutrientAttributes, id: \.self) { attribute in
-                        Button(attribute.description) {
-                            newAttribute = attribute
+                if classifierController.unusedNutrientAttributes.count > 0 {
+                    Menu {
+                        ForEach(classifierController.unusedNutrientAttributes, id: \.self) { attribute in
+                            Button(attribute.description) {
+                                newAttribute = attribute
+                            }
                         }
+                    } label: {
+                        Label("Add Nutrient Expectation", systemImage: "plus")
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(.accentColor)
                     }
-                } label: {
-                    Label("Add Nutrient Expectation", systemImage: "plus")
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(.accentColor)
+                    .buttonStyle(BorderlessButtonStyle())
                 }
-//                .frame(maxWidth: .infinity)
-                .buttonStyle(BorderlessButtonStyle())
             }
         }
     }

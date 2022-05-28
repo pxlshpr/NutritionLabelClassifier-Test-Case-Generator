@@ -18,6 +18,8 @@
 		E229AB322841FAF100F3A1EB /* AttributeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB302841FAF100F3A1EB /* AttributeForm.swift */; };
 		E229AB342842096900F3A1EB /* Expectation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB332842096900F3A1EB /* Expectation.swift */; };
 		E229AB352842096900F3A1EB /* Expectation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB332842096900F3A1EB /* Expectation.swift */; };
+		E229AB372842226800F3A1EB /* ClassifierController+Share.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB362842226800F3A1EB /* ClassifierController+Share.swift */; };
+		E229AB382842226800F3A1EB /* ClassifierController+Share.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB362842226800F3A1EB /* ClassifierController+Share.swift */; };
 		E29BE0ED283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DA283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld */; };
 		E29BE0EE283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DA283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld */; };
 		E29BE0EF283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DC283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift */; };
@@ -56,6 +58,7 @@
 		E229AB2D28414DEA00F3A1EB /* ListView+Expectations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ListView+Expectations.swift"; sourceTree = "<group>"; };
 		E229AB302841FAF100F3A1EB /* AttributeForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeForm.swift; sourceTree = "<group>"; };
 		E229AB332842096900F3A1EB /* Expectation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Expectation.swift; sourceTree = "<group>"; };
+		E229AB362842226800F3A1EB /* ClassifierController+Share.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClassifierController+Share.swift"; sourceTree = "<group>"; };
 		E29BE0DB283B64AC00B20427 /* Shared.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Shared.xcdatamodel; sourceTree = "<group>"; };
 		E29BE0DC283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionLabelClassifier_Test_Case_GeneratorApp.swift; sourceTree = "<group>"; };
 		E29BE0DD283B64AC00B20427 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
@@ -182,6 +185,7 @@
 			isa = PBXGroup;
 			children = (
 				E29BE105283B6A0300B20427 /* ClassifierController.swift */,
+				E229AB362842226800F3A1EB /* ClassifierController+Share.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -316,6 +320,7 @@
 				E229AB342842096900F3A1EB /* Expectation.swift in Sources */,
 				E29BE0ED283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */,
 				E229AB312841FAF100F3A1EB /* AttributeForm.swift in Sources */,
+				E229AB372842226800F3A1EB /* ClassifierController+Share.swift in Sources */,
 				E229AB2B28412AC300F3A1EB /* AttributeView.swift in Sources */,
 				E29BE118283CF70C00B20427 /* BoxType.swift in Sources */,
 				E229AB252840D14D00F3A1EB /* Box+Related.swift in Sources */,
@@ -340,6 +345,7 @@
 				E229AB352842096900F3A1EB /* Expectation.swift in Sources */,
 				E29BE0EE283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */,
 				E229AB322841FAF100F3A1EB /* AttributeForm.swift in Sources */,
+				E229AB382842226800F3A1EB /* ClassifierController+Share.swift in Sources */,
 				E229AB2C28412AC300F3A1EB /* AttributeView.swift in Sources */,
 				E29BE119283CF70C00B20427 /* BoxType.swift in Sources */,
 				E229AB262840D14D00F3A1EB /* Box+Related.swift in Sources */,

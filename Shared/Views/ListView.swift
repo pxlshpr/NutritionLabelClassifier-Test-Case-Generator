@@ -96,7 +96,7 @@ struct ListView: View {
 //                }
                 Menu {
                     Button {
-                        
+                        classifierController.validateAll()
                     } label: {
                         Label("Validate All", systemImage: "checkmark")
                     }
@@ -389,13 +389,13 @@ extension ListView {
         }
     }
     
-    var shareButton: some View {
-        Button {
-            
-        } label: {
-            Image(systemName: "square.and.arrow.up")
-        }
-    }
+//    var shareButton: some View {
+//        Button {
+//
+//        } label: {
+//            Image(systemName: "square.and.arrow.up")
+//        }
+//    }
 }
 
 extension ClassifierController {
@@ -474,7 +474,7 @@ extension ClassifierController {
     var shareButton: some View {
         if pickedImage != nil {
             Button {
-                
+                self.shareTextCase()
             } label: {
                 Image(systemName: "square.and.arrow.up\(status == .valid ? ".fill" : "")")
             }

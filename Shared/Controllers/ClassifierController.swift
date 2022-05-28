@@ -24,6 +24,9 @@ class ClassifierController: ObservableObject {
 //        @Published var recognizedTexts: [RecognizedText]? = nil
 //        @Published var nutrientsDataFrame: DataFrame? = nil
     
+    var recognizedTextsWithLC: [RecognizedText] = []
+    var recognizedTextsWithoutLC: [RecognizedText] = []
+
     @Published var boxes: [Box] = []
     @Published var boxesToDisplay: [Box] = []
     @Published var filteredBoxes: [Box] = []
@@ -145,6 +148,13 @@ extension ClassifierController {
 //        expectedAttributes = [:]
     }
     
+    func validateAll() {
+        guard let output = classifierOutput else { return }
+        for attribute in output.nutrients.rows.map({$0.attribute}) {
+            outputAttributeStatuses[attribute] = .valid
+        }
+    }
+    
     var containsServingAttributes: Bool {
         guard let output = classifierOutput else { return false }
         return output.containsServingAttributes
@@ -183,11 +193,11 @@ extension ClassifierController {
     }
 
     func recalculateBoxes(for image: UIImage) {
-        let recognizedTextsWithLC = VisionSugar.recognizedTexts(
+        recognizedTextsWithLC = VisionSugar.recognizedTexts(
             of: observationsWithLC,
             for: image, inContentSize: self.contentSize)
 
-        let recognizedTextsWithoutLC = VisionSugar.recognizedTexts(
+        recognizedTextsWithoutLC = VisionSugar.recognizedTexts(
             of: observationsWithoutLC,
             for: image, inContentSize: self.contentSize)
         
@@ -215,11 +225,11 @@ extension ClassifierController {
     }
     
     func calculateBoxes(in image: UIImage) {
-        let recognizedTextsWithLC = VisionSugar.recognizedTexts(
+        recognizedTextsWithLC = VisionSugar.recognizedTexts(
             of: observationsWithLC,
             for: image, inContentSize: self.contentSize)
 
-        let recognizedTextsWithoutLC = VisionSugar.recognizedTexts(
+        recognizedTextsWithoutLC = VisionSugar.recognizedTexts(
             of: observationsWithoutLC,
             for: image, inContentSize: self.contentSize)
                 
