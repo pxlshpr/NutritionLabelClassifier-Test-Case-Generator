@@ -23,6 +23,8 @@ struct ListView: View {
     
     @StateObject var listViewModel = ListViewModel()
     
+    @State var newAttribute: Attribute? = nil
+    
     var body: some View {
         NavigationView {
             list
@@ -43,15 +45,17 @@ struct ListView: View {
                      prefersScrollingExpandsWhenScrolledToEdge: false)
         {
             if let row = rowBeingPresented {
-                OutputRow(row: row)
+                AttributeView(row: row)
             }
         }
-        .bottomSheet(isPresented: $isPresentingAddServingAttribute,
+        .bottomSheet(item: $newAttribute,
                      largestUndimmedDetentIdentifier: .medium,
                      prefersGrabberVisible: true,
                      prefersScrollingExpandsWhenScrolledToEdge: false)
         {
-            OutputRow(attributeChoices: Attribute.allCases.filter { $0.isServingAttribute })
+            if let attribute = newAttribute {
+                AttributeForm(attribute: attribute)
+            }
         }
         .bottomSheet(item: $boxIdBeingPresented,
                      largestUndimmedDetentIdentifier: .medium,
@@ -63,8 +67,6 @@ struct ListView: View {
             }
         }
     }
-    
-    @State var isPresentingAddServingAttribute = false
     
     func setImagePickerDelegate() {
         listViewModel.imagePickerDelegate = ImagePickerView.Delegate(isPresented: $isPresentingImagePicker, didCancel: { (phPickerViewController) in

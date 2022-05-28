@@ -1,7 +1,7 @@
 import SwiftUI
 import NutritionLabelClassifier
 
-struct OutputRow: View {
+struct AttributeView: View {
     
     @Environment(\.dismiss) var dismiss
     

@@ -29,7 +29,9 @@ class ClassifierController: ObservableObject {
     @Published var filteredBoxes: [Box] = []
     @Published var classifierOutput: Output? = nil
     @Published var outputAttributeStatuses: [Attribute: BoxStatus] = [:]
-    @Published var expectedAttributes: [Attribute: AttributeRow] = [:]
+    
+    @Published var expectations: [Expectation] = []
+//    @Published var expectedAttributes: [Attribute: AttributeRow] = [:]
 
     @Published var imagePickerDelegate: ImagePickerView.Delegate? = nil
 
@@ -137,7 +139,8 @@ extension ClassifierController {
         filteredBoxes = []
         classifierOutput = nil
         outputAttributeStatuses = [:]
-        expectedAttributes = [:]
+        expectations = []
+//        expectedAttributes = [:]
     }
     
     var containsServingAttributes: Bool {
@@ -161,9 +164,9 @@ extension ClassifierController {
         missingNutrients.count > 0
     }
     
-    func add(_ attribute: Attribute) {
-        expectedAttributes[attribute] = AttributeRow(value1: nil, value2: nil, double: nil, string: nil)
-    }
+//    func add(_ attribute: Attribute) {
+//        expectedAttributes[attribute] = AttributeRow(value1: nil, value2: nil, double: nil, string: nil)
+//    }
     
     func didPickImage(_ image: UIImage) {
         reset()
