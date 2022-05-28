@@ -63,28 +63,30 @@ class ClassifierController: ObservableObject {
 
 extension ClassifierController {
     
-    var hasBothColumnHeaders: Bool {
-        return false
-    }
-
     var hasAnyColumnHeaders: Bool {
         return false
     }
 
+    func containsExpectation(for attribute: Attribute) -> Bool {
+        expectations.contains(where: { $0.attribute == attribute })
+    }
+    
     func shouldAllowAdding(_ attribute: Attribute) -> Bool {
-        guard containsOutputAttributeFor(attribute) else {
-            return true
+        if containsOutputAttributeFor(attribute) {
+            if let status = outputAttributeStatuses[attribute] {
+                return status == .invalid
+            } else {
+                return false
+            }
         }
-        if let status = outputAttributeStatuses[attribute] {
-            return status == .invalid
-        }
-        return false
+        return !containsExpectation(for: attribute)
     }
     
     func containsOutputAttributeFor(_ attribute: Attribute) -> Bool {
         guard let output = classifierOutput else { return false }
-        return output.nutrients.rows.contains(where: { $0.attribute == attribute })
+        return output.containsAttribute(attribute)
     }
+    
     var filtersDescription: String {
         let status = statusFilter?.description
         let type = typeFilter?.description
@@ -147,23 +149,7 @@ extension ClassifierController {
         guard let output = classifierOutput else { return false }
         return output.containsServingAttributes
     }
-    
-    var hasMissingServingAttributes: Bool {
-        //TODO:
-        return true
-    }
 
-    var missingNutrients: [Attribute] {
-        Attribute.allCases.filter {
-            $0.isNutrientAttribute
-            && shouldAllowAdding($0)
-        }
-    }
-    
-    var hasMissingNutrients: Bool {
-        missingNutrients.count > 0
-    }
-    
 //    func add(_ attribute: Attribute) {
 //        expectedAttributes[attribute] = AttributeRow(value1: nil, value2: nil, double: nil, string: nil)
 //    }
@@ -265,15 +251,4 @@ extension ClassifierController {
         }
     }
 
-}
-
-extension Output {
-    var containsServingAttributes: Bool {
-        guard let serving = serving else { return false }
-        return serving.amount != nil
-        || serving.unit != nil
-        || serving.unitSizeName != nil
-        || serving.equivalentSize != nil
-        || serving.perContainer != nil
-    }
 }

@@ -1,35 +1,6 @@
 import SwiftUI
 import NutritionLabelClassifier
 
-struct Expectation {
-    let attribute: Attribute
-    let value1: Value?
-    let value2: Value?
-    let double: Double?
-    let string: String?
-    let unit: NutritionUnit?
-    
-    init(attribute: Attribute, value1: Value? = nil, value2: Value? = nil, double: Double? = nil, string: String? = nil, unit: NutritionUnit? = nil) {
-        self.attribute = attribute
-        self.value1 = value1
-        self.value2 = value2
-        self.double = double
-        self.string = string
-        self.unit = unit
-    }
-}
-
-extension Expectation: Hashable {
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(attribute)
-        hasher.combine(value1)
-        hasher.combine(value2)
-        hasher.combine(double)
-        hasher.combine(string)
-        hasher.combine(unit)
-    }
-}
-
 extension ClassifierController {
     var servingExpectations: [Expectation] {
         expectations.filter { $0.attribute.isServingAttribute }
@@ -42,18 +13,43 @@ extension ClassifierController {
     var columnHeaderExpectations: [Expectation] {
         expectations.filter { $0.attribute.isColumnAttribute }
     }
-}
-
-extension Expectation {
-    var valueDescription: String {
-        var description: String = ""
-        if value1 != nil || value2 != nil {
-            description = "\(value1?.description ?? "") | \(value2?.description ?? "")"
-        }
-        return description
+    
+    var unusedServingAttributes: [Attribute] {
+        Attribute.allCases.filter { $0.isServingAttribute && shouldAllowAdding($0) }
+    }
+    
+    var unusedNutrientAttributes: [Attribute] {
+        Attribute.allCases.filter { $0.isNutrientAttribute && shouldAllowAdding($0) }
+    }
+    
+    var unusedColumnHeaderAttributes: [Attribute] {
+        Attribute.allCases.filter { $0.isColumnAttribute && shouldAllowAdding($0) }
     }
 }
 
+extension ClassifierController {
+    func deleteServingExpectation(at offsets: IndexSet) {
+        guard let index = offsets.first else { return }
+        delete(expectation: servingExpectations[index])
+    }
+
+    func deleteNutrientExpectation(at offsets: IndexSet) {
+        guard let index = offsets.first else { return }
+        delete(expectation: nutrientExpectations[index])
+    }
+
+    func deleteColumnHeaderExpectation(at offsets: IndexSet) {
+        guard let index = offsets.first else { return }
+        delete(expectation: columnHeaderExpectations[index])
+    }
+
+    func delete(expectation: Expectation) {
+        guard let index = expectations.firstIndex(where: { $0.attribute == expectation.attribute }) else { return }
+        withAnimation {
+            let _ = expectations.remove(at: index)
+        }
+    }
+}
 extension ListView {
     var expectationsList: some View {
         List {
@@ -75,13 +71,14 @@ extension ListView {
     
     @ViewBuilder
     var servingExpectationsSection: some View {
-        if classifierController.hasMissingServingAttributes {
+        if classifierController.unusedServingAttributes.count > 0 {
             Section("Serving Expectations") {
                 ForEach(classifierController.servingExpectations, id: \.self) { expectation in
                     cell(for: expectation)
                 }
+                .onDelete(perform: classifierController.deleteServingExpectation)
                 Menu {
-                    ForEach(Attribute.allCases.filter { $0.isServingAttribute }, id: \.self) { attribute in
+                    ForEach(classifierController.unusedServingAttributes, id: \.self) { attribute in
                         Button(attribute.description) {
                             newAttribute = attribute
                         }
@@ -91,7 +88,7 @@ extension ListView {
                         .multilineTextAlignment(.center)
                         .foregroundColor(.accentColor)
                 }
-                .frame(maxWidth: .infinity)
+//                .frame(maxWidth: .infinity)
                 .buttonStyle(BorderlessButtonStyle())
             }
         }
@@ -99,13 +96,14 @@ extension ListView {
     
     @ViewBuilder
     var columnHeaderExpectationsSection: some View {
-        if !classifierController.hasBothColumnHeaders {
+        if classifierController.unusedColumnHeaderAttributes.count > 0 {
             Section("Column Header Expectations") {
                 ForEach(classifierController.columnHeaderExpectations, id: \.self) { expectation in
                     cell(for: expectation)
                 }
+                .onDelete(perform: classifierController.deleteColumnHeaderExpectation)
                 Menu {
-                    ForEach(Attribute.allCases.filter { $0.isColumnAttribute }, id: \.self) { attribute in
+                    ForEach(classifierController.unusedColumnHeaderAttributes, id: \.self) { attribute in
                         Button(attribute.description) {
                             newAttribute = attribute
                         }
@@ -115,7 +113,7 @@ extension ListView {
                         .multilineTextAlignment(.center)
                         .foregroundColor(.accentColor)
                 }
-                .frame(maxWidth: .infinity)
+//                .frame(maxWidth: .infinity)
                 .buttonStyle(BorderlessButtonStyle())
             }
         }
@@ -123,13 +121,14 @@ extension ListView {
 
     @ViewBuilder
     var nutrientExpectationsSection: some View {
-        if classifierController.hasMissingNutrients {
+        if classifierController.unusedNutrientAttributes.count > 0 {
             Section("Nutrient Expectations") {
                 ForEach(classifierController.nutrientExpectations, id: \.self) { expectation in
                     cell(for: expectation)
                 }
+                .onDelete(perform: classifierController.deleteNutrientExpectation)
                 Menu {
-                    ForEach(classifierController.missingNutrients, id: \.self) { attribute in
+                    ForEach(classifierController.unusedNutrientAttributes, id: \.self) { attribute in
                         Button(attribute.description) {
                             newAttribute = attribute
                         }
@@ -139,7 +138,7 @@ extension ListView {
                         .multilineTextAlignment(.center)
                         .foregroundColor(.accentColor)
                 }
-                .frame(maxWidth: .infinity)
+//                .frame(maxWidth: .infinity)
                 .buttonStyle(BorderlessButtonStyle())
             }
         }
