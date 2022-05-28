@@ -15,7 +15,7 @@ extension ListView {
     var servingExpectationsSection: some View {
         if classifierController.hasMissingServingAttributes {
             Section("Serving Expectations") {
-                //TODO: Filter out the serving expectations only, create helpers in classifierController
+                //TODO: Filter out the serving expectations only, create helpers in classifierController 
                 ForEach(Array(classifierController.expectedAttributes.keys), id: \.self) { attribute in
                     Text(attribute.description)
                 }

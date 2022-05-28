@@ -226,7 +226,7 @@ struct ListView: View {
     var nutrientsSection: some View {
         if let output = classifierController.classifierOutput {
             Section("Nutrients") {
-                ForEach(output.nutrients.rows, id: \.attributeId) { row in
+                ForEach(output.nutrients.rows, id: \.attribute) { row in
                     cell(for: row)
                 }
                 .frame(maxWidth: .infinity)

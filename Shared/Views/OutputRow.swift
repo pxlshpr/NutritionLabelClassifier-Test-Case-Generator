@@ -20,6 +20,9 @@ struct OutputRow: View {
             .toolbar { navigationLeadingToolbarContent }
             .toolbar { bottomToolbarContent }
         }
+        .onDisappear {
+            ClassifierController.shared.resignBoxFocus()
+        }
     }
 
     @ViewBuilder
@@ -109,7 +112,10 @@ struct OutputRow: View {
     var rowIndex: Int? {
         guard let output = ClassifierController.shared.classifierOutput,
               let row = row,
-              let index = output.nutrients.rows.firstIndex(where: { $0.attributeId == row.attributeId })
+              let index = output.nutrients.rows.firstIndex(where: {
+//                  $0.attributeId == row.attributeId
+                  $0.attribute == row.attribute
+              })
         else {
             return nil
         }
@@ -141,6 +147,7 @@ struct OutputRow: View {
         if nextRow != nil {
             moveToNextRow()
         } else {
+            ClassifierController.shared.resignBoxFocus()
             dismiss()
         }
     }
