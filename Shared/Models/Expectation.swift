@@ -49,7 +49,7 @@ extension Expectation {
             description = string
         }
         else if let unit = unit {
-            description = unit.rawValue
+            description = unit.description
         }
         return description
     }

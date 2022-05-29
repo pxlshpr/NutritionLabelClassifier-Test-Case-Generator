@@ -23,7 +23,12 @@ extension ClassifierController {
     }
     
     var unusedColumnHeaderAttributes: [Attribute] {
-        Attribute.allCases.filter { $0.isColumnAttribute && shouldAllowAdding($0) }
+        Attribute.allCases.filter {
+            $0.isColumnAttribute
+            && shouldAllowAdding($0)
+            && $0 != .columnHeader1Size
+            && $0 != .columnHeader2Size
+        }
     }
     
     var shouldShowServingExpectations: Bool {

@@ -13,12 +13,18 @@ class ListViewModel: ObservableObject {
     @Published var imagePickerDelegate: ImagePickerView.Delegate? = nil
 }
 
+extension ListView {
+    func attributeView(for attribute: Attribute) -> some View {
+        AttributeView(attribute: attribute)
+    }
+}
+
 struct ListView: View {
     
     @ObservedObject var classifierController: ClassifierController
     @State var isPresentingImagePicker = false
     
-    @State var rowBeingPresented: Output.Nutrients.Row? = nil
+    @State var attributeBeingPresented: Attribute? = nil
     @State var boxIdBeingPresented: UUID? = nil
     
     @StateObject var listViewModel = ListViewModel()
@@ -36,16 +42,26 @@ struct ListView: View {
                     imagePickerView
                 }
         }
+        .sheet(isPresented: $classifierController.isPresentingFilePickerForExistingFile) {
+            DocumentPicker(delegate: classifierController)
+                .accentColor(Color.accentColor)
+        }
+        .sheet(isPresented: $classifierController.isPresentingFilePickerForCreatedFile, onDismiss: {
+//            Store.cleanBackupFiles()
+        }) {
+            DocumentPicker(url: classifierController.testDataZipFileUrl, exportAsCopy: true)
+                .accentColor(Color.accentColor)
+        }
         .onAppear {
             setImagePickerDelegate()
         }
-        .bottomSheet(item: $rowBeingPresented,
+        .bottomSheet(item: $attributeBeingPresented,
                      largestUndimmedDetentIdentifier: .medium,
                      prefersGrabberVisible: true,
                      prefersScrollingExpandsWhenScrolledToEdge: false)
         {
-            if let row = rowBeingPresented {
-                AttributeView(row: row)
+            if let attribute = attributeBeingPresented {
+                attributeView(for: attribute)
             }
         }
         .bottomSheet(item: $newAttribute,
@@ -82,7 +98,6 @@ struct ListView: View {
             print("Did Fail with error: \(error) in \(phPickerViewController)")
         })
     }
-
     
     var navigationTitleContent: some ToolbarContent {
         ToolbarItemGroup(placement: .principal) {
@@ -181,41 +196,42 @@ struct ListView: View {
     var servingSection: some View {
         if let output = classifierController.classifierOutput, output.containsServingAttributes {
             Section("Serving") {
-                if let servingsPerContainer = output.serving?.perContainer {
-                    HStack {
-                        if let identifiableName = servingsPerContainer.identifiableName {
-                            Button {
-                                
-                            } label: {
-                                Text("Servings per \(identifiableName.string)")
-                                    .padding(3)
-                                    .background(Color(.secondarySystemBackground))
-                            }
-                            .buttonStyle(BorderlessButtonStyle())
-                        } else {
-                            Button {
-                            } label: {
-                                Text("Servings per container")
-                                    .padding(5)
-                                    .background(Color(.secondarySystemBackground))
-                                    .cornerRadius(5)
-                            }
-                            .buttonStyle(BorderlessButtonStyle())
-                        }
-                        Spacer()
-                        Button(servingsPerContainer.identifiableAmount.double.clean) {
-                            
-                        }
-                        .padding(5)
-                        .background(Color(.secondarySystemBackground))
-                        .cornerRadius(5)
-                        .buttonStyle(BorderlessButtonStyle())
-                    }
-                }
+                servingAmountField(from: output)
+                servingsPerContainerAmount(from: output)
             }
         }
     }
+    
+    @ViewBuilder
+    func servingAmountField(from output: Output) -> some View {
+        if let amount = output.serving?.amount {
+            cell(attribute: .servingAmount, value: amount.clean)
+        }
+    }
+    
+    @ViewBuilder
+    func servingsPerContainerAmount(from output: Output) -> some View {
+        if let amount = output.serving?.perContainer?.amount {
+            cell(attribute: .servingsPerContainerAmount, value: amount.clean)
+        }
+    }
 
+    func cell(attribute: Attribute, value: String) -> some View {
+        Button {
+            attributeBeingPresented = attribute
+        } label: {
+            HStack {
+                Text(attribute.description)
+                Spacer()
+                Text(value)
+                Image(systemName: "\(classifierController.outputAttributeStatuses[attribute]?.systemImage ?? "questionmark").square")
+                    .foregroundColor(classifierController.outputAttributeStatuses[attribute]?.color ?? .orange)
+            }
+        }
+        .buttonStyle(BorderlessButtonStyle())
+
+    }
+    
     @ViewBuilder
     var columnHeadersSection: some View {
         if classifierController.hasAnyColumnHeaders {
@@ -239,7 +255,7 @@ struct ListView: View {
     
     func cell(for row: Output.Nutrients.Row) -> some View {
         Button {
-            rowBeingPresented = row
+            attributeBeingPresented = row.attribute
             focusOn(row)
         } label: {
             HStack {
@@ -249,6 +265,7 @@ struct ListView: View {
                     Text(identifiableValue1.value.description)
                 }
                 if let identifiableValue2 = row.identifiableValue2 {
+                    Text("•")
                     Text(identifiableValue2.value.description)
                 }
                 Image(systemName: "\(classifierController.outputAttributeStatuses[row.attribute]?.systemImage ?? "questionmark").square")
@@ -378,6 +395,7 @@ extension ListView {
             Spacer()
             choosePhotoButton
             classifierController.shareButton
+            classifierController.saveButton
         }
     }
     
@@ -387,15 +405,7 @@ extension ListView {
         } label: {
             Image(systemName: "photo.fill")
         }
-    }
-    
-//    var shareButton: some View {
-//        Button {
-//
-//        } label: {
-//            Image(systemName: "square.and.arrow.up")
-//        }
-//    }
+    }    
 }
 
 extension ClassifierController {
@@ -471,16 +481,35 @@ extension ClassifierController {
     }
     
     @ViewBuilder
-    var shareButton: some View {
+    var saveButton: some View {
         if pickedImage != nil {
-            Button {
-                self.shareTextCase()
+            Menu {
+                Button {
+                    ClassifierController.shared.isPresentingFilePickerForExistingFile = true
+                } label: {
+                    Label("Save to Existing File", systemImage: "doc.badge.plus")
+                }
+                Button {
+                    self.createNewTestCaseFile()
+                } label: {
+                    Label("Save Test Case", systemImage: "plus.app")
+                }
             } label: {
-                Image(systemName: "square.and.arrow.up\(status == .valid ? ".fill" : "")")
+                Image(systemName: "square.and.arrow.down\(status == .valid ? ".fill" : "")")
             }
         }
     }
 
+    @ViewBuilder
+    var shareButton: some View {
+        if ClassifierController.shared.testDataFileExists {
+            Button {
+                self.shareZipFile()
+            } label: {
+                Image(systemName: "square.and.arrow.up")
+            }
+        }
+    }
 }
 
 extension Output.Nutrients.Row {

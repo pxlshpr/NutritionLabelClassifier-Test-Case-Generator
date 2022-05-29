@@ -4,10 +4,11 @@ import VisionSugar
 import Vision
 import SwiftUISugar
 import TabularData
+import Zip
 
 typealias AttributeRow = (value1: Value?, value2: Value?, double: Double?, string: String?)
 
-class ClassifierController: ObservableObject {
+class ClassifierController: NSObject, ObservableObject {
     
     static let shared = ClassifierController()
 
@@ -21,6 +22,9 @@ class ClassifierController: ObservableObject {
     @Published var selectedBox: Box? = nil
     @Published var refreshBool = false
 
+    @Published var isPresentingFilePickerForExistingFile = false
+    @Published var isPresentingFilePickerForCreatedFile = false
+    
 //        @Published var recognizedTexts: [RecognizedText]? = nil
 //        @Published var nutrientsDataFrame: DataFrame? = nil
     
@@ -77,7 +81,7 @@ extension ClassifierController {
     func shouldAllowAdding(_ attribute: Attribute) -> Bool {
         if containsOutputAttributeFor(attribute) {
             if let status = outputAttributeStatuses[attribute] {
-                return status == .invalid
+                return status == .invalid && !containsExpectation(for: attribute)
             } else {
                 return false
             }
@@ -261,4 +265,21 @@ extension ClassifierController {
         }
     }
 
+}
+
+extension ClassifierController: UIDocumentPickerDelegate {
+    
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        guard let url = urls.first else {
+            return
+        }
+        
+        appendTestCaseToExistingFile(at: url)
+    }
+    
+    func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+        controller.dismiss(animated: true) {
+        }
+        print("Cancelled")
+    }
 }

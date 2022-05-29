@@ -15,7 +15,7 @@
       "location" : "https://github.com/pxlshpr/NutritionLabelClassifier.git",
       "state" : {
         "branch" : "main",
-        "revision" : "3d1c2dec673a05a43ac1cc5eab7f2b531936cb01"
+        "revision" : "a233f108c0a247fc465748ee6290e7f9755a4664"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pxlshpr/SwiftUISugar",
       "state" : {
-        "revision" : "287b7578f1b6292a1c3d39763dee2cf80f8bd522",
-        "version" : "0.0.135"
+        "revision" : "d3b3388be21550ed654e94ce39d418c8848ef636",
+        "version" : "0.0.140"
       }
     },
     {
@@ -61,6 +61,24 @@
       "state" : {
         "revision" : "d59f45c70117e02ccab41185e68b8a62e26463ca",
         "version" : "0.0.37"
+      }
+    },
+    {
+      "identity" : "zip",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/marmelroy/Zip",
+      "state" : {
+        "revision" : "67fa55813b9e7b3b9acee9c0ae501def28746d76",
+        "version" : "2.1.2"
+      }
+    },
+    {
+      "identity" : "zipfoundation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/weichsel/ZIPFoundation",
+      "state" : {
+        "branch" : "development",
+        "revision" : "bad07a8f3dfefb0cf9faa8f9c89b6a762c92ebb0"
       }
     }
   ],

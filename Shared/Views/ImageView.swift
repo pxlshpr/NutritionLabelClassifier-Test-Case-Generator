@@ -241,6 +241,7 @@ extension ImageView {
             Spacer()
             choosePhotoButton
             classifierController.shareButton
+            classifierController.saveButton
         }
     }
     
@@ -252,26 +253,4 @@ extension ImageView {
             Image(systemName: "photo\(classifierController.pickedImage == nil ? "" : ".fill")")
         }
     }
-    
-//    @ViewBuilder
-//    var listButton: some View {
-//        if classifierController.pickedImage != nil {
-//            Button {
-//                classifierController.isPresentingList = true
-//            } label: {
-//                Image(systemName: classifierController.isPresentingList ? "list.bullet.circle.fill" : "list.bullet.circle")
-//            }
-//        }
-//    }
-    
-//    @ViewBuilder
-//    var shareButton: some View {
-//        if classifierController.pickedImage != nil {
-//            Button {
-//                
-//            } label: {
-//                Image(systemName: "square.and.arrow.up")
-//            }
-//        }
-//    }
 }

@@ -11,7 +11,7 @@ extension Attribute: SelectionOption {
 
 extension NutritionUnit: SelectionOption {
     public var optionId: String {
-        rawValue
+        description
     }
 }
 

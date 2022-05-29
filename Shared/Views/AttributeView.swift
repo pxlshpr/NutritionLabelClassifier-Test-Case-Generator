@@ -1,21 +1,71 @@
 import SwiftUI
 import NutritionLabelClassifier
 
+extension Output {
+    func doubleFor(_ attribute: Attribute) -> Double? {
+        switch attribute {
+        case .servingAmount:
+            return serving?.amount
+        case .servingEquivalentAmount:
+            return serving?.equivalentSize?.amount
+        case .servingsPerContainerAmount:
+            return serving?.perContainer?.amount
+        default:
+            return nil
+        }
+    }
+}
 struct AttributeView: View {
     
     @Environment(\.dismiss) var dismiss
     
-    @State var row: Output.Nutrients.Row? = nil
-    @State var expectedAttribute: Attribute? = nil
-    @State var attributeChoices: [Attribute]? = nil
+//    @State var row: Output.Nutrients.Row
+    
+    @State var attribute: Attribute
+    @State var value1: Value?
+    @State var value2: Value?
+    @State var double: Double?
+    @State var string: String?
+    @State var unit: NutritionUnit?
+    @State var columnHeaderType: ColumnHeaderType?
 
+    init(attribute: Attribute) {
+        _attribute = State(initialValue: attribute)
+        
+        guard let output = ClassifierController.shared.classifierOutput else {
+            _value1 = State(initialValue: nil)
+            _value2 = State(initialValue: nil)
+            _double = State(initialValue: nil)
+            _string = State(initialValue: nil)
+            _unit = State(initialValue: nil)
+            _columnHeaderType = State(initialValue: nil)
+            return
+        }
+        let value1 = output.nutrients.rows.first(where: { $0.attribute == attribute })?.value1
+        let value2 = output.nutrients.rows.first(where: { $0.attribute == attribute })?.value2
+        let double: Double?
+        if attribute.expectsDouble {
+            double = output.doubleFor(attribute)
+        } else {
+            double = nil
+        }
+
+        _value1 = State(initialValue: value1)
+        _value2 = State(initialValue: value2)
+        _double = State(initialValue: double)
+        _string = State(initialValue: string)
+        _unit = State(initialValue: unit)
+        _columnHeaderType = State(initialValue: columnHeaderType)
+    }
+    
     var body: some View {
         NavigationView {
             Form {
                 outputSection
-                newAttributeSection
             }
-            .navigationTitle(title)
+            .navigationTitle("Attribute")
+            .navigationBarTitleDisplayMode(.large)
+//            .toolbar { navigationToolbarContent }
             .toolbar { navigationTrailingToolbarContent }
             .toolbar { navigationLeadingToolbarContent }
             .toolbar { bottomToolbarContent }
@@ -24,51 +74,57 @@ struct AttributeView: View {
             ClassifierController.shared.resignBoxFocus()
         }
     }
-
-    @ViewBuilder
-    var newAttributeSection: some View {
-        if row == nil {
-            Section("Expected Attribute") {
-                Text("let's do this")
-            }
-        }
-    }
     
     @ViewBuilder
     var outputSection: some View {
-        if let row = row {
-            Section("Classifier Output") {
+        Section {
+            HStack {
+                Text("Name").foregroundColor(.secondary)
+                Spacer()
+                Text(attribute.description)
+            }
+            if let value1 = value1 {
                 HStack {
-                    Text("Attribute")
-                        .foregroundColor(.secondary)
+                    Text("Value 1").foregroundColor(.secondary)
                     Spacer()
-                    Text(row.attribute.description)
-                }
-                if let value1 = row.value1 {
-                    HStack {
-                        Text("Value 1")
-                            .foregroundColor(.secondary)
-                        Spacer()
-                        Text(value1.description)
-                    }
-                }
-                if let value2 = row.value2 {
-                    HStack {
-                        Text("Value 2")
-                            .foregroundColor(.secondary)
-                        Spacer()
-                        Text(value2.description)
-                    }
+                    Text(value1.description)
                 }
             }
-        }
-    }
-    
-    var title: String {
-        if let attribute = row?.attribute {
-            return attribute.description
-        } else {
-            return expectedAttribute?.description ?? "Select an Attribute"
+            if let value2 = value2 {
+                HStack {
+                    Text("Value 2").foregroundColor(.secondary)
+                    Spacer()
+                    Text(value2.description)
+                }
+            }
+            if let double = double {
+                HStack {
+                    Text("Double").foregroundColor(.secondary)
+                    Spacer()
+                    Text(double.clean)
+                }
+            }
+            if let string = string {
+                HStack {
+                    Text("String").foregroundColor(.secondary)
+                    Spacer()
+                    Text(string)
+                }
+            }
+            if let unit = unit {
+                HStack {
+                    Text("Unit").foregroundColor(.secondary)
+                    Spacer()
+                    Text(unit.description)
+                }
+            }
+            if let columnHeaderType = columnHeaderType {
+                HStack {
+                    Text("Column Header Type").foregroundColor(.secondary)
+                    Spacer()
+                    Text(columnHeaderType.description)
+                }
+            }
         }
     }
     
@@ -84,21 +140,21 @@ struct AttributeView: View {
     }
     
     func moveToNextRow() {
-        guard let nextRow = nextRow else { return }
-        row = nextRow
-        if let box = nextRow.box {
-            ClassifierController.shared.focus(on: box)
-        }
+//        guard let nextRow = nextRow else { return }
+//        row = nextRow
+//        if let box = nextRow.box {
+//            ClassifierController.shared.focus(on: box)
+//        }
     }
-
+    
     func moveToPreviousRow() {
-        guard let previousRow = previousRow else { return }
-        row = previousRow
-        if let box = previousRow.box {
-            ClassifierController.shared.focus(on: box)
-        }
+//        guard let previousRow = previousRow else { return }
+//        row = previousRow
+//        if let box = previousRow.box {
+//            ClassifierController.shared.focus(on: box)
+//        }
     }
-
+    
     var nextRow: Output.Nutrients.Row? {
         guard let output = ClassifierController.shared.classifierOutput,
               let rowIndex = rowIndex,
@@ -110,18 +166,17 @@ struct AttributeView: View {
     }
     
     var rowIndex: Int? {
-        guard let output = ClassifierController.shared.classifierOutput,
-              let row = row,
-              let index = output.nutrients.rows.firstIndex(where: {
-//                  $0.attributeId == row.attributeId
-                  $0.attribute == row.attribute
-              })
-        else {
+//        guard let output = ClassifierController.shared.classifierOutput,
+//              let index = output.nutrients.rows.firstIndex(where: {
+//                  //                  $0.attributeId == row.attributeId
+//                  $0.attribute == row.attribute
+//              })
+//        else {
             return nil
-        }
-        return index
+//        }
+//        return index
     }
-
+    
     var previousRow: Output.Nutrients.Row? {
         guard let output = ClassifierController.shared.classifierOutput,
               let rowIndex = rowIndex,
@@ -131,7 +186,7 @@ struct AttributeView: View {
         }
         return output.nutrients.rows[rowIndex - 1]
     }
-
+    
     var navigationLeadingToolbarContent: some ToolbarContent {
         ToolbarItemGroup(placement: .navigationBarLeading) {
             Button {
@@ -155,25 +210,20 @@ struct AttributeView: View {
     var bottomToolbarContent: some ToolbarContent {
         ToolbarItemGroup(placement: .bottomBar) {
             Button {
-                if let row = row {
-                    ClassifierController.shared.outputAttributeStatuses[row.attribute] = .valid
-                }
-                moveToNextRowOrDismiss()
-            } label: {
-                Image(systemName: "checkmark")
-                    .foregroundColor(.green)
-            }
-            Spacer()
-            Button {
-                if let row = row {
-                    ClassifierController.shared.outputAttributeStatuses[row.attribute] = .invalid
-                }
+                ClassifierController.shared.outputAttributeStatuses[attribute] = .invalid
                 moveToNextRowOrDismiss()
             } label: {
                 Image(systemName: "xmark")
                     .foregroundColor(.red)
             }
+            Spacer()
+            Button {
+                ClassifierController.shared.outputAttributeStatuses[attribute] = .valid
+                moveToNextRowOrDismiss()
+            } label: {
+                Image(systemName: "checkmark")
+                    .foregroundColor(.green)
+            }
         }
-    }
-
+    }    
 }

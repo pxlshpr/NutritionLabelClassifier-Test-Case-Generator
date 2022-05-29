@@ -83,10 +83,15 @@ struct AttributeForm: View {
             expectation = Expectation(attribute: attribute, value1: value1, value2: value2)
         }
         else if attribute.isColumnAttribute {
-            guard let type = columnHeaderType as? ColumnHeaderType else { return }
-            expectation = Expectation(attribute: attribute,
-                                      string: columnHeaderName,
-                                      columnHeaderType: type)
+            if attribute == .primaryColumnIndex {
+                guard let double = Double(doubleString) else { return }
+                expectation = Expectation(attribute: attribute, double: double)
+            } else {
+                guard let type = columnHeaderType as? ColumnHeaderType else { return }
+                expectation = Expectation(attribute: attribute,
+                                          string: columnHeaderName,
+                                          columnHeaderType: type)
+            }
         }
         else if attribute.expectsDouble {
             guard let double = Double(doubleString) else { return }
@@ -122,6 +127,9 @@ struct AttributeForm: View {
             }
             return isValid
         } else if attribute.isColumnAttribute {
+            if attribute == .primaryColumnIndex {
+                return !doubleString.isEmpty && Double(doubleString) != nil
+            }
             guard let type = columnHeaderType as? ColumnHeaderType else { return false }
             if type == .perCustomSize {
                 return !columnHeaderName.isEmpty
@@ -143,16 +151,20 @@ struct AttributeForm: View {
         if attribute.isNutrientAttribute {
             valueFieldsSection
         }
-        if attribute.isColumnAttribute {
-            columnFieldSection
+        else if attribute.isColumnAttribute {
+            if attribute.expectsDouble {
+                doubleFieldSection
+            } else {
+                columnFieldSection
+            }
         }
-        if attribute.expectsDouble {
+        else if attribute.expectsDouble {
             doubleFieldSection
         }
-        if attribute.expectsString {
+        else if attribute.expectsString {
             stringFieldSection
         }
-        if attribute.expectsNutritionUnit {
+        else if attribute.expectsNutritionUnit {
             nutritionUnitSection
         }
     }
@@ -194,6 +206,7 @@ struct AttributeForm: View {
             }
             if showColumnNameField, let type = columnHeaderType as? ColumnHeaderType {
                 Field(label: type.stringFieldName, value: $columnHeaderName)
+                    .autocapitalization(.none)
             }
         }
     }
@@ -211,9 +224,8 @@ struct AttributeForm: View {
 
     var stringFieldSection: some View {
         Section {
-            Field(label: "Text",
-                  value: $string
-            )
+            Field(label: "Text", value: $string)
+                .autocapitalization(.none)
         }
     }
     
