@@ -251,7 +251,7 @@ struct ListView: View {
     func cell(forNutrientObservation observation: Observation) -> some View {
         Button {
             observationBeingPresented = observation
-            classifierController.sendZoomNotificationToFocusAround(observation.combinedRect)
+            classifierController.sendZoomNotificationToFocusAround(observation.combinedBoundingBox)
 //            focusOn(row)
         } label: {
             HStack {

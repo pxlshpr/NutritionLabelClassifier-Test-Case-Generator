@@ -21,17 +21,26 @@ struct Observation {
     var unit: NutritionUnit? { unitText?.unit }
     var headerType: HeaderType? { headerTypeText?.type }
 
-    var combinedRect: CGRect {
+    var boxes: [Box] {
         let ids = [attributeText.textId, value1Text?.textId, value2Text?.textId, doubleText?.textId, stringText?.textId, unitText?.textId, headerTypeText?.textId].compactMap { $0 }
         return ids
-            .compactMap { ClassifierController.shared.rectForBox(withId: $0) }
-            .reduce(.zero, { $0.union($1) })
+            .compactMap { ClassifierController.shared.box(withId: $0) }
+    }
+    
+    var combinedBoundingBox: CGRect {
+        let boundingBoxes = boxes.map { $0.boundingBox }
+        guard let firstBoundingBox = boundingBoxes.first else { return .zero }
+        return boundingBoxes.dropFirst().reduce(firstBoundingBox, { $0.union($1) })
     }
 
 }
 
 extension ClassifierController {
+    func box(withId id: UUID) -> Box? {
+        boxes.first { $0.id == id }
+    }
+    
     func rectForBox(withId id: UUID) -> CGRect? {
-        return nil
+        box(withId: id)?.rect
     }
 }
