@@ -10,8 +10,8 @@ extension ClassifierController {
         expectations.filter { $0.attribute.isNutrientAttribute }
     }
     
-    var columnHeaderExpectations: [Expectation] {
-        expectations.filter { $0.attribute.isColumnAttribute }
+    var headerExpectations: [Expectation] {
+        expectations.filter { $0.attribute.isHeaderAttribute }
     }
     
     var unusedServingAttributes: [Attribute] {
@@ -24,10 +24,8 @@ extension ClassifierController {
     
     var unusedColumnHeaderAttributes: [Attribute] {
         Attribute.allCases.filter {
-            $0.isColumnAttribute
+            $0.isHeaderAttribute
             && shouldAllowAdding($0)
-            && $0 != .header1Size
-            && $0 != .header2Size
         }
     }
     
@@ -36,7 +34,7 @@ extension ClassifierController {
     }
     
     var shouldShowColumnHeaderExpectations: Bool {
-        unusedColumnHeaderAttributes.count > 0 || columnHeaderExpectations.count > 0
+        unusedColumnHeaderAttributes.count > 0 || headerExpectations.count > 0
     }
     
     var shouldShowNutrientExpectations: Bool {
@@ -77,7 +75,7 @@ extension ClassifierController {
 
     func deleteColumnHeaderExpectation(at offsets: IndexSet) {
         guard let index = offsets.first else { return }
-        delete(expectation: columnHeaderExpectations[index])
+        delete(expectation: headerExpectations[index])
     }
 
     func delete(expectation: Expectation) {
@@ -137,7 +135,7 @@ extension ListView {
     var columnHeaderExpectationsSection: some View {
         if classifierController.shouldShowColumnHeaderExpectations {
             Section("Column Header Expectations") {
-                ForEach(classifierController.columnHeaderExpectations, id: \.self) { expectation in
+                ForEach(classifierController.headerExpectations, id: \.self) { expectation in
                     cell(for: expectation)
                 }
                 .onDelete(perform: classifierController.deleteColumnHeaderExpectation)

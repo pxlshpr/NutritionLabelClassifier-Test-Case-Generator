@@ -266,27 +266,28 @@ extension ClassifierController {
             addString(string, for: .servingsPerContainerName)
         }
 
+        //TODO: Add new header types
         /// header1Type
-        if outputAttributeStatuses[.header1Type] == .valid, let type = classifierOutput?.nutrients.header1Type {
-            addDouble(Double(type.rawValue), for: .header1Type)
-        }
-        /// header1Size
-        if outputAttributeStatuses[.header1Size] == .valid, let string = classifierOutput?.nutrients.header1UnitName {
-            addString(string, for: .header1Size)
-        }
-        /// header2Type
-        if outputAttributeStatuses[.header2Type] == .valid, let type = classifierOutput?.nutrients.header2Type {
-            addDouble(Double(type.rawValue), for: .header2Type)
-        }
-        /// header2Size
-        if outputAttributeStatuses[.header2Size] == .valid, let string = classifierOutput?.nutrients.header2UnitName {
-            addString(string, for: .header2Size)
-        }
-        /// primaryColumnIndex
-        if outputAttributeStatuses[.primaryColumnIndex] == .valid, let int = classifierOutput?.primaryColumnIndex {
-            addDouble(Double(int), for: .primaryColumnIndex)
-        }
-        
+//        if outputAttributeStatuses[.header1Type] == .valid, let type = classifierOutput?.nutrients.header1Type {
+//            addDouble(Double(type.rawValue), for: .header1Type)
+//        }
+//        /// header1Size
+//        if outputAttributeStatuses[.header1Size] == .valid, let string = classifierOutput?.nutrients.header1UnitName {
+//            addString(string, for: .header1Size)
+//        }
+//        /// header2Type
+//        if outputAttributeStatuses[.header2Type] == .valid, let type = classifierOutput?.nutrients.header2Type {
+//            addDouble(Double(type.rawValue), for: .header2Type)
+//        }
+//        /// header2Size
+//        if outputAttributeStatuses[.header2Size] == .valid, let string = classifierOutput?.nutrients.header2UnitName {
+//            addString(string, for: .header2Size)
+//        }
+//        /// primaryColumnIndex
+//        if outputAttributeStatuses[.primaryColumnIndex] == .valid, let int = classifierOutput?.primaryColumnIndex {
+//            addDouble(Double(int), for: .primaryColumnIndex)
+//        }
+//
         func addValues(value1: Value? = nil, value2: Value? = nil, for attribute: Attribute) {
             attributeCells.append(attribute.rawValue)
             value1Cells.append(value1?.description)
@@ -298,13 +299,14 @@ extension ClassifierController {
         /// Add all the added expectations
         for expectation in expectations {
             
-            if let headerType = expectation.headerType {
-                addDouble(Double(headerType.rawValue), for: expectation.attribute)
-                if let string = expectation.string {
-                    addString(string, for: expectation.attribute == .header1Type ? .header1Size : .header2Size)
-                }
-                continue
-            }
+            //TODO: Handle header types
+//            if let headerType = expectation.headerType {
+//                addDouble(Double(headerType.rawValue), for: expectation.attribute)
+//                if let string = expectation.string {
+//                    addString(string, for: expectation.attribute == .header1Type ? .header1Size : .header2Size)
+//                }
+//                continue
+//            }
 
             attributeCells.append(expectation.attribute.rawValue)
             value1Cells.append(expectation.value1?.description)

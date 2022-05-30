@@ -82,16 +82,11 @@ struct AttributeForm: View {
 
             expectation = Expectation(attribute: attribute, value1: value1, value2: value2)
         }
-        else if attribute.isColumnAttribute {
-            if attribute == .primaryColumnIndex {
-                guard let double = Double(doubleString) else { return }
-                expectation = Expectation(attribute: attribute, double: double)
-            } else {
-                guard let type = headerType as? HeaderType else { return }
-                expectation = Expectation(attribute: attribute,
-                                          string: columnHeaderName,
-                                          headerType: type)
-            }
+        else if attribute.isHeaderAttribute {
+            guard let type = headerType as? HeaderType else { return }
+            expectation = Expectation(attribute: attribute,
+                                      string: columnHeaderName,
+                                      headerType: type)
         }
         else if attribute.expectsDouble {
             guard let double = Double(doubleString) else { return }
@@ -126,16 +121,9 @@ struct AttributeForm: View {
                 isValid = isValid && Double(value2String) != nil
             }
             return isValid
-        } else if attribute.isColumnAttribute {
-            if attribute == .primaryColumnIndex {
-                return !doubleString.isEmpty && Double(doubleString) != nil
-            }
+        } else if attribute.isHeaderAttribute {
             guard let type = headerType as? HeaderType else { return false }
-            if type == .perCustomSize {
-                return !columnHeaderName.isEmpty
-            } else {
-                return true
-            }
+            return true
         } else if attribute.expectsDouble {
             return !doubleString.isEmpty && Double(doubleString) != nil
         } else if attribute.expectsString {
@@ -151,12 +139,8 @@ struct AttributeForm: View {
         if attribute.isNutrientAttribute {
             valueFieldsSection
         }
-        else if attribute.isColumnAttribute {
-            if attribute.expectsDouble {
-                doubleFieldSection
-            } else {
-                columnFieldSection
-            }
+        else if attribute.expectsHeaderType {
+            columnFieldSection
         }
         else if attribute.expectsDouble {
             doubleFieldSection
