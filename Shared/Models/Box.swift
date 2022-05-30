@@ -70,19 +70,19 @@ class Box: ObservableObject, Identifiable {
         self.color = .gray
         
         self.setup(dataFrame: nutrientsDataFrame, id: recognizedTextWithLC.id)
-//        if let row = nutrientsDataFrame.rowWhereValue1IsFromRecognizedText(with: id), let valueWithId = row["value1"] as? ValueWithId
+//        if let row = nutrientsDataFrame.rowWhereValue1IsFromRecognizedText(with: id), let valueWithId = row["value1"] as? ValueText
 //        {
 //            value1 = valueWithId.value
 //            value2 = nil
 //            color = .green
 //        }
-//        else if let row = nutrientsDataFrame.rowWhereValue2IsFromRecognizedText(with: id), let valueWithId = row["value2"] as? ValueWithId
+//        else if let row = nutrientsDataFrame.rowWhereValue2IsFromRecognizedText(with: id), let valueWithId = row["value2"] as? ValueText
 //        {
 //            value1 = nil
 //            value2 = valueWithId.value
 //            color = .green
 //        }
-//        else if let row = nutrientsDataFrame.rowWhereAttributeIsFromRecognizedText(with: id), let attributeWithId = row["attribute"] as? AttributeWithId
+//        else if let row = nutrientsDataFrame.rowWhereAttributeIsFromRecognizedText(with: id), let attributeWithId = row["attribute"] as? AttributeText
 //        {
 //            value1 = nil
 //            value2 = nil
@@ -97,19 +97,19 @@ class Box: ObservableObject, Identifiable {
     }
     
     func setup(dataFrame: DataFrame, id: UUID) {
-        if let row = dataFrame.rowWhereValue1IsFromRecognizedText(with: id), let valueWithId = row["value1"] as? ValueWithId
+        if let row = dataFrame.rowWhereValue1IsFromRecognizedText(with: id), let valueWithId = row["value1"] as? ValueText
         {
             value1 = valueWithId.value
             color = .blue
         }
         
-        if let row = dataFrame.rowWhereValue2IsFromRecognizedText(with: id), let valueWithId = row["value2"] as? ValueWithId
+        if let row = dataFrame.rowWhereValue2IsFromRecognizedText(with: id), let valueWithId = row["value2"] as? ValueText
         {
             value2 = valueWithId.value
             color = .blue
         }
         
-        if let row = dataFrame.rowWhereAttributeIsFromRecognizedText(with: id), let attributeWithId = row["attribute"] as? AttributeWithId
+        if let row = dataFrame.rowWhereAttributeIsFromRecognizedText(with: id), let attributeWithId = row["attribute"] as? AttributeText
         {
             attribute = attributeWithId.attribute
             if value1 != nil || value2 != nil {
@@ -128,11 +128,11 @@ class Box: ObservableObject, Identifiable {
         self.recognizedTextWithLC = nil
 
         if let row = nutrientsDataFrame.rows.first(where: {
-            guard let valueWithId = $0["value1"] as? ValueWithId else { return false }
-            return valueWithId.observationId == recognizedTextWithoutLC.id
-        }), let valueWithId = row["value1"] as? ValueWithId
+            guard let valueText = $0["value1"] as? ValueText else { return false }
+            return valueText.textId == recognizedTextWithoutLC.id
+        }), let valueText = row["value1"] as? ValueText
         {
-            value1 = valueWithId.value
+            value1 = valueText.value
             value2 = nil
             color = .indigo
         } else {
@@ -189,20 +189,20 @@ extension Box: Hashable, Equatable {
 extension DataFrame {
     func rowWhereValue1IsFromRecognizedText(with id: UUID) -> DataFrame.Rows.Element? {
         rows.first(where: {
-            guard let valueWithId = $0["value1"] as? ValueWithId else { return false }
-            return valueWithId.observationId == id
+            guard let valueWithId = $0["value1"] as? ValueText else { return false }
+            return valueWithId.textId == id
         })
     }
     func rowWhereValue2IsFromRecognizedText(with id: UUID) -> DataFrame.Rows.Element? {
         rows.first(where: {
-            guard let valueWithId = $0["value2"] as? ValueWithId else { return false }
-            return valueWithId.observationId == id
+            guard let valueWithId = $0["value2"] as? ValueText else { return false }
+            return valueWithId.textId == id
         })
     }
     func rowWhereAttributeIsFromRecognizedText(with id: UUID) -> DataFrame.Rows.Element? {
         rows.first(where: {
-            guard let attributeWithId = $0["attribute"] as? AttributeWithId else { return false }
-            return attributeWithId.observationId == id
+            guard let attributeWithId = $0["attribute"] as? AttributeText else { return false }
+            return attributeWithId.textId == id
         })
     }
 }

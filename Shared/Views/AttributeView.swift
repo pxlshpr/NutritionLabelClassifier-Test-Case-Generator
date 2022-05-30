@@ -27,7 +27,7 @@ struct AttributeView: View {
     @State var double: Double?
     @State var string: String?
     @State var unit: NutritionUnit?
-    @State var columnHeaderType: ColumnHeaderType?
+    @State var headerType: HeaderType?
 
     init(attribute: Attribute) {
         _attribute = State(initialValue: attribute)
@@ -38,7 +38,7 @@ struct AttributeView: View {
             _double = State(initialValue: nil)
             _string = State(initialValue: nil)
             _unit = State(initialValue: nil)
-            _columnHeaderType = State(initialValue: nil)
+            _headerType = State(initialValue: nil)
             return
         }
         let value1 = output.nutrients.rows.first(where: { $0.attribute == attribute })?.value1
@@ -55,7 +55,7 @@ struct AttributeView: View {
         _double = State(initialValue: double)
         _string = State(initialValue: string)
         _unit = State(initialValue: unit)
-        _columnHeaderType = State(initialValue: columnHeaderType)
+        _headerType = State(initialValue: headerType)
     }
     
     var body: some View {
@@ -118,11 +118,11 @@ struct AttributeView: View {
                     Text(unit.description)
                 }
             }
-            if let columnHeaderType = columnHeaderType {
+            if let headerType = headerType {
                 HStack {
                     Text("Column Header Type").foregroundColor(.secondary)
                     Spacer()
-                    Text(columnHeaderType.description)
+                    Text(headerType.description)
                 }
             }
         }

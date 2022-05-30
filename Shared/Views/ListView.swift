@@ -259,12 +259,12 @@ struct ListView: View {
             focusOn(row)
         } label: {
             HStack {
-                Text(row.identifiableAttribute.attribute.description)
+                Text(row.attributeText.attribute.description)
                 Spacer()
-                if let identifiableValue1 = row.identifiableValue1 {
+                if let identifiableValue1 = row.valueText1 {
                     Text(identifiableValue1.value.description)
                 }
-                if let identifiableValue2 = row.identifiableValue2 {
+                if let identifiableValue2 = row.valueText2 {
                     Text("•")
                     Text(identifiableValue2.value.description)
                 }
@@ -277,26 +277,26 @@ struct ListView: View {
     
     func cell_legacy(for row: Output.Nutrients.Row) -> some View {
         HStack {
-            Button(row.identifiableAttribute.attribute.description) {
-                boxIdBeingPresented = row.identifiableAttribute.id
+            Button(row.attributeText.attribute.description) {
+                boxIdBeingPresented = row.attributeText.textId
             }
             .padding(5)
             .background(Color(.secondarySystemBackground))
             .cornerRadius(5)
             .buttonStyle(BorderlessButtonStyle())
             Spacer()
-            if let identifiableValue1 = row.identifiableValue1 {
+            if let identifiableValue1 = row.valueText1 {
                 Button(identifiableValue1.value.description) {
-                    boxIdBeingPresented = row.identifiableValue1?.id
+                    boxIdBeingPresented = row.valueText1?.textId
                 }
                 .padding(5)
                 .background(Color(.secondarySystemBackground))
                 .cornerRadius(5)
                 .buttonStyle(BorderlessButtonStyle())
             }
-            if let identifiableValue2 = row.identifiableValue2 {
+            if let identifiableValue2 = row.valueText2 {
                 Button(identifiableValue2.value.description) {
-                    boxIdBeingPresented = row.identifiableValue2?.id
+                    boxIdBeingPresented = row.valueText2?.textId
                 }
                 .padding(5)
                 .background(Color(.secondarySystemBackground))

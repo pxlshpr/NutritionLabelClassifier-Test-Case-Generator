@@ -7,16 +7,16 @@ struct Expectation {
     let double: Double?
     let string: String?
     let unit: NutritionUnit?
-    let columnHeaderType: ColumnHeaderType?
+    let headerType: HeaderType?
 
-    init(attribute: Attribute, value1: Value? = nil, value2: Value? = nil, double: Double? = nil, string: String? = nil, unit: NutritionUnit? = nil, columnHeaderType: ColumnHeaderType? = nil) {
+    init(attribute: Attribute, value1: Value? = nil, value2: Value? = nil, double: Double? = nil, string: String? = nil, unit: NutritionUnit? = nil, headerType: HeaderType? = nil) {
         self.attribute = attribute
         self.value1 = value1
         self.value2 = value2
         self.double = double
         self.string = string
         self.unit = unit
-        self.columnHeaderType = columnHeaderType
+        self.headerType = headerType
     }
 }
 
@@ -31,7 +31,7 @@ extension Expectation {
             }
         }
         /// Column Header when we have both Double and String
-        else if let type = columnHeaderType {
+        else if let type = headerType {
             if type == .per100g {
                 description = type.description
             } else {

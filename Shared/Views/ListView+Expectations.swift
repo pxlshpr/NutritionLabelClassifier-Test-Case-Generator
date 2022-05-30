@@ -26,8 +26,8 @@ extension ClassifierController {
         Attribute.allCases.filter {
             $0.isColumnAttribute
             && shouldAllowAdding($0)
-            && $0 != .columnHeader1Size
-            && $0 != .columnHeader2Size
+            && $0 != .header1Size
+            && $0 != .header2Size
         }
     }
     
@@ -43,19 +43,19 @@ extension ClassifierController {
         unusedNutrientAttributes.count > 0 || nutrientExpectations.count > 0
     }
     
-    var availableColumnHeaderTypes: [ColumnHeaderType] {
-        ColumnHeaderType.allCases.filter { type in
+    var availableColumnHeaderTypes: [HeaderType] {
+        HeaderType.allCases.filter { type in
             guard let output = classifierOutput else {
                 return false
             }
-            if let columnHeader1Type = output.nutrients.columnHeader1Type, type == columnHeader1Type {
+            if let header1Type = output.nutrients.header1Type, type == header1Type {
                 return false
             }
-            if let columnHeader2Type = output.nutrients.columnHeader2Type, type == columnHeader2Type {
+            if let header2Type = output.nutrients.header2Type, type == header2Type {
                 return false
             }
             return !expectations.contains(where: {
-                if let columnHeaderType = $0.columnHeaderType, type == columnHeaderType {
+                if let headerType = $0.headerType, type == headerType {
                     return true
                 }
                 return false

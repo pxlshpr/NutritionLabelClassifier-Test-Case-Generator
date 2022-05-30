@@ -238,18 +238,18 @@ extension ClassifierController {
             for: image, inContentSize: self.contentSize)
                 
         let arrayOfRecognizedTexts = [recognizedTextsWithLC, recognizedTextsWithoutLC]
-        let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: arrayOfRecognizedTexts)
+        let observationsDataFrame = NutritionLabelClassifier(arrayOfRecognizedTexts: arrayOfRecognizedTexts).dataFrameOfObservations()
         let classifierOutput = NutritionLabelClassifier.classify(arrayOfRecognizedTexts)
         
         var boxes: [Box] = []
         for recognizedText in recognizedTextsWithLC {
-            boxes.append(Box(recognizedTextWithLC: recognizedText, nutrientsDataFrame: nutrientsDataFrame))
+            boxes.append(Box(recognizedTextWithLC: recognizedText, nutrientsDataFrame: observationsDataFrame))
         }
         for recognizedText in recognizedTextsWithoutLC {
             if let box = boxes.first(where: { $0.rect == recognizedText.rect }) {
                 box.recognizedTextWithoutLC = recognizedText
             } else {
-                boxes.append(Box(recognizedTextWithoutLC: recognizedText, nutrientsDataFrame: nutrientsDataFrame))
+                boxes.append(Box(recognizedTextWithoutLC: recognizedText, nutrientsDataFrame: observationsDataFrame))
             }
         }
         

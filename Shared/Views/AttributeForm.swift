@@ -8,7 +8,7 @@ struct AttributeForm: View {
     
     @State var attribute: Attribute
 
-    @State var columnHeaderType: SelectionOption
+    @State var headerType: SelectionOption
     @State var columnHeaderName: String = ""
     @State var showColumnNameField: Bool = false
 
@@ -24,10 +24,10 @@ struct AttributeForm: View {
     init(attribute: Attribute) {
         _attribute = State(initialValue: attribute)
         if let type = ClassifierController.shared.availableColumnHeaderTypes.first {
-            _columnHeaderType = State(initialValue: type)
+            _headerType = State(initialValue: type)
             _showColumnNameField = State(initialValue: type != .per100g)
         } else {
-            _columnHeaderType = State(initialValue: ColumnHeaderType.per100g)
+            _headerType = State(initialValue: HeaderType.per100g)
         }
     }
     
@@ -87,10 +87,10 @@ struct AttributeForm: View {
                 guard let double = Double(doubleString) else { return }
                 expectation = Expectation(attribute: attribute, double: double)
             } else {
-                guard let type = columnHeaderType as? ColumnHeaderType else { return }
+                guard let type = headerType as? HeaderType else { return }
                 expectation = Expectation(attribute: attribute,
                                           string: columnHeaderName,
-                                          columnHeaderType: type)
+                                          headerType: type)
             }
         }
         else if attribute.expectsDouble {
@@ -130,7 +130,7 @@ struct AttributeForm: View {
             if attribute == .primaryColumnIndex {
                 return !doubleString.isEmpty && Double(doubleString) != nil
             }
-            guard let type = columnHeaderType as? ColumnHeaderType else { return false }
+            guard let type = headerType as? HeaderType else { return false }
             if type == .perCustomSize {
                 return !columnHeaderName.isEmpty
             } else {
@@ -197,14 +197,14 @@ struct AttributeForm: View {
         Section {
             Field(label: "Type",
                   units: .constant(ClassifierController.shared.availableColumnHeaderTypes),
-                  selectedUnit: $columnHeaderType,
+                  selectedUnit: $headerType,
                   selectorStyle: .prominent,
                   contentProvider: self)
             { selection in
-                guard let type = selection as? ColumnHeaderType else { return }
+                guard let type = selection as? HeaderType else { return }
                 showColumnNameField = type != .per100g
             }
-            if showColumnNameField, let type = columnHeaderType as? ColumnHeaderType {
+            if showColumnNameField, let type = headerType as? HeaderType {
                 Field(label: type.stringFieldName, value: $columnHeaderName)
                     .autocapitalization(.none)
             }
@@ -264,7 +264,7 @@ extension AttributeForm: FieldContentProvider {
     }
 }
 
-extension ColumnHeaderType: SelectionOption {
+extension HeaderType: SelectionOption {
     public var optionId: String {
         "\(rawValue)"
     }
