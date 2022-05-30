@@ -15,7 +15,7 @@ class ClassifierController: NSObject, ObservableObject {
     @Published var pickedImage: UIImage? = nil
     @Published var isPresentingImagePicker = false
     @Published var isPresentingList: Bool = false
-    @Published var listTypeBeingPresented: ListType = .output
+    @Published var listTypeBeingPresented: ListType = .observations
 
     @Published var focusedBox: Box? = nil
 
@@ -32,10 +32,10 @@ class ClassifierController: NSObject, ObservableObject {
     var recognizedTextsWithoutLC: [RecognizedText] = []
 
     @Published var boxes: [Box] = []
-    @Published var boxesToDisplay: [Box] = []
     @Published var filteredBoxes: [Box] = []
     @Published var classifierOutput: Output? = nil
-    @Published var outputAttributeStatuses: [Attribute: BoxStatus] = [:]
+    @Published var observations: [Observation] = []
+//    @Published var outputAttributeStatuses: [Attribute: ObservationStatus] = [:]
     
     @Published var expectations: [Expectation] = []
 //    @Published var expectedAttributes: [Attribute: AttributeRow] = [:]
@@ -48,20 +48,22 @@ class ClassifierController: NSObject, ObservableObject {
         }
     }
     
-    @Published var statusFilter: BoxStatus? = nil {
+    @Published var statusFilter: ObservationStatus? = nil {
         didSet {
             setFilteredBoxes()
         }
     }
     
-    var status: BoxStatus {
-        guard outputAttributeStatuses.count > 0 else { return .unmarked }
-        for status in outputAttributeStatuses.values {
-            if status == .invalid {
-                return .unmarked
-            }
-        }
-        return .valid
+    var status: ObservationStatus {
+        //TODO:
+//        guard outputAttributeStatuses.count > 0 else { return .unmarked }
+//        for status in outputAttributeStatuses.values {
+//            if status == .invalid {
+//                return .unmarked
+//            }
+//        }
+//        return .valid
+        return .unmarked
     }
     var contentSize: CGSize = .zero
     var observationsWithLC: [VNRecognizedTextObservation] = []
@@ -69,9 +71,25 @@ class ClassifierController: NSObject, ObservableObject {
 }
 
 extension ClassifierController {
+
+    var containsNutrientObservations: Bool {
+        observations.contains { $0.attribute.isNutrientAttribute }
+    }
     
-    var hasAnyColumnHeaders: Bool {
-        return false
+    var nutrientObservations: [Observation] {
+        observations.filter { $0.attribute.isNutrientAttribute }
+    }
+
+    var servingObservations: [Observation] {
+        observations.filter { $0.attribute.isServingAttribute }
+    }
+
+    var headerObservations: [Observation] {
+        observations.filter { $0.attribute.isHeaderAttribute }
+    }
+
+    var containsHeaderObservations: Bool {
+        observations.contains { $0.attribute.isHeaderAttribute }
     }
 
     func containsExpectation(for attribute: Attribute) -> Bool {
@@ -79,14 +97,15 @@ extension ClassifierController {
     }
     
     func shouldAllowAdding(_ attribute: Attribute) -> Bool {
-        if containsOutputAttributeFor(attribute) {
-            if let status = outputAttributeStatuses[attribute] {
-                return status == .invalid && !containsExpectation(for: attribute)
-            } else {
-                return false
-            }
-        }
-        return !containsExpectation(for: attribute)
+        !observations.contains(where: { $0.attribute == attribute && $0.status != .invalid })
+//        if containsOutputAttributeFor(attribute) {
+//            if let status = outputAttributeStatuses[attribute] {
+//                return status == .invalid && !containsExpectation(for: attribute)
+//            } else {
+//                return false
+//            }
+//        }
+//        return !containsExpectation(for: attribute)
     }
     
     func containsOutputAttributeFor(_ attribute: Attribute) -> Bool {
@@ -111,13 +130,14 @@ extension ClassifierController {
     }
     
     func focus(on box: Box) {
-        guard let image = pickedImage else { return }
-        
         focusedBox = box
-        
-        /// Send zoom notification
+        sendZoomNotificationToFocusAround(box.boundingBoxIncludingRelatedFields)
+    }
+    
+    func sendZoomNotificationToFocusAround(_ rect: CGRect) {
+        guard let image = pickedImage else { return }
         let userInfo: [String: Any] = [
-            Notification.Keys.boundingBox: box.boundingBoxIncludingRelatedFields,
+            Notification.Keys.boundingBox: rect,
             Notification.Keys.imageSize: image.size,
         ]
         NotificationCenter.default.post(name: .scrollZoomableScrollViewToRect, object: nil, userInfo: userInfo)
@@ -147,16 +167,20 @@ extension ClassifierController {
         boxes = []
         filteredBoxes = []
         classifierOutput = nil
-        outputAttributeStatuses = [:]
+        observations = []
+//        outputAttributeStatuses = [:]
         expectations = []
 //        expectedAttributes = [:]
     }
     
     func validateAll() {
-        guard let output = classifierOutput else { return }
-        for attribute in output.nutrients.rows.map({$0.attribute}) {
-            outputAttributeStatuses[attribute] = .valid
+        for i in observations.indices {
+            observations[i].status = .valid
         }
+//        guard let output = classifierOutput else { return }
+//        for attribute in output.nutrients.rows.map({$0.attribute}) {
+//            outputAttributeStatuses[attribute] = .valid
+//        }
     }
     
     var containsServingAttributes: Bool {
@@ -175,7 +199,7 @@ extension ClassifierController {
             self.recognizeTextsInImage(image)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.listTypeBeingPresented = .output
+            self.listTypeBeingPresented = .observations
             self.statusFilter = nil
             self.typeFilter = nil
             self.isPresentingList = true
@@ -253,6 +277,8 @@ extension ClassifierController {
             }
         }
         
+        let observations = classifierOutput.observations
+        
         /// Remove boxes that have no recognized text (either with or without lanugage correction)
         boxes = boxes.filter {
             !$0.cellTitle.isEmpty
@@ -262,9 +288,27 @@ extension ClassifierController {
             self.boxes = boxes
             self.filteredBoxes = boxes
             self.classifierOutput = classifierOutput
+            self.observations = observations
         }
     }
 
+}
+
+extension Output {
+    var observations: [Observation] {
+        
+        var observations: [Observation] = []
+        for nutrient in nutrients.rows {
+            let observation = Observation(
+                attributeText: nutrient.attributeText,
+                value1Text: nutrient.valueText1,
+                value2Text: nutrient.valueText2
+            )
+            observations.append(observation)
+        }
+
+        return observations
+    }
 }
 
 extension ClassifierController: UIDocumentPickerDelegate {

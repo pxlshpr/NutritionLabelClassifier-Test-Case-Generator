@@ -10,8 +10,8 @@
 		E229AB252840D14D00F3A1EB /* Box+Related.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB242840D14D00F3A1EB /* Box+Related.swift */; };
 		E229AB262840D14D00F3A1EB /* Box+Related.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB242840D14D00F3A1EB /* Box+Related.swift */; };
 		E229AB292841228500F3A1EB /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = E229AB282841228500F3A1EB /* Introspect */; };
-		E229AB2B28412AC300F3A1EB /* AttributeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB2A28412AC300F3A1EB /* AttributeView.swift */; };
-		E229AB2C28412AC300F3A1EB /* AttributeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB2A28412AC300F3A1EB /* AttributeView.swift */; };
+		E229AB2B28412AC300F3A1EB /* ObservationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB2A28412AC300F3A1EB /* ObservationView.swift */; };
+		E229AB2C28412AC300F3A1EB /* ObservationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB2A28412AC300F3A1EB /* ObservationView.swift */; };
 		E229AB2E28414DEA00F3A1EB /* ListView+Expectations.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB2D28414DEA00F3A1EB /* ListView+Expectations.swift */; };
 		E229AB2F28414DEA00F3A1EB /* ListView+Expectations.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB2D28414DEA00F3A1EB /* ListView+Expectations.swift */; };
 		E229AB312841FAF100F3A1EB /* AttributeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB302841FAF100F3A1EB /* AttributeForm.swift */; };
@@ -24,6 +24,8 @@
 		E229AB3E2842A9EC00F3A1EB /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = E229AB3D2842A9EC00F3A1EB /* Zip */; };
 		E229AB402842B0DC00F3A1EB /* ImageCompare.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB3F2842B0DC00F3A1EB /* ImageCompare.swift */; };
 		E229AB412842B0DC00F3A1EB /* ImageCompare.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB3F2842B0DC00F3A1EB /* ImageCompare.swift */; };
+		E229AB43284537CC00F3A1EB /* Observation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB42284537CC00F3A1EB /* Observation.swift */; };
+		E229AB44284537CC00F3A1EB /* Observation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB42284537CC00F3A1EB /* Observation.swift */; };
 		E29BE0ED283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DA283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld */; };
 		E29BE0EE283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DA283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld */; };
 		E29BE0EF283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DC283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift */; };
@@ -58,12 +60,13 @@
 
 /* Begin PBXFileReference section */
 		E229AB242840D14D00F3A1EB /* Box+Related.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Box+Related.swift"; sourceTree = "<group>"; };
-		E229AB2A28412AC300F3A1EB /* AttributeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeView.swift; sourceTree = "<group>"; };
+		E229AB2A28412AC300F3A1EB /* ObservationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservationView.swift; sourceTree = "<group>"; };
 		E229AB2D28414DEA00F3A1EB /* ListView+Expectations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ListView+Expectations.swift"; sourceTree = "<group>"; };
 		E229AB302841FAF100F3A1EB /* AttributeForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeForm.swift; sourceTree = "<group>"; };
 		E229AB332842096900F3A1EB /* Expectation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Expectation.swift; sourceTree = "<group>"; };
 		E229AB362842226800F3A1EB /* ClassifierController+Share.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClassifierController+Share.swift"; sourceTree = "<group>"; };
 		E229AB3F2842B0DC00F3A1EB /* ImageCompare.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCompare.swift; sourceTree = "<group>"; };
+		E229AB42284537CC00F3A1EB /* Observation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observation.swift; sourceTree = "<group>"; };
 		E29BE0DB283B64AC00B20427 /* Shared.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Shared.xcdatamodel; sourceTree = "<group>"; };
 		E29BE0DC283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionLabelClassifier_Test_Case_GeneratorApp.swift; sourceTree = "<group>"; };
 		E29BE0DD283B64AC00B20427 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
@@ -166,7 +169,7 @@
 				E29BE0DD283B64AC00B20427 /* ImageView.swift */,
 				E29BE120283CF83E00B20427 /* ListView.swift */,
 				E229AB2D28414DEA00F3A1EB /* ListView+Expectations.swift */,
-				E229AB2A28412AC300F3A1EB /* AttributeView.swift */,
+				E229AB2A28412AC300F3A1EB /* ObservationView.swift */,
 				E229AB302841FAF100F3A1EB /* AttributeForm.swift */,
 				E29BE11D283CF74100B20427 /* ZoomableScrollView.swift */,
 			);
@@ -204,6 +207,7 @@
 				E29BE108283B76F600B20427 /* Box.swift */,
 				E229AB242840D14D00F3A1EB /* Box+Related.swift */,
 				E229AB332842096900F3A1EB /* Expectation.swift */,
+				E229AB42284537CC00F3A1EB /* Observation.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -328,13 +332,14 @@
 				E229AB2E28414DEA00F3A1EB /* ListView+Expectations.swift in Sources */,
 				E29BE0EF283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift in Sources */,
 				E29BE112283B7D2D00B20427 /* BoxDetailsView.swift in Sources */,
+				E229AB43284537CC00F3A1EB /* Observation.swift in Sources */,
 				E29BE11B283CF71200B20427 /* BoxStatus.swift in Sources */,
 				E229AB342842096900F3A1EB /* Expectation.swift in Sources */,
 				E29BE0ED283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */,
 				E229AB312841FAF100F3A1EB /* AttributeForm.swift in Sources */,
 				E229AB372842226800F3A1EB /* ClassifierController+Share.swift in Sources */,
 				E229AB402842B0DC00F3A1EB /* ImageCompare.swift in Sources */,
-				E229AB2B28412AC300F3A1EB /* AttributeView.swift in Sources */,
+				E229AB2B28412AC300F3A1EB /* ObservationView.swift in Sources */,
 				E29BE118283CF70C00B20427 /* BoxType.swift in Sources */,
 				E229AB252840D14D00F3A1EB /* Box+Related.swift in Sources */,
 				E29BE115283CF6FF00B20427 /* Notification.swift in Sources */,
@@ -354,13 +359,14 @@
 				E229AB2F28414DEA00F3A1EB /* ListView+Expectations.swift in Sources */,
 				E29BE0F0283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift in Sources */,
 				E29BE113283B7D2D00B20427 /* BoxDetailsView.swift in Sources */,
+				E229AB44284537CC00F3A1EB /* Observation.swift in Sources */,
 				E29BE11C283CF71200B20427 /* BoxStatus.swift in Sources */,
 				E229AB352842096900F3A1EB /* Expectation.swift in Sources */,
 				E29BE0EE283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */,
 				E229AB322841FAF100F3A1EB /* AttributeForm.swift in Sources */,
 				E229AB382842226800F3A1EB /* ClassifierController+Share.swift in Sources */,
 				E229AB412842B0DC00F3A1EB /* ImageCompare.swift in Sources */,
-				E229AB2C28412AC300F3A1EB /* AttributeView.swift in Sources */,
+				E229AB2C28412AC300F3A1EB /* ObservationView.swift in Sources */,
 				E29BE119283CF70C00B20427 /* BoxType.swift in Sources */,
 				E229AB262840D14D00F3A1EB /* Box+Related.swift in Sources */,
 				E29BE116283CF6FF00B20427 /* Notification.swift in Sources */,

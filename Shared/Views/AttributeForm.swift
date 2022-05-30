@@ -82,10 +82,9 @@ struct AttributeForm: View {
 
             expectation = Expectation(attribute: attribute, value1: value1, value2: value2)
         }
-        else if attribute.isHeaderAttribute {
+        else if attribute.expectsHeaderType {
             guard let type = headerType as? HeaderType else { return }
             expectation = Expectation(attribute: attribute,
-                                      string: columnHeaderName,
                                       headerType: type)
         }
         else if attribute.expectsDouble {
@@ -122,7 +121,6 @@ struct AttributeForm: View {
             }
             return isValid
         } else if attribute.isHeaderAttribute {
-            guard let type = headerType as? HeaderType else { return false }
             return true
         } else if attribute.expectsDouble {
             return !doubleString.isEmpty && Double(doubleString) != nil
@@ -185,12 +183,8 @@ struct AttributeForm: View {
                   selectorStyle: .prominent,
                   contentProvider: self)
             { selection in
-                guard let type = selection as? HeaderType else { return }
-                showColumnNameField = type != .per100g
-            }
-            if showColumnNameField, let type = headerType as? HeaderType {
-                Field(label: type.stringFieldName, value: $columnHeaderName)
-                    .autocapitalization(.none)
+//                guard let type = selection as? HeaderType else { return }
+//                showColumnNameField = type != .per100g
             }
         }
     }

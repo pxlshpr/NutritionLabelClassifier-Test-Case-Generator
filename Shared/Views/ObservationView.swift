@@ -15,49 +15,13 @@ extension Output {
         }
     }
 }
-struct AttributeView: View {
+
+struct ObservationView: View {
     
     @Environment(\.dismiss) var dismiss
     
-//    @State var row: Output.Nutrients.Row
-    
-    @State var attribute: Attribute
-    @State var value1: Value?
-    @State var value2: Value?
-    @State var double: Double?
-    @State var string: String?
-    @State var unit: NutritionUnit?
-    @State var headerType: HeaderType?
-
-    init(attribute: Attribute) {
-        _attribute = State(initialValue: attribute)
+    @State var observation: Observation
         
-        guard let output = ClassifierController.shared.classifierOutput else {
-            _value1 = State(initialValue: nil)
-            _value2 = State(initialValue: nil)
-            _double = State(initialValue: nil)
-            _string = State(initialValue: nil)
-            _unit = State(initialValue: nil)
-            _headerType = State(initialValue: nil)
-            return
-        }
-        let value1 = output.nutrients.rows.first(where: { $0.attribute == attribute })?.value1
-        let value2 = output.nutrients.rows.first(where: { $0.attribute == attribute })?.value2
-        let double: Double?
-        if attribute.expectsDouble {
-            double = output.doubleFor(attribute)
-        } else {
-            double = nil
-        }
-
-        _value1 = State(initialValue: value1)
-        _value2 = State(initialValue: value2)
-        _double = State(initialValue: double)
-        _string = State(initialValue: string)
-        _unit = State(initialValue: unit)
-        _headerType = State(initialValue: headerType)
-    }
-    
     var body: some View {
         NavigationView {
             Form {
@@ -81,44 +45,44 @@ struct AttributeView: View {
             HStack {
                 Text("Name").foregroundColor(.secondary)
                 Spacer()
-                Text(attribute.description)
+                Text(observation.attribute.description)
             }
-            if let value1 = value1 {
+            if let value1 = observation.value1 {
                 HStack {
                     Text("Value 1").foregroundColor(.secondary)
                     Spacer()
                     Text(value1.description)
                 }
             }
-            if let value2 = value2 {
+            if let value2 = observation.value2 {
                 HStack {
                     Text("Value 2").foregroundColor(.secondary)
                     Spacer()
                     Text(value2.description)
                 }
             }
-            if let double = double {
+            if let double = observation.double {
                 HStack {
                     Text("Double").foregroundColor(.secondary)
                     Spacer()
                     Text(double.clean)
                 }
             }
-            if let string = string {
+            if let string = observation.string {
                 HStack {
                     Text("String").foregroundColor(.secondary)
                     Spacer()
                     Text(string)
                 }
             }
-            if let unit = unit {
+            if let unit = observation.unit {
                 HStack {
                     Text("Unit").foregroundColor(.secondary)
                     Spacer()
                     Text(unit.description)
                 }
             }
-            if let headerType = headerType {
+            if let headerType = observation.headerType {
                 HStack {
                     Text("Column Header Type").foregroundColor(.secondary)
                     Spacer()
@@ -156,6 +120,7 @@ struct AttributeView: View {
     }
     
     var nextRow: Output.Nutrients.Row? {
+        ClassifierController.shared.classifierOutput
         guard let output = ClassifierController.shared.classifierOutput,
               let rowIndex = rowIndex,
               rowIndex < output.nutrients.rows.count - 1
@@ -210,7 +175,12 @@ struct AttributeView: View {
     var bottomToolbarContent: some ToolbarContent {
         ToolbarItemGroup(placement: .bottomBar) {
             Button {
-                ClassifierController.shared.outputAttributeStatuses[attribute] = .invalid
+                guard let index = ClassifierController.shared.observations.firstIndex(where: { $0.attribute == observation.attribute}) else {
+                    return
+                }
+                ClassifierController.shared.observations[index].status = .invalid
+                
+                observation.status = .invalid
                 moveToNextRowOrDismiss()
             } label: {
                 Image(systemName: "xmark")
@@ -218,7 +188,12 @@ struct AttributeView: View {
             }
             Spacer()
             Button {
-                ClassifierController.shared.outputAttributeStatuses[attribute] = .valid
+                guard let index = ClassifierController.shared.observations.firstIndex(where: { $0.attribute == observation.attribute}) else {
+                    return
+                }
+                ClassifierController.shared.observations[index].status = .valid
+                
+                observation.status = .valid
                 moveToNextRowOrDismiss()
             } label: {
                 Image(systemName: "checkmark")

@@ -1,6 +1,6 @@
 import SwiftUI
 
-enum BoxStatus: Int, CaseIterable {
+enum ObservationStatus: Int, CaseIterable {
     case unmarked
     case valid
     case invalid

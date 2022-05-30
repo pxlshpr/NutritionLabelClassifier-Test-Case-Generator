@@ -185,6 +185,24 @@ extension ClassifierController {
         return "NutritionClassifier-TestCases-\(dateFormatter.string(from: Date()))\(amPm)"
     }
 
+    func observation(for attribute: Attribute) -> Observation? {
+        observations.first(where: { $0.attribute == attribute })
+    }
+    
+    func observationIsValid(for attribute: Attribute) -> Bool {
+        guard let observation = observation(for: attribute) else { return false }
+        return observation.status == .valid
+    }
+    
+    var containsServingObservations: Bool {
+        observations.contains {
+            $0.attribute == .servingAmount
+            || $0.attribute == .servingUnit
+            || $0.attribute == .servingUnitSize
+            || $0.attribute == .servingEquivalentAmount
+            || $0.attribute == .servingsPerContainerAmount
+        }
+    }
     
     func expectationsDataFrame() -> DataFrame {
         /// Create the `DataFrame`
@@ -199,9 +217,12 @@ extension ClassifierController {
         /// Add each output element marked as `valid`
         if let rows = classifierOutput?.nutrients.rows {
             for row in rows {
-                guard outputAttributeStatuses[row.attribute] == .valid else {
+                guard observation(for: row.attribute)?.status == .valid else {
                     continue
                 }
+//                guard outputAttributeStatuses[row.attribute] == .valid else {
+//                    continue
+//                }
                 attributeCells.append(row.attribute.rawValue)
                 value1Cells.append(row.value1?.description)
                 value2Cells.append(row.value2?.description)
@@ -227,85 +248,76 @@ extension ClassifierController {
         }
 
         /// servingAmount
-        if outputAttributeStatuses[.servingAmount] == .valid, let double = classifierOutput?.serving?.amount {
+        if observationIsValid(for: .servingAmount), let double = classifierOutput?.serving?.amount {
             addDouble(double, for: .servingAmount)
         }
 
         /// servingUnit
-        if outputAttributeStatuses[.servingUnit] == .valid, let unit = classifierOutput?.serving?.unit {
+        if observationIsValid(for: .servingUnit), let unit = classifierOutput?.serving?.unit {
             addString(unit.description, for: .servingUnit)
         }
 
         /// servingUnitSize
-        if outputAttributeStatuses[.servingUnitSize] == .valid, let string = classifierOutput?.serving?.unitName {
+        if observationIsValid(for: .servingUnitSize), let string = classifierOutput?.serving?.unitName {
             addString(string, for: .servingUnitSize)
         }
 
         /// servingEquivalentAmount
-        if outputAttributeStatuses[.servingEquivalentAmount] == .valid, let double = classifierOutput?.serving?.equivalentSize?.amount {
+        if observationIsValid(for: .servingEquivalentAmount), let double = classifierOutput?.serving?.equivalentSize?.amount {
             addDouble(double, for: .servingEquivalentAmount)
         }
 
         /// servingEquivalentUnit
-        if outputAttributeStatuses[.servingEquivalentUnit] == .valid, let unit = classifierOutput?.serving?.equivalentSize?.unit {
+        if observationIsValid(for: .servingEquivalentUnit), let unit = classifierOutput?.serving?.equivalentSize?.unit {
             addString(unit.description, for: .servingEquivalentUnit)
         }
 
         /// servingEquivalentUnitSize
-        if outputAttributeStatuses[.servingEquivalentUnitSize] == .valid, let double = classifierOutput?.serving?.equivalentSize?.sizeName {
+        if observationIsValid(for: .servingEquivalentUnitSize), let double = classifierOutput?.serving?.equivalentSize?.sizeName {
             addString(double, for: .servingEquivalentUnitSize)
         }
 
         /// servingsPerContainerAmount
-        if outputAttributeStatuses[.servingsPerContainerAmount] == .valid, let double = classifierOutput?.serving?.perContainer?.amount {
+        if observationIsValid(for: .servingsPerContainerAmount), let double = classifierOutput?.serving?.perContainer?.amount {
             addDouble(double, for: .servingsPerContainerAmount)
         }
 
         /// servingsPerContainerName
-        if outputAttributeStatuses[.servingsPerContainerName] == .valid, let string = classifierOutput?.serving?.perContainer?.name {
+        if observationIsValid(for: .servingsPerContainerName), let string = classifierOutput?.serving?.perContainer?.name {
             addString(string, for: .servingsPerContainerName)
         }
 
-        //TODO: Add new header types
-        /// header1Type
-        if outputAttributeStatuses[.headerType1] == .valid, let type = classifierOutput?.nutrients.headerText1?.type {
+        if observationIsValid(for: .headerType1), let type = classifierOutput?.nutrients.headerText1?.type {
             addDouble(Double(type.rawValue), for: .headerType1)
         }
-        if outputAttributeStatuses[.headerType2] == .valid, let type = classifierOutput?.nutrients.headerText2?.type {
+        if observationIsValid(for: .headerType2), let type = classifierOutput?.nutrients.headerText2?.type {
             addDouble(Double(type.rawValue), for: .headerType2)
         }
         
         if let serving = classifierOutput?.nutrients.headerText1?.serving ?? classifierOutput?.nutrients.headerText2?.serving {
-            if outputAttributeStatuses[.headerServingAmount] == .valid, let amount = serving.amount {
+            if observationIsValid(for: .headerServingAmount), let amount = serving.amount {
                 addDouble(amount, for: .headerServingAmount)
             }
-            if outputAttributeStatuses[.headerServingUnit] == .valid, let unit = serving.unit {
+            if observationIsValid(for: .headerServingUnit), let unit = serving.unit {
                 addString(unit.description, for: .headerServingUnit)
             }
-            if outputAttributeStatuses[.headerServingUnitSize] == .valid, let unitName = serving.unitName {
+            if observationIsValid(for: .headerServingUnitSize), let unitName = serving.unitName {
                 addString(unitName, for: .headerServingUnitSize)
             }
-            //TODO: Equivalent unit, should we check if it exists first?
-
+            
+            if let equivalentSize = serving.equivalentSize {
+                if observationIsValid(for: .headerServingEquivalentAmount) {
+                    addDouble(equivalentSize.amount, for: .headerServingEquivalentAmount)
+                }
+                if observationIsValid(for: .headerServingEquivalentUnit), let unit = equivalentSize.unit {
+                    addString(unit.description, for: .headerServingEquivalentUnit)
+                }
+                if observationIsValid(for: .headerServingEquivalentUnitSize), let unitName = equivalentSize.unitName {
+                    addString(unitName, for: .headerServingEquivalentUnitSize)
+                }
+            }
         }
         
-//        /// header1Size
-//        if outputAttributeStatuses[.header1Size] == .valid, let string = classifierOutput?.nutrients.header1UnitName {
-//            addString(string, for: .header1Size)
-//        }
-//        /// header2Type
-//        if outputAttributeStatuses[.header2Type] == .valid, let type = classifierOutput?.nutrients.header2Type {
-//            addDouble(Double(type.rawValue), for: .header2Type)
-//        }
-//        /// header2Size
-//        if outputAttributeStatuses[.header2Size] == .valid, let string = classifierOutput?.nutrients.header2UnitName {
-//            addString(string, for: .header2Size)
-//        }
-//        /// primaryColumnIndex
-//        if outputAttributeStatuses[.primaryColumnIndex] == .valid, let int = classifierOutput?.primaryColumnIndex {
-//            addDouble(Double(int), for: .primaryColumnIndex)
-//        }
-//
         func addValues(value1: Value? = nil, value2: Value? = nil, for attribute: Attribute) {
             attributeCells.append(attribute.rawValue)
             value1Cells.append(value1?.description)
@@ -317,14 +329,10 @@ extension ClassifierController {
         /// Add all the added expectations
         for expectation in expectations {
             
-            //TODO: Handle header types
-//            if let headerType = expectation.headerType {
-//                addDouble(Double(headerType.rawValue), for: expectation.attribute)
-//                if let string = expectation.string {
-//                    addString(string, for: expectation.attribute == .header1Type ? .header1Size : .header2Size)
-//                }
-//                continue
-//            }
+            if let headerType = expectation.headerType {
+                addDouble(Double(headerType.rawValue), for: expectation.attribute)
+                continue
+            }
 
             attributeCells.append(expectation.attribute.rawValue)
             value1Cells.append(expectation.value1?.description)

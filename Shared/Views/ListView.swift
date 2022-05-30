@@ -4,7 +4,7 @@ import NutritionLabelClassifier
 import Introspect
 
 enum ListType: String, CaseIterable {
-    case output = "Classifier Output"
+    case observations = "Observations"
     case expectations = "Expectations"
     case texts = "Recognized Texts"
 }
@@ -13,18 +13,12 @@ class ListViewModel: ObservableObject {
     @Published var imagePickerDelegate: ImagePickerView.Delegate? = nil
 }
 
-extension ListView {
-    func attributeView(for attribute: Attribute) -> some View {
-        AttributeView(attribute: attribute)
-    }
-}
-
 struct ListView: View {
     
     @ObservedObject var classifierController: ClassifierController
     @State var isPresentingImagePicker = false
     
-    @State var attributeBeingPresented: Attribute? = nil
+    @State var observationBeingPresented: Observation? = nil
     @State var boxIdBeingPresented: UUID? = nil
     
     @StateObject var listViewModel = ListViewModel()
@@ -55,13 +49,13 @@ struct ListView: View {
         .onAppear {
             setImagePickerDelegate()
         }
-        .bottomSheet(item: $attributeBeingPresented,
+        .bottomSheet(item: $observationBeingPresented,
                      largestUndimmedDetentIdentifier: .medium,
                      prefersGrabberVisible: true,
                      prefersScrollingExpandsWhenScrolledToEdge: false)
         {
-            if let attribute = attributeBeingPresented {
-                attributeView(for: attribute)
+            if let observation = observationBeingPresented {
+                ObservationView(observation: observation)
             }
         }
         .bottomSheet(item: $newAttribute,
@@ -124,14 +118,14 @@ struct ListView: View {
                     Image(systemName: "\(classifierController.status.systemImage).square")
                         .foregroundColor(classifierController.status.color)
                 }
-                .opacity(classifierController.listTypeBeingPresented == .output ? 1.0 : 0.0)
+                .opacity(classifierController.listTypeBeingPresented == .observations ? 1.0 : 0.0)
             }
         }
     }
     
     var listTypeSegmentedButton: some View {
         Picker("", selection: $classifierController.listTypeBeingPresented) {
-            Text("Output").tag(ListType.output)
+            Text("Output").tag(ListType.observations)
             Text("Expectations").tag(ListType.expectations)
             Text("Texts").tag(ListType.texts)
         }
@@ -183,7 +177,7 @@ struct ListView: View {
         .listStyle(.plain)
     }
     
-    var classifierOutputList: some View {
+    var observationsList: some View {
         List {
             servingSection
             columnHeadersSection
@@ -194,38 +188,38 @@ struct ListView: View {
     
     @ViewBuilder
     var servingSection: some View {
-        if let output = classifierController.classifierOutput, output.containsServingAttributes {
+        if classifierController.containsServingObservations {
             Section("Serving") {
-                servingAmountField(from: output)
-                servingsPerContainerAmount(from: output)
+                servingAmountField
+                servingsPerContainerAmount
             }
         }
     }
     
     @ViewBuilder
-    func servingAmountField(from output: Output) -> some View {
-        if let amount = output.serving?.amount {
-            cell(attribute: .servingAmount, value: amount.clean)
+    var servingAmountField: some View {
+        if let observation = classifierController.observation(for: .servingAmount) {
+            cell(observation: observation, value: observation.double?.clean ?? "")
         }
     }
     
     @ViewBuilder
-    func servingsPerContainerAmount(from output: Output) -> some View {
-        if let amount = output.serving?.perContainer?.amount {
-            cell(attribute: .servingsPerContainerAmount, value: amount.clean)
+    var servingsPerContainerAmount: some View {
+        if let observation = classifierController.observation(for: .servingsPerContainerAmount) {
+            cell(observation: observation, value: observation.double?.clean ?? "")
         }
     }
 
-    func cell(attribute: Attribute, value: String) -> some View {
+    func cell(observation: Observation, value: String) -> some View {
         Button {
-            attributeBeingPresented = attribute
+            observationBeingPresented = observation
         } label: {
             HStack {
-                Text(attribute.description)
+                Text(observation.attribute.description)
                 Spacer()
                 Text(value)
-                Image(systemName: "\(classifierController.outputAttributeStatuses[attribute]?.systemImage ?? "questionmark").square")
-                    .foregroundColor(classifierController.outputAttributeStatuses[attribute]?.color ?? .orange)
+                Image(systemName: "\(observation.status.systemImage).square")
+                    .foregroundColor(observation.status.color)
             }
         }
         .buttonStyle(BorderlessButtonStyle())
@@ -234,7 +228,7 @@ struct ListView: View {
     
     @ViewBuilder
     var columnHeadersSection: some View {
-        if classifierController.hasAnyColumnHeaders {
+        if classifierController.containsHeaderObservations {
             Section("Column Headers") {
             }
         }
@@ -242,10 +236,10 @@ struct ListView: View {
 
     @ViewBuilder
     var nutrientsSection: some View {
-        if let output = classifierController.classifierOutput {
+        if classifierController.containsNutrientObservations {
             Section("Nutrients") {
-                ForEach(output.nutrients.rows, id: \.attribute) { row in
-                    cell(for: row)
+                ForEach(classifierController.nutrientObservations, id: \.attribute) { observation in
+                    cell(forNutrientObservation: observation)
                 }
                 .frame(maxWidth: .infinity)
                 .buttonStyle(BorderlessButtonStyle())
@@ -253,83 +247,28 @@ struct ListView: View {
         }
     }
     
-    func cell(for row: Output.Nutrients.Row) -> some View {
+    @ViewBuilder
+    func cell(forNutrientObservation observation: Observation) -> some View {
         Button {
-            attributeBeingPresented = row.attribute
-            focusOn(row)
+            observationBeingPresented = observation
+            classifierController.sendZoomNotificationToFocusAround(observation.combinedRect)
+//            focusOn(row)
         } label: {
             HStack {
-                Text(row.attributeText.attribute.description)
+                Text(observation.attribute.description)
                 Spacer()
-                if let identifiableValue1 = row.valueText1 {
-                    Text(identifiableValue1.value.description)
+                if let value = observation.value1 {
+                    Text(value.description)
                 }
-                if let identifiableValue2 = row.valueText2 {
+                if let value = observation.value2 {
                     Text("•")
-                    Text(identifiableValue2.value.description)
+                    Text(value.description)
                 }
-                Image(systemName: "\(classifierController.outputAttributeStatuses[row.attribute]?.systemImage ?? "questionmark").square")
-                    .foregroundColor(classifierController.outputAttributeStatuses[row.attribute]?.color ?? .orange)
+                Image(systemName: "\(observation.status.systemImage).square")
+                    .foregroundColor(observation.status.color)
             }
         }
         .buttonStyle(BorderlessButtonStyle())
-    }
-    
-    func cell_legacy(for row: Output.Nutrients.Row) -> some View {
-        HStack {
-            Button(row.attributeText.attribute.description) {
-                boxIdBeingPresented = row.attributeText.textId
-            }
-            .padding(5)
-            .background(Color(.secondarySystemBackground))
-            .cornerRadius(5)
-            .buttonStyle(BorderlessButtonStyle())
-            Spacer()
-            if let identifiableValue1 = row.valueText1 {
-                Button(identifiableValue1.value.description) {
-                    boxIdBeingPresented = row.valueText1?.textId
-                }
-                .padding(5)
-                .background(Color(.secondarySystemBackground))
-                .cornerRadius(5)
-                .buttonStyle(BorderlessButtonStyle())
-            }
-            if let identifiableValue2 = row.valueText2 {
-                Button(identifiableValue2.value.description) {
-                    boxIdBeingPresented = row.valueText2?.textId
-                }
-                .padding(5)
-                .background(Color(.secondarySystemBackground))
-                .cornerRadius(5)
-                .buttonStyle(BorderlessButtonStyle())
-            }
-            Menu {
-                Button {
-                } label: {
-                    Label("Validate", systemImage: "checkmark")
-                }
-                Button(role: .destructive) {
-                } label: {
-                    Label("Invalidate", systemImage: "xmark")
-                }
-            } label: {
-                Image(systemName: "\(BoxStatus.unmarked.systemImage).square")
-                    .foregroundColor(BoxStatus.unmarked.color)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-//                    .simultaneousGesture(TapGesture().onEnded {
-                        toggleFocusOnRow(row)
-                    }
-            }
-//            .contentShape(Rectangle())
-//            .simultaneousGesture(TapGesture().onEnded {
-//                toggleFocusOnRow(row)
-//            })
-            .padding(5)
-            .background(Color(.secondarySystemBackground))
-            .cornerRadius(5)
-            .buttonStyle(BorderlessButtonStyle())
-        }
     }
 
     func focusOn(_ row: Output.Nutrients.Row) {
@@ -355,8 +294,8 @@ struct ListView: View {
                 recognizedTextsList
             case .expectations:
                 expectationsList
-            case .output:
-                classifierOutputList
+            case .observations:
+                observationsList
             }
         }
     }
@@ -414,7 +353,7 @@ extension ClassifierController {
     var filtersMenu: some View {
         if pickedImage != nil {
             Menu {
-                ForEach(BoxStatus.allCases, id: \.self) { status in
+                ForEach(ObservationStatus.allCases, id: \.self) { status in
                     if self.boxes.contains(where: { $0.status == status }) {
                         Button {
                             self.statusFilter = status

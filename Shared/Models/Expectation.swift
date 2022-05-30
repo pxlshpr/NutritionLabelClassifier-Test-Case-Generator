@@ -32,15 +32,7 @@ extension Expectation {
         }
         /// Column Header when we have both Double and String
         else if let type = headerType {
-            if type == .per100g {
-                description = type.description
-            } else {
-                if let string = string, !string.isEmpty {
-                    description = "\(type.description) (\(string))"
-                } else {
-                    description = "\(type.description)"
-                }
-            }
+            description = type.description
         }
         else if let double = double {
             description = "\(double.clean)"

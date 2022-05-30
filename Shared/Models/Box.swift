@@ -19,7 +19,7 @@ class Box: ObservableObject, Identifiable {
     @Published var isFocused: Bool = false
     @Published var isSupplementaryToFocused: Bool = false
     @Published var color: Color
-    @Published var status: BoxStatus = .unmarked
+    @Published var status: ObservationStatus = .unmarked
     
     var expectedAttribute: Attribute? = nil
     var expectedValue1: String? = nil

@@ -143,7 +143,7 @@ struct BoxDetailsView: View {
             Button {
                 markAsValid()
             } label: {
-                Image(systemName: BoxStatus.valid.systemImage)
+                Image(systemName: ObservationStatus.valid.systemImage)
                     .disabled(box.status == .valid)
             }
             Spacer()
@@ -226,7 +226,7 @@ struct BoxDetailsView: View {
             .foregroundColor(box.status.color)
             .id(ClassifierController.shared.refreshBool)
 //        Menu {
-//            ForEach(BoxStatus.allCases.filter({ $0 != .unmarked }), id: \.self) { status in
+//            ForEach(ObservationStatus.allCases.filter({ $0 != .unmarked }), id: \.self) { status in
 //                Button {
 //                    box.status = status
 //                    if let index = classifierController.filteredBoxes.firstIndex(where: { $0.id == box.id }) {
