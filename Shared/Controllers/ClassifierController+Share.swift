@@ -268,9 +268,27 @@ extension ClassifierController {
 
         //TODO: Add new header types
         /// header1Type
-//        if outputAttributeStatuses[.header1Type] == .valid, let type = classifierOutput?.nutrients.header1Type {
-//            addDouble(Double(type.rawValue), for: .header1Type)
-//        }
+        if outputAttributeStatuses[.headerType1] == .valid, let type = classifierOutput?.nutrients.headerText1?.type {
+            addDouble(Double(type.rawValue), for: .headerType1)
+        }
+        if outputAttributeStatuses[.headerType2] == .valid, let type = classifierOutput?.nutrients.headerText2?.type {
+            addDouble(Double(type.rawValue), for: .headerType2)
+        }
+        
+        if let serving = classifierOutput?.nutrients.headerText1?.serving ?? classifierOutput?.nutrients.headerText2?.serving {
+            if outputAttributeStatuses[.headerServingAmount] == .valid, let amount = serving.amount {
+                addDouble(amount, for: .headerServingAmount)
+            }
+            if outputAttributeStatuses[.headerServingUnit] == .valid, let unit = serving.unit {
+                addString(unit.description, for: .headerServingUnit)
+            }
+            if outputAttributeStatuses[.headerServingUnitSize] == .valid, let unitName = serving.unitName {
+                addString(unitName, for: .headerServingUnitSize)
+            }
+            //TODO: Equivalent unit, should we check if it exists first?
+
+        }
+        
 //        /// header1Size
 //        if outputAttributeStatuses[.header1Size] == .valid, let string = classifierOutput?.nutrients.header1UnitName {
 //            addString(string, for: .header1Size)
