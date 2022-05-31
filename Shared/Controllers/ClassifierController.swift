@@ -294,23 +294,6 @@ extension ClassifierController {
 
 }
 
-extension Output {
-    var observations: [Observation] {
-        
-        var observations: [Observation] = []
-        for nutrient in nutrients.rows {
-            let observation = Observation(
-                attributeText: nutrient.attributeText,
-                value1Text: nutrient.valueText1,
-                value2Text: nutrient.valueText2
-            )
-            observations.append(observation)
-        }
-
-        return observations
-    }
-}
-
 extension ClassifierController: UIDocumentPickerDelegate {
     
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
