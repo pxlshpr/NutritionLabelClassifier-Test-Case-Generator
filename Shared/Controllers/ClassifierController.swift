@@ -97,18 +97,13 @@ extension ClassifierController {
     }
     
     func shouldAllowAdding(_ attribute: Attribute) -> Bool {
-        !observations.contains(where: { $0.attribute == attribute && $0.status != .invalid })
-//        if containsOutputAttributeFor(attribute) {
-//            if let status = outputAttributeStatuses[attribute] {
-//                return status == .invalid && !containsExpectation(for: attribute)
-//            } else {
-//                return false
-//            }
-//        }
-//        return !containsExpectation(for: attribute)
+        if let observation = observation(for: attribute) {
+            return observation.status == .invalid && !containsExpectation(for: attribute)
+        }
+        return !containsExpectation(for: attribute)
     }
     
-    func containsOutputAttributeFor(_ attribute: Attribute) -> Bool {
+    func outputContainsAttributeFor(_ attribute: Attribute) -> Bool {
         guard let output = classifierOutput else { return false }
         return output.containsAttribute(attribute)
     }

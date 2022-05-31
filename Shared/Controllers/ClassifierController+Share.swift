@@ -288,10 +288,12 @@ extension ClassifierController {
         }
 
         if observationIsValid(for: .headerType1), let type = classifierOutput?.nutrients.headerText1?.type {
-            addDouble(Double(type.rawValue), for: .headerType1)
+            addString(type.rawValue, for: .headerType1)
+//            addDouble(Double(type.rawValue), for: .headerType1)
         }
         if observationIsValid(for: .headerType2), let type = classifierOutput?.nutrients.headerText2?.type {
-            addDouble(Double(type.rawValue), for: .headerType2)
+            addString(type.rawValue, for: .headerType2)
+//            addDouble(Double(type.rawValue), for: .headerType2)
         }
         
         if let serving = classifierOutput?.nutrients.headerText1?.serving ?? classifierOutput?.nutrients.headerText2?.serving {
@@ -330,7 +332,8 @@ extension ClassifierController {
         for expectation in expectations {
             
             if let headerType = expectation.headerType {
-                addDouble(Double(headerType.rawValue), for: expectation.attribute)
+                addString(headerType.rawValue, for: expectation.attribute)
+//                addDouble(Double(headerType.rawValue), for: expectation.attribute)
                 continue
             }
 

@@ -97,12 +97,7 @@ struct ListView: View {
         ToolbarItemGroup(placement: .principal) {
             HStack {
                 listTypeSegmentedButton
-//                listTypeMenu
                 Spacer()
-//                if classifierController.listTypeBeingPresented == .texts {
-//                    Text(classifierController.filtersDescription)
-//                        .font(.footnote)
-//                }
                 Menu {
                     Button {
                         classifierController.validateAll()
@@ -130,7 +125,6 @@ struct ListView: View {
             Text("Texts").tag(ListType.texts)
         }
         .pickerStyle(.segmented)
-//        .scaledToFit()
         .labelsHidden()
     }
     
@@ -160,6 +154,21 @@ struct ListView: View {
         }
     }
     
+    //MARK: - Lists
+    
+    var list: some View {
+        Group {
+            switch classifierController.listTypeBeingPresented {
+            case .texts:
+                recognizedTextsList
+            case .expectations:
+                expectationsList
+            case .observations:
+                observationsList
+            }
+        }
+    }
+
     var recognizedTextsList: some View {
         List {
             ForEach(BoxType.allCases, id: \.self) { boxType in
@@ -177,14 +186,25 @@ struct ListView: View {
         .listStyle(.plain)
     }
     
+    var expectationsList: some View {
+        List {
+            servingExpectationsSection
+            headerExpectationsSection
+            nutrientExpectationsSection
+        }
+        .listStyle(.plain)
+    }
+
     var observationsList: some View {
         List {
             servingSection
-            columnHeadersSection
+            headersSection
             nutrientsSection
         }
         .listStyle(.plain)
     }
+    
+    //MARK: - Sections
     
     @ViewBuilder
     var servingSection: some View {
@@ -202,6 +222,36 @@ struct ListView: View {
         }
     }
     
+    @ViewBuilder
+    var headersSection: some View {
+        if classifierController.containsHeaderObservations {
+            Section("Column Headers") {
+                cell(for: .headerType1)
+                cell(for: .headerType2)
+                cell(for: .headerServingAmount)
+                cell(for: .headerServingUnit)
+                cell(for: .headerServingUnitSize)
+                cell(for: .headerServingEquivalentAmount)
+                cell(for: .headerServingEquivalentUnit)
+                cell(for: .headerServingEquivalentUnitSize)
+            }
+        }
+    }
+
+    @ViewBuilder
+    var nutrientsSection: some View {
+        if classifierController.containsNutrientObservations {
+            Section("Nutrients") {
+                ForEach(classifierController.nutrientObservations, id: \.attribute) { observation in
+                    cell(for: observation)
+                }
+                .frame(maxWidth: .infinity)
+                .buttonStyle(BorderlessButtonStyle())
+            }
+        }
+    }
+    
+    //MARK: - Cell
     @ViewBuilder
     func cell(for attribute: Attribute) -> some View {
         if let observation = classifierController.observation(for: attribute) {
@@ -254,100 +304,6 @@ struct ListView: View {
         }
     }
     
-//    func cell(observation: Observation, value: String) -> some View {
-//        Button {
-//            observationBeingPresented = observation
-//            classifierController.focus(on: observation)
-//        } label: {
-//            HStack {
-//                Text(observation.attribute.description)
-//                Spacer()
-//                Text(value)
-//                Image(systemName: "\(observation.status.systemImage).square")
-//                    .foregroundColor(observation.status.color)
-//            }
-//        }
-//        .buttonStyle(BorderlessButtonStyle())
-//
-//    }
-    
-    @ViewBuilder
-    var columnHeadersSection: some View {
-        if classifierController.containsHeaderObservations {
-            Section("Column Headers") {
-                cell(for: .headerType1)
-                cell(for: .headerType2)
-                cell(for: .headerServingAmount)
-                cell(for: .headerServingUnit)
-                cell(for: .headerServingUnitSize)
-                cell(for: .headerServingEquivalentAmount)
-                cell(for: .headerServingEquivalentUnit)
-                cell(for: .headerServingEquivalentUnitSize)
-            }
-        }
-    }
-
-    @ViewBuilder
-    var nutrientsSection: some View {
-        if classifierController.containsNutrientObservations {
-            Section("Nutrients") {
-                ForEach(classifierController.nutrientObservations, id: \.attribute) { observation in
-                    cell(for: observation)
-//                    cell(forNutrientObservation: observation)
-                }
-                .frame(maxWidth: .infinity)
-                .buttonStyle(BorderlessButtonStyle())
-            }
-        }
-    }
-    
-//    @ViewBuilder
-//    func cell(forNutrientObservation observation: Observation) -> some View {
-//        Button {
-//            observationBeingPresented = observation
-//            classifierController.focus(on: observation)
-//        } label: {
-//            HStack {
-//                Text(observation.attribute.description)
-//                Spacer()
-//                if let value = observation.value1 {
-//                    Text(value.description)
-//                }
-//                if let value = observation.value2 {
-//                    Text("•")
-//                    Text(value.description)
-//                }
-//                Image(systemName: "\(observation.status.systemImage).square")
-//                    .foregroundColor(observation.status.color)
-//            }
-//        }
-//        .buttonStyle(BorderlessButtonStyle())
-//    }
-
-//    func toggleFocusOnRow(_ row: Output.Nutrients.Row) {
-//        /// Get the box for the `Output.Nutrients.Row`, which returns the box for its `Attribute`
-//        guard let box = row.box else { return }
-//        
-//        if classifierController.focusedBox != nil {
-//            classifierController.resignBoxFocus()
-//        } else {
-//            classifierController.focus(on: box)
-//        }
-//    }
-
-    var list: some View {
-        Group {
-            switch classifierController.listTypeBeingPresented {
-            case .texts:
-                recognizedTextsList
-            case .expectations:
-                expectationsList
-            case .observations:
-                observationsList
-            }
-        }
-    }
-    
     @ViewBuilder
     func cell(for index: Int) -> some View {
 //        if let index = vm.filteredBoxes.firstIndex(where: { $0.id == box.id }) {
@@ -357,15 +313,6 @@ struct ListView: View {
             BoxCell(box: $classifierController.filteredBoxes[index])
                 .id(classifierController.refreshBool)
         }
-//            NavigationLink {
-//                BoxDetailsView(
-//                    box: $classifierController.filteredBoxes[index],
-//                    classifierController: classifierController)
-//            } label: {
-//                BoxCell(box: $classifierController.filteredBoxes[index])
-//                    .id(classifierController.refreshBool)
-//            }
-//        }
     }
 }
 

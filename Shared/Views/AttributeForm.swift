@@ -9,7 +9,7 @@ struct AttributeForm: View {
     @State var attribute: Attribute
 
     @State var headerType: SelectionOption
-    @State var columnHeaderName: String = ""
+    @State var headerName: String = ""
     @State var showColumnNameField: Bool = false
 
     @State var nutritionUnit: SelectionOption = NutritionUnit.g
@@ -23,7 +23,7 @@ struct AttributeForm: View {
 
     init(attribute: Attribute) {
         _attribute = State(initialValue: attribute)
-        if let type = ClassifierController.shared.availableColumnHeaderTypes.first {
+        if let type = ClassifierController.shared.availableHeaderTypes.first {
             _headerType = State(initialValue: type)
             _showColumnNameField = State(initialValue: type != .per100g)
         } else {
@@ -178,7 +178,7 @@ struct AttributeForm: View {
     var columnFieldSection: some View {
         Section {
             Field(label: "Type",
-                  units: .constant(ClassifierController.shared.availableColumnHeaderTypes),
+                  units: .constant(ClassifierController.shared.availableHeaderTypes),
                   selectedUnit: $headerType,
                   selectorStyle: .prominent,
                   contentProvider: self)

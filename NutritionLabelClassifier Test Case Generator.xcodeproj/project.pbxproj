@@ -28,6 +28,8 @@
 		E229AB44284537CC00F3A1EB /* Observation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB42284537CC00F3A1EB /* Observation.swift */; };
 		E229AB472845476800F3A1EB /* Output+Observations.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB462845476800F3A1EB /* Output+Observations.swift */; };
 		E229AB482845476800F3A1EB /* Output+Observations.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB462845476800F3A1EB /* Output+Observations.swift */; };
+		E229AB4A2846362F00F3A1EB /* ClassifierController+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB492846362F00F3A1EB /* ClassifierController+Helpers.swift */; };
+		E229AB4B2846362F00F3A1EB /* ClassifierController+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229AB492846362F00F3A1EB /* ClassifierController+Helpers.swift */; };
 		E29BE0ED283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DA283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld */; };
 		E29BE0EE283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DA283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_Generator.xcdatamodeld */; };
 		E29BE0EF283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29BE0DC283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift */; };
@@ -70,6 +72,7 @@
 		E229AB3F2842B0DC00F3A1EB /* ImageCompare.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCompare.swift; sourceTree = "<group>"; };
 		E229AB42284537CC00F3A1EB /* Observation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observation.swift; sourceTree = "<group>"; };
 		E229AB462845476800F3A1EB /* Output+Observations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Output+Observations.swift"; sourceTree = "<group>"; };
+		E229AB492846362F00F3A1EB /* ClassifierController+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClassifierController+Helpers.swift"; sourceTree = "<group>"; };
 		E29BE0DB283B64AC00B20427 /* Shared.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Shared.xcdatamodel; sourceTree = "<group>"; };
 		E29BE0DC283B64AC00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionLabelClassifier_Test_Case_GeneratorApp.swift; sourceTree = "<group>"; };
 		E29BE0DD283B64AC00B20427 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
@@ -208,6 +211,7 @@
 			isa = PBXGroup;
 			children = (
 				E29BE105283B6A0300B20427 /* ClassifierController.swift */,
+				E229AB492846362F00F3A1EB /* ClassifierController+Helpers.swift */,
 				E229AB362842226800F3A1EB /* ClassifierController+Share.swift */,
 			);
 			path = Controllers;
@@ -342,6 +346,7 @@
 			files = (
 				E29BE11E283CF74100B20427 /* ZoomableScrollView.swift in Sources */,
 				E229AB2E28414DEA00F3A1EB /* ListView+Expectations.swift in Sources */,
+				E229AB4A2846362F00F3A1EB /* ClassifierController+Helpers.swift in Sources */,
 				E29BE0EF283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift in Sources */,
 				E29BE112283B7D2D00B20427 /* BoxDetailsView.swift in Sources */,
 				E229AB472845476800F3A1EB /* Output+Observations.swift in Sources */,
@@ -370,6 +375,7 @@
 			files = (
 				E29BE11F283CF74100B20427 /* ZoomableScrollView.swift in Sources */,
 				E229AB2F28414DEA00F3A1EB /* ListView+Expectations.swift in Sources */,
+				E229AB4B2846362F00F3A1EB /* ClassifierController+Helpers.swift in Sources */,
 				E29BE0F0283B64AD00B20427 /* NutritionLabelClassifier_Test_Case_GeneratorApp.swift in Sources */,
 				E29BE113283B7D2D00B20427 /* BoxDetailsView.swift in Sources */,
 				E229AB482845476800F3A1EB /* Output+Observations.swift in Sources */,
