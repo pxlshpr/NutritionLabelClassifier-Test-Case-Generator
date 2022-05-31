@@ -136,8 +136,8 @@ struct ImageView: View {
         HStack {
             VStack(alignment: .leading) {
                 Group {
-                    if let focusedBox = classifierController.focusedBox {
-                        if box.id == focusedBox.id {
+                    if let focusedBoxes = classifierController.focusedBoxes {
+                        if focusedBoxes.contains(where: { $0.id == box.id }) {
                             if box.status == .valid {
                                 Color.valid
                             } else if box.status == .invalid {
@@ -145,14 +145,14 @@ struct ImageView: View {
                             } else {
                                 Color.focused
                             }
-                        } else if focusedBox.relatedBoxes.contains(where: { $0.id == box.id }) {
-                            if box.status == .valid {
-                                Color.validSupplementary
-                            } else if box.status == .invalid {
-                                Color.invalidSupplementary
-                            } else {
-                                Color.focusedSupplementary
-                            }
+//                        } else if focusedBox.relatedBoxes.contains(where: { $0.id == box.id }) {
+//                            if box.status == .valid {
+//                                Color.validSupplementary
+//                            } else if box.status == .invalid {
+//                                Color.invalidSupplementary
+//                            } else {
+//                                Color.focusedSupplementary
+//                            }
                         } else {
                             Color.unfocused
                         }

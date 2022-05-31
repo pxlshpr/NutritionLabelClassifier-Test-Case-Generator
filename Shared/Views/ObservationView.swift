@@ -95,77 +95,64 @@ struct ObservationView: View {
     var navigationTrailingToolbarContent: some ToolbarContent {
         ToolbarItemGroup(placement: .navigationBarTrailing) {
             Button {
-                moveToNextRow()
+                moveToNextObservation()
             } label: {
                 Image(systemName: "chevron.right")
             }
-            .disabled(nextRow == nil)
+            .disabled(nextObservation == nil)
         }
     }
     
-    func moveToNextRow() {
-//        guard let nextRow = nextRow else { return }
-//        row = nextRow
-//        if let box = nextRow.box {
-//            ClassifierController.shared.focus(on: box)
-//        }
+    func moveToNextObservation() {
+        guard let nextObservation = nextObservation else { return }
+        observation = nextObservation
+        ClassifierController.shared.focus(on: observation)
     }
     
-    func moveToPreviousRow() {
-//        guard let previousRow = previousRow else { return }
-//        row = previousRow
-//        if let box = previousRow.box {
-//            ClassifierController.shared.focus(on: box)
-//        }
+    func moveToPreviousObservation() {
+        guard let previousObservation = previousObservation else { return }
+        observation = previousObservation
+        ClassifierController.shared.focus(on: observation)
     }
     
-    var nextRow: Output.Nutrients.Row? {
-        ClassifierController.shared.classifierOutput
-        guard let output = ClassifierController.shared.classifierOutput,
-              let rowIndex = rowIndex,
-              rowIndex < output.nutrients.rows.count - 1
-        else {
+    var nextObservation: Observation? {
+        guard let index = observationIndex, index < observations.count - 1 else {
             return nil
         }
-        return output.nutrients.rows[rowIndex + 1]
+        return observations[index + 1]
     }
-    
-    var rowIndex: Int? {
-//        guard let output = ClassifierController.shared.classifierOutput,
-//              let index = output.nutrients.rows.firstIndex(where: {
-//                  //                  $0.attributeId == row.attributeId
-//                  $0.attribute == row.attribute
-//              })
-//        else {
-            return nil
-//        }
-//        return index
-    }
-    
-    var previousRow: Output.Nutrients.Row? {
-        guard let output = ClassifierController.shared.classifierOutput,
-              let rowIndex = rowIndex,
-              rowIndex > 0
-        else {
+
+    var previousObservation: Observation? {
+        guard let index = observationIndex, index > 0 else {
             return nil
         }
-        return output.nutrients.rows[rowIndex - 1]
+        return observations[index - 1]
+    }
+    
+    var observations: [Observation] {
+        ClassifierController.shared.observations
+    }
+    
+    var observationIndex: Int? {
+        ClassifierController.shared.observations.firstIndex(where: {
+            $0.attribute == observation.attribute
+        })
     }
     
     var navigationLeadingToolbarContent: some ToolbarContent {
         ToolbarItemGroup(placement: .navigationBarLeading) {
             Button {
-                moveToPreviousRow()
+                moveToPreviousObservation()
             } label: {
                 Image(systemName: "chevron.left")
             }
-            .disabled(previousRow == nil)
+            .disabled(previousObservation == nil)
         }
     }
     
     func moveToNextRowOrDismiss() {
-        if nextRow != nil {
-            moveToNextRow()
+        if nextObservation != nil {
+            moveToNextObservation()
         } else {
             ClassifierController.shared.resignBoxFocus()
             dismiss()

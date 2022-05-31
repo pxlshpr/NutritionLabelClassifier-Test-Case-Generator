@@ -190,46 +190,99 @@ struct ListView: View {
     var servingSection: some View {
         if classifierController.containsServingObservations {
             Section("Serving") {
-                servingAmountField
-                servingsPerContainerAmount
+                cell(for: .servingAmount)
+                cell(for: .servingUnit)
+                cell(for: .servingUnitSize)
+                cell(for: .servingEquivalentAmount)
+                cell(for: .servingEquivalentUnit)
+                cell(for: .servingEquivalentUnitSize)
+                cell(for: .servingsPerContainerAmount)
+                cell(for: .servingsPerContainerName)
             }
         }
     }
     
     @ViewBuilder
-    var servingAmountField: some View {
-        if let observation = classifierController.observation(for: .servingAmount) {
-            cell(observation: observation, value: observation.double?.clean ?? "")
+    func cell(for attribute: Attribute) -> some View {
+        if let observation = classifierController.observation(for: attribute) {
+            cell(for: observation)
         }
     }
     
-    @ViewBuilder
-    var servingsPerContainerAmount: some View {
-        if let observation = classifierController.observation(for: .servingsPerContainerAmount) {
-            cell(observation: observation, value: observation.double?.clean ?? "")
-        }
-    }
-
-    func cell(observation: Observation, value: String) -> some View {
+    func cell(for observation: Observation) -> some View {
         Button {
             observationBeingPresented = observation
+            classifierController.focus(on: observation)
         } label: {
             HStack {
                 Text(observation.attribute.description)
                 Spacer()
-                Text(value)
+                detail(for: observation)
                 Image(systemName: "\(observation.status.systemImage).square")
                     .foregroundColor(observation.status.color)
             }
         }
         .buttonStyle(BorderlessButtonStyle())
-
     }
+    
+    func detail(for observation: Observation) -> some View {
+        Group {
+            if observation.attribute.isNutrientAttribute {
+                if let value = observation.value1 {
+                    Text(value.description)
+                }
+                if let value = observation.value2 {
+                    Text("•")
+                    Text(value.description)
+                }
+            }
+            else if let double = observation.double {
+                Text(double.clean)
+            }
+            else if let string = observation.string {
+                Text(string)
+            }
+            else if let unit = observation.unit {
+                Text(unit.description)
+            }
+            else if let headerType = observation.headerType {
+                Text(headerType.description)
+            }
+            else {
+                Text("Unknown Type")
+            }
+        }
+    }
+    
+//    func cell(observation: Observation, value: String) -> some View {
+//        Button {
+//            observationBeingPresented = observation
+//            classifierController.focus(on: observation)
+//        } label: {
+//            HStack {
+//                Text(observation.attribute.description)
+//                Spacer()
+//                Text(value)
+//                Image(systemName: "\(observation.status.systemImage).square")
+//                    .foregroundColor(observation.status.color)
+//            }
+//        }
+//        .buttonStyle(BorderlessButtonStyle())
+//
+//    }
     
     @ViewBuilder
     var columnHeadersSection: some View {
         if classifierController.containsHeaderObservations {
             Section("Column Headers") {
+                cell(for: .headerType1)
+                cell(for: .headerType2)
+                cell(for: .headerServingAmount)
+                cell(for: .headerServingUnit)
+                cell(for: .headerServingUnitSize)
+                cell(for: .headerServingEquivalentAmount)
+                cell(for: .headerServingEquivalentUnit)
+                cell(for: .headerServingEquivalentUnitSize)
             }
         }
     }
@@ -239,7 +292,8 @@ struct ListView: View {
         if classifierController.containsNutrientObservations {
             Section("Nutrients") {
                 ForEach(classifierController.nutrientObservations, id: \.attribute) { observation in
-                    cell(forNutrientObservation: observation)
+                    cell(for: observation)
+//                    cell(forNutrientObservation: observation)
                 }
                 .frame(maxWidth: .infinity)
                 .buttonStyle(BorderlessButtonStyle())
@@ -247,45 +301,39 @@ struct ListView: View {
         }
     }
     
-    @ViewBuilder
-    func cell(forNutrientObservation observation: Observation) -> some View {
-        Button {
-            observationBeingPresented = observation
-            classifierController.sendZoomNotificationToFocusAround(observation.combinedBoundingBox)
-//            focusOn(row)
-        } label: {
-            HStack {
-                Text(observation.attribute.description)
-                Spacer()
-                if let value = observation.value1 {
-                    Text(value.description)
-                }
-                if let value = observation.value2 {
-                    Text("•")
-                    Text(value.description)
-                }
-                Image(systemName: "\(observation.status.systemImage).square")
-                    .foregroundColor(observation.status.color)
-            }
-        }
-        .buttonStyle(BorderlessButtonStyle())
-    }
+//    @ViewBuilder
+//    func cell(forNutrientObservation observation: Observation) -> some View {
+//        Button {
+//            observationBeingPresented = observation
+//            classifierController.focus(on: observation)
+//        } label: {
+//            HStack {
+//                Text(observation.attribute.description)
+//                Spacer()
+//                if let value = observation.value1 {
+//                    Text(value.description)
+//                }
+//                if let value = observation.value2 {
+//                    Text("•")
+//                    Text(value.description)
+//                }
+//                Image(systemName: "\(observation.status.systemImage).square")
+//                    .foregroundColor(observation.status.color)
+//            }
+//        }
+//        .buttonStyle(BorderlessButtonStyle())
+//    }
 
-    func focusOn(_ row: Output.Nutrients.Row) {
-        guard let box = row.box else { return }
-        classifierController.focus(on: box)
-    }
-
-    func toggleFocusOnRow(_ row: Output.Nutrients.Row) {
-        /// Get the box for the `Output.Nutrients.Row`, which returns the box for its `Attribute`
-        guard let box = row.box else { return }
-        
-        if classifierController.focusedBox != nil {
-            classifierController.resignBoxFocus()
-        } else {
-            classifierController.focus(on: box)
-        }
-    }
+//    func toggleFocusOnRow(_ row: Output.Nutrients.Row) {
+//        /// Get the box for the `Output.Nutrients.Row`, which returns the box for its `Attribute`
+//        guard let box = row.box else { return }
+//        
+//        if classifierController.focusedBox != nil {
+//            classifierController.resignBoxFocus()
+//        } else {
+//            classifierController.focus(on: box)
+//        }
+//    }
 
     var list: some View {
         Group {

@@ -17,7 +17,7 @@ class ClassifierController: NSObject, ObservableObject {
     @Published var isPresentingList: Bool = false
     @Published var listTypeBeingPresented: ListType = .observations
 
-    @Published var focusedBox: Box? = nil
+    @Published var focusedBoxes: [Box]? = nil
 
     @Published var selectedBox: Box? = nil
     @Published var refreshBool = false
@@ -129,11 +129,16 @@ extension ClassifierController {
         }
     }
     
-    func focus(on box: Box) {
-        focusedBox = box
-        sendZoomNotificationToFocusAround(box.boundingBoxIncludingRelatedFields)
+    func focus(on observation: Observation) {
+        focusedBoxes = observation.boxes
+        sendZoomNotificationToFocusAround(observation.combinedBoundingBox)
     }
     
+    func focus(on box: Box) {
+        focusedBoxes = [box]
+        sendZoomNotificationToFocusAround(box.boundingBoxIncludingRelatedFields)
+    }
+
     func sendZoomNotificationToFocusAround(_ rect: CGRect) {
         guard let image = pickedImage else { return }
         let userInfo: [String: Any] = [
@@ -144,7 +149,7 @@ extension ClassifierController {
     }
     
     func resignBoxFocus() {
-        focusedBox = nil
+        focusedBoxes = nil
         NotificationCenter.default.post(name: .resetZoomableScrollViewScale, object: nil)
     }
     func setFilteredBoxes() {
