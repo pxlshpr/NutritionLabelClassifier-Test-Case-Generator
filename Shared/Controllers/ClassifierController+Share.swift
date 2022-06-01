@@ -110,8 +110,8 @@ extension ClassifierController {
         }
     }
     
-    func imageUrl(uuid: UUID, hash: Int) -> URL {
-        imagesDirectoryUrl.appendingPathComponent("\(uuid)_\(hash).jpg")
+    func imageUrl(uuid: UUID) -> URL {
+        imagesDirectoryUrl.appendingPathComponent("\(uuid).jpg")
     }
     
     func writeTestCaseFiles() {
@@ -129,10 +129,10 @@ extension ClassifierController {
         let expectationsUrl = expectationsDirectoryUrl.appendingPathComponent("\(uuid).csv")
 
         do {
-            guard let image = pickedImage, let imageHash = image.pngData()?.hashValue, let imageData = image.jpegData(compressionQuality: 0.8) else {
+            guard let image = pickedImage, let imageData = image.jpegData(compressionQuality: 0.8) else {
                 return
             }
-            try imageData.write(to: imageUrl(uuid: uuid, hash: imageHash))
+            try imageData.write(to: imageUrl(uuid: uuid))
             
             try expectationsDataFrame.writeCSV(to: expectationsUrl)
             try recognizedTextsWithLCDataFrame.writeCSV(to: recognizedTextsWithLCUrl)
