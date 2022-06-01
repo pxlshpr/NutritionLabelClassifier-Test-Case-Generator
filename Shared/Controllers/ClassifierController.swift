@@ -311,6 +311,8 @@ extension ClassifierController {
         
         let observations = classifierOutput.observations
         
+        
+        //FIXME: We're losing servingsPerContainerAmount in classifierOuput, somewhere over here
         /// Remove boxes that have no recognized text (either with or without lanugage correction)
         boxes = boxes.filter {
             !$0.cellTitle.isEmpty
