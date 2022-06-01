@@ -273,7 +273,7 @@ extension ClassifierController {
         }
 
         /// servingEquivalentUnitSize
-        if observationIsValid(for: .servingEquivalentUnitSize), let double = classifierOutput?.serving?.equivalentSize?.sizeName {
+        if observationIsValid(for: .servingEquivalentUnitSize), let double = classifierOutput?.serving?.equivalentSize?.unitName {
             addString(double, for: .servingEquivalentUnitSize)
         }
 
