@@ -113,11 +113,11 @@ extension Output {
             }
         case .headerType1:
             if let headerText = nutrients.headerText1 {
-                return Observation(attribute: .servingsPerContainerName, headerText: headerText)
+                return Observation(attribute: .headerType1, headerText: headerText)
             }
         case .headerType2:
             if let headerText = nutrients.headerText2 {
-                return Observation(attribute: .servingsPerContainerName, headerText: headerText)
+                return Observation(attribute: .headerType2, headerText: headerText)
             }
         case .headerServingAmount, .headerServingUnit, .headerServingUnitSize, .headerServingEquivalentAmount, .headerServingEquivalentUnit, .headerServingEquivalentUnitSize:
             return observation(forHeaderServingAttribute: attribute)

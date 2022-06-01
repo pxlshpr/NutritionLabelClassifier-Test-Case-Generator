@@ -46,10 +46,10 @@ extension ClassifierController {
             guard let output = classifierOutput else {
                 return false
             }
-            if let header1Type = output.nutrients.header1Type, type == header1Type {
+            if let header1Type = output.nutrients.header1Type, observations.first(where: { $0.attribute == .headerType1 })?.status != .invalid, type == header1Type {
                 return false
             }
-            if let header2Type = output.nutrients.header2Type, type == header2Type {
+            if let header2Type = output.nutrients.header2Type, observations.first(where: { $0.attribute == .headerType2 })?.status != .invalid, type == header2Type {
                 return false
             }
             return !expectations.contains(where: {
