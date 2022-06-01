@@ -42,7 +42,12 @@ extension ClassifierController {
         testCasesDirectoryUrl
         .appendingPathComponent("Without Language Correction", isDirectory: true)
     }
-    
+
+    var testCasesWithFastRecognitionDirectoryUrl: URL {
+        testCasesDirectoryUrl
+        .appendingPathComponent("With Fast Recognition", isDirectory: true)
+    }
+
     var expectationsDirectoryUrl: URL {
         testDataUrl.appendingPathComponent("Expectations", isDirectory: true)
     }
@@ -87,6 +92,7 @@ extension ClassifierController {
                         testCasesDirectoryUrl,
                         testCasesWithLanguageCorrectionDirectoryUrl,
                         testCasesWithoutLanguageCorrectionDirectoryUrl,
+                        testCasesWithFastRecognitionDirectoryUrl,
                         expectationsDirectoryUrl] {
                 try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
             }
@@ -118,6 +124,7 @@ extension ClassifierController {
         /// Create the `DataFrame`s for the `recognizedText`s (used as input by the test suite)
         let recognizedTextsWithLCDataFrame = recognizedTextsWithLC.dataFrame
         let recognizedTextsWithoutLCDataFrame = recognizedTextsWithoutLC.dataFrame
+        let recognizedTextsWithFastRecognitionDataFrame = recognizedTextsWithFastRecognition.dataFrame
 
         /// Create the `DataFrame` for the expectations
         let expectationsDataFrame = expectationsDataFrame()
@@ -126,6 +133,7 @@ extension ClassifierController {
         let uuid = UUID()
         let recognizedTextsWithLCUrl = testCasesWithLanguageCorrectionDirectoryUrl.appendingPathComponent("\(uuid).csv")
         let recognizedTextsWithoutLCUrl = testCasesWithoutLanguageCorrectionDirectoryUrl.appendingPathComponent("\(uuid).csv")
+        let recognizedTextsWithFastRecognitionUrl = testCasesWithFastRecognitionDirectoryUrl.appendingPathComponent("\(uuid).csv")
         let expectationsUrl = expectationsDirectoryUrl.appendingPathComponent("\(uuid).csv")
 
         do {
@@ -137,6 +145,7 @@ extension ClassifierController {
             try expectationsDataFrame.writeCSV(to: expectationsUrl)
             try recognizedTextsWithLCDataFrame.writeCSV(to: recognizedTextsWithLCUrl)
             try recognizedTextsWithoutLCDataFrame.writeCSV(to: recognizedTextsWithoutLCUrl)
+            try recognizedTextsWithFastRecognitionDataFrame.writeCSV(to: recognizedTextsWithFastRecognitionUrl)
             print("Wrote to: \(expectationsUrl)")
         } catch {
             print("Error creating Test Case File: \(error)")

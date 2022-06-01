@@ -286,6 +286,14 @@ struct BoxDetailsView: View {
                     Text(recognizedText.string)
                 }
             }
+            if let recognizedText = box.recognizedTextWithFastRecognition {
+                HStack {
+                    Text("Fast Recognition")
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Text(recognizedText.string)
+                }
+            }
         }
     }
     

@@ -30,6 +30,7 @@ class ClassifierController: NSObject, ObservableObject {
     
     var recognizedTextsWithLC: [RecognizedText] = []
     var recognizedTextsWithoutLC: [RecognizedText] = []
+    var recognizedTextsWithFastRecognition: [RecognizedText] = []
 
     @Published var boxes: [Box] = []
     @Published var filteredBoxes: [Box] = []
@@ -68,6 +69,7 @@ class ClassifierController: NSObject, ObservableObject {
     var contentSize: CGSize = .zero
     var observationsWithLC: [VNRecognizedTextObservation] = []
     var observationsWithoutLC: [VNRecognizedTextObservation] = []
+    var observationsWithFastRecognition: [VNRecognizedTextObservation] = []
 }
 
 extension ClassifierController {
@@ -216,7 +218,13 @@ extension ClassifierController {
             VisionSugar.recognizeTexts(in: image, useLanguageCorrection: false) { observations in
                 guard let observations = observations else { return }
                 self.observationsWithoutLC = observations
-                self.calculateBoxes(in: image)
+                
+                VisionSugar.recognizeTexts(in: image, recognitionLevel: .fast) { observations in
+                    guard let observations = observations else { return }
+                    self.observationsWithFastRecognition = observations
+                    
+                    self.calculateBoxes(in: image)
+                }
             }
         }
     }
@@ -230,6 +238,10 @@ extension ClassifierController {
             of: observationsWithoutLC,
             for: image, inContentSize: self.contentSize)
         
+        recognizedTextsWithFastRecognition = VisionSugar.recognizedTexts(
+            of: observationsWithFastRecognition,
+            for: image, inContentSize: self.contentSize)
+        
         for box in boxes {
             if let recognizedText = recognizedTextsWithLC.first(where: { $0.id == box.recognizedTextWithLC?.id }) {
                 box.recognizedTextWithLC = recognizedText
@@ -237,6 +249,10 @@ extension ClassifierController {
             }
             if let recognizedText = recognizedTextsWithoutLC.first(where: { $0.id == box.recognizedTextWithoutLC?.id }) {
                 box.recognizedTextWithoutLC = recognizedText
+                box.rect = recognizedText.rect
+            }
+            if let recognizedText = recognizedTextsWithFastRecognition.first(where: { $0.id == box.recognizedTextWithFastRecognition?.id }) {
+                box.recognizedTextWithFastRecognition = recognizedText
                 box.rect = recognizedText.rect
             }
         }
@@ -250,6 +266,10 @@ extension ClassifierController {
                 box.recognizedTextWithoutLC = recognizedText
                 box.rect = recognizedText.rect
             }
+            if let recognizedText = recognizedTextsWithFastRecognition.first(where: { $0.id == box.recognizedTextWithFastRecognition?.id }) {
+                box.recognizedTextWithFastRecognition = recognizedText
+                box.rect = recognizedText.rect
+            }
         }
     }
     
@@ -261,8 +281,12 @@ extension ClassifierController {
         recognizedTextsWithoutLC = VisionSugar.recognizedTexts(
             of: observationsWithoutLC,
             for: image, inContentSize: self.contentSize)
-                
-        let arrayOfRecognizedTexts = [recognizedTextsWithLC, recognizedTextsWithoutLC]
+
+        recognizedTextsWithFastRecognition = VisionSugar.recognizedTexts(
+            of: observationsWithFastRecognition,
+            for: image, inContentSize: self.contentSize)
+
+        let arrayOfRecognizedTexts = [recognizedTextsWithLC, recognizedTextsWithoutLC, recognizedTextsWithFastRecognition]
         let observationsDataFrame = NutritionLabelClassifier(arrayOfRecognizedTexts: arrayOfRecognizedTexts).dataFrameOfObservations()
         let classifierOutput = NutritionLabelClassifier.classify(arrayOfRecognizedTexts)
         
@@ -275,6 +299,13 @@ extension ClassifierController {
                 box.recognizedTextWithoutLC = recognizedText
             } else {
                 boxes.append(Box(recognizedTextWithoutLC: recognizedText, nutrientsDataFrame: observationsDataFrame))
+            }
+        }
+        for recognizedText in recognizedTextsWithFastRecognition {
+            if let box = boxes.first(where: { $0.rect == recognizedText.rect }) {
+                box.recognizedTextWithFastRecognition = recognizedText
+            } else {
+                boxes.append(Box(recognizedTextWithFastRecognition: recognizedText, nutrientsDataFrame: observationsDataFrame))
             }
         }
         

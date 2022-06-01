@@ -11,6 +11,7 @@ class Box: ObservableObject, Identifiable {
 
     var recognizedTextWithLC: RecognizedText?
     var recognizedTextWithoutLC: RecognizedText?
+    var recognizedTextWithFastRecognition: RecognizedText?
 
     var attribute: Attribute?
     var value1: Value?
@@ -54,7 +55,10 @@ class Box: ObservableObject, Identifiable {
     }
     
     var cellTitle: String {
-        recognizedTextWithLC?.string ?? recognizedTextWithoutLC?.string ?? ""
+        recognizedTextWithLC?.string
+        ?? recognizedTextWithoutLC?.string
+        ?? recognizedTextWithFastRecognition?.string
+        ?? ""
     }
     
     init(recognizedTextWithLC: RecognizedText, nutrientsDataFrame: DataFrame) {
@@ -63,6 +67,7 @@ class Box: ObservableObject, Identifiable {
         self.boundingBox = recognizedTextWithLC.boundingBox
         self.rect = recognizedTextWithLC.rect
         self.recognizedTextWithoutLC = nil
+        self.recognizedTextWithFastRecognition = nil
 
         self.value1 = nil
         self.value2 = nil
@@ -70,30 +75,6 @@ class Box: ObservableObject, Identifiable {
         self.color = .gray
         
         self.setup(dataFrame: nutrientsDataFrame, id: recognizedTextWithLC.id)
-//        if let row = nutrientsDataFrame.rowWhereValue1IsFromRecognizedText(with: id), let valueWithId = row["value1"] as? ValueText
-//        {
-//            value1 = valueWithId.value
-//            value2 = nil
-//            color = .green
-//        }
-//        else if let row = nutrientsDataFrame.rowWhereValue2IsFromRecognizedText(with: id), let valueWithId = row["value2"] as? ValueText
-//        {
-//            value1 = nil
-//            value2 = valueWithId.value
-//            color = .green
-//        }
-//        else if let row = nutrientsDataFrame.rowWhereAttributeIsFromRecognizedText(with: id), let attributeWithId = row["attribute"] as? AttributeText
-//        {
-//            value1 = nil
-//            value2 = nil
-//            attribute = attributeWithId.attribute
-//            color = .cyan
-//        } else {
-//            value1 = nil
-//            value2 = nil
-//            attribute = nil
-//            color = .gray
-//        }
     }
     
     func setup(dataFrame: DataFrame, id: UUID) {
@@ -120,27 +101,51 @@ class Box: ObservableObject, Identifiable {
         }
     }
 
+    init(recognizedTextWithFastRecognition: RecognizedText, nutrientsDataFrame: DataFrame) {
+        self.id = recognizedTextWithFastRecognition.id
+        self.recognizedTextWithFastRecognition = recognizedTextWithFastRecognition
+        self.boundingBox = recognizedTextWithFastRecognition.boundingBox
+        self.rect = recognizedTextWithFastRecognition.rect
+        self.recognizedTextWithLC = nil
+        self.recognizedTextWithoutLC = nil
+
+        self.value1 = nil
+        self.value2 = nil
+        self.attribute = nil
+        self.color = .gray
+        
+        self.setup(dataFrame: nutrientsDataFrame, id: recognizedTextWithFastRecognition.id)
+    }
+    
     init(recognizedTextWithoutLC: RecognizedText, nutrientsDataFrame: DataFrame) {
         self.id = recognizedTextWithoutLC.id
         self.recognizedTextWithoutLC = recognizedTextWithoutLC
         self.boundingBox = recognizedTextWithoutLC.boundingBox
         self.rect = recognizedTextWithoutLC.rect
         self.recognizedTextWithLC = nil
+        self.recognizedTextWithFastRecognition = nil
 
-        if let row = nutrientsDataFrame.rows.first(where: {
-            guard let valueText = $0["value1"] as? ValueText else { return false }
-            return valueText.textId == recognizedTextWithoutLC.id
-        }), let valueText = row["value1"] as? ValueText
-        {
-            value1 = valueText.value
-            value2 = nil
-            color = .indigo
-        } else {
-            value1 = nil
-            value2 = nil
-            color = .mint
-        }
-        attribute = nil
+        self.value1 = nil
+        self.value2 = nil
+        self.attribute = nil
+        self.color = .gray
+        
+        self.setup(dataFrame: nutrientsDataFrame, id: recognizedTextWithoutLC.id)
+
+//        if let row = nutrientsDataFrame.rows.first(where: {
+//            guard let valueText = $0["value1"] as? ValueText else { return false }
+//            return valueText.textId == recognizedTextWithoutLC.id
+//        }), let valueText = row["value1"] as? ValueText
+//        {
+//            value1 = valueText.value
+//            value2 = nil
+//            color = .indigo
+//        } else {
+//            value1 = nil
+//            value2 = nil
+//            color = .mint
+//        }
+//        attribute = nil
     }
 
     var hasClassifierResult: Bool {
@@ -170,6 +175,7 @@ extension Box: Hashable, Equatable {
         hasher.combine(id)
         hasher.combine(recognizedTextWithLC)
         hasher.combine(recognizedTextWithoutLC)
+        hasher.combine(recognizedTextWithFastRecognition)
         hasher.combine(attribute)
         hasher.combine(value1)
         hasher.combine(value2)
