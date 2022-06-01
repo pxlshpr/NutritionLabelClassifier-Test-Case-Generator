@@ -176,6 +176,7 @@ extension ClassifierController {
     func validateAll() {
         for i in observations.indices {
             observations[i].status = .valid
+            observations[i].boxes.forEach { $0.status = .valid }
         }
 //        guard let output = classifierOutput else { return }
 //        for attribute in output.nutrients.rows.map({$0.attribute}) {

@@ -115,7 +115,7 @@ struct ImageView: View {
     @ViewBuilder
     var boxesLayer: some View {
         ZStack(alignment: .topLeading) {
-            ForEach(classifierController.filteredBoxes, id: \.self) { box in
+            ForEach(classifierController.filteredBoxes, id: \.hashValue) { box in
                 Button {
                     Haptics.feedback(style: .rigid)
 //                    classifierController.selectedBox = box
@@ -145,14 +145,6 @@ struct ImageView: View {
                             } else {
                                 Color.focused
                             }
-//                        } else if focusedBox.relatedBoxes.contains(where: { $0.id == box.id }) {
-//                            if box.status == .valid {
-//                                Color.validSupplementary
-//                            } else if box.status == .invalid {
-//                                Color.invalidSupplementary
-//                            } else {
-//                                Color.focusedSupplementary
-//                            }
                         } else {
                             Color.unfocused
                         }

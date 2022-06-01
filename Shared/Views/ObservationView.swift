@@ -166,7 +166,8 @@ struct ObservationView: View {
                     return
                 }
                 ClassifierController.shared.observations[index].status = .invalid
-                
+                ClassifierController.shared.observations[index].boxes.forEach { $0.status = .invalid }
+
                 observation.status = .invalid
                 moveToNextRowOrDismiss()
             } label: {
@@ -179,7 +180,8 @@ struct ObservationView: View {
                     return
                 }
                 ClassifierController.shared.observations[index].status = .valid
-                
+                ClassifierController.shared.observations[index].boxes.forEach { $0.status = .valid }
+
                 observation.status = .valid
                 moveToNextRowOrDismiss()
             } label: {
