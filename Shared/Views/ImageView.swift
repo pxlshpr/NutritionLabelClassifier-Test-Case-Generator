@@ -29,6 +29,13 @@ struct ImageView: View {
                 }
             }
             .navigationTitle("Test Case Generator")
+            .toolbar {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    Text(NutritionLabelClassifierVersion)
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                }
+            }
             .navigationBarTitleDisplayMode(.inline)
         }
         .toolbar { bottomToolbarContent }

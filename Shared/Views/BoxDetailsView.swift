@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftUISugar
 import NutritionLabelClassifier
 import SwiftHaptics
+import VisionSugar
 
 extension Attribute: SelectionOption {
     public var optionId: String {
@@ -275,7 +276,7 @@ struct BoxDetailsView: View {
                     Text("With LC")
                         .foregroundColor(.secondary)
                     Spacer()
-                    Text(recognizedText.string)
+                    buttonForRecognizedText(recognizedText)
                 }
             }
             if let recognizedText = box.recognizedTextWithoutLC {
@@ -283,7 +284,7 @@ struct BoxDetailsView: View {
                     Text("Without LC")
                         .foregroundColor(.secondary)
                     Spacer()
-                    Text(recognizedText.string)
+                    buttonForRecognizedText(recognizedText)
                 }
             }
             if let recognizedText = box.recognizedTextWithFastRecognition {
@@ -291,9 +292,19 @@ struct BoxDetailsView: View {
                     Text("Fast Recognition")
                         .foregroundColor(.secondary)
                     Spacer()
-                    Text(recognizedText.string)
+                    buttonForRecognizedText(recognizedText)
                 }
             }
+        }
+    }
+    
+    func buttonForRecognizedText(_ recognizedText: RecognizedText) -> some View {
+        Button {
+            UIPasteboard.general.string = recognizedText.string
+        } label: {
+            Text(recognizedText.string)
+                .multilineTextAlignment(.trailing)
+                .foregroundColor(Color(.label))
         }
     }
     
