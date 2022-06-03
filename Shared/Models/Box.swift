@@ -61,6 +61,21 @@ class Box: ObservableObject, Identifiable {
         ?? ""
     }
     
+    init(boundingBox: CGRect, rect: CGRect) {
+        self.id = UUID()
+        self.boundingBox = boundingBox
+        self.rect = rect
+        
+        self.recognizedTextWithLC = nil
+        self.recognizedTextWithoutLC = nil
+        self.recognizedTextWithFastRecognition = nil
+        
+        self.attribute = nil
+        self.value1 = nil
+        self.value2 = nil
+        self.color = .purple
+    }
+    
     init(recognizedTextWithLC: RecognizedText, nutrientsDataFrame: DataFrame) {
         self.id = recognizedTextWithLC.id
         self.recognizedTextWithLC = recognizedTextWithLC

@@ -15,7 +15,7 @@
       "location" : "https://github.com/pxlshpr/NutritionLabelClassifier.git",
       "state" : {
         "branch" : "main",
-        "revision" : "8f46aad57e8bf50744e01e107a30942ecde03eee"
+        "revision" : "4ca669a21fda02017a8c4f7a98b6132d5d682da1"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pxlshpr/VisionSugar",
       "state" : {
-        "revision" : "d59f45c70117e02ccab41185e68b8a62e26463ca",
-        "version" : "0.0.37"
+        "revision" : "735820d90f45bd7fe4e31f3563f0c050807251d7",
+        "version" : "0.0.39"
       }
     },
     {
