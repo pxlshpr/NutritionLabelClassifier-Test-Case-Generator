@@ -5,7 +5,9 @@ import TabularData
 import SwiftUISugar
 
 class Box: ObservableObject, Identifiable {
+    
     var id: UUID
+    
     var boundingBox: CGRect
     var rect: CGRect
 

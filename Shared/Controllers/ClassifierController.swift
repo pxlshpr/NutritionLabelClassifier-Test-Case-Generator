@@ -211,7 +211,8 @@ extension ClassifierController {
     
     func recognizeTextsInImage(_ image: UIImage) {
         observationsWithLC = []
-        VisionSugar.recognizeTexts(in: image, useLanguageCorrection: true) { observations in
+        let customWords = ["Lípidos"]
+        VisionSugar.recognizeTexts(in: image, useLanguageCorrection: true, customWords: customWords) { observations in
             guard let observations = observations else { return }
             self.observationsWithLC = observations
             
@@ -219,7 +220,7 @@ extension ClassifierController {
                 guard let observations = observations else { return }
                 self.observationsWithoutLC = observations
                 
-                VisionSugar.recognizeTexts(in: image, recognitionLevel: .fast) { observations in
+                VisionSugar.recognizeTexts(in: image, recognitionLevel: .fast, customWords: customWords) { observations in
                     guard let observations = observations else { return }
                     self.observationsWithFastRecognition = observations
                     
