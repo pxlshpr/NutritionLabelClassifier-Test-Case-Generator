@@ -6,7 +6,7 @@ import SwiftUISugar
 
 class Box: ObservableObject, Identifiable {
     
-    var id: UUID
+    var ids: [UUID]
     
     var boundingBox: CGRect
     var rect: CGRect
@@ -64,7 +64,7 @@ class Box: ObservableObject, Identifiable {
     }
     
     init(boundingBox: CGRect, rect: CGRect) {
-        self.id = UUID()
+        self.ids = [UUID()]
         self.boundingBox = boundingBox
         self.rect = rect
         
@@ -79,7 +79,7 @@ class Box: ObservableObject, Identifiable {
     }
     
     init(recognizedTextWithLC: RecognizedText, nutrientsDataFrame: DataFrame) {
-        self.id = recognizedTextWithLC.id
+        self.ids = [recognizedTextWithLC.id]
         self.recognizedTextWithLC = recognizedTextWithLC
         self.boundingBox = recognizedTextWithLC.boundingBox
         self.rect = recognizedTextWithLC.rect
@@ -119,7 +119,7 @@ class Box: ObservableObject, Identifiable {
     }
 
     init(recognizedTextWithFastRecognition: RecognizedText, nutrientsDataFrame: DataFrame) {
-        self.id = recognizedTextWithFastRecognition.id
+        self.ids = [recognizedTextWithFastRecognition.id]
         self.recognizedTextWithFastRecognition = recognizedTextWithFastRecognition
         self.boundingBox = recognizedTextWithFastRecognition.boundingBox
         self.rect = recognizedTextWithFastRecognition.rect
@@ -135,7 +135,7 @@ class Box: ObservableObject, Identifiable {
     }
     
     init(recognizedTextWithoutLC: RecognizedText, nutrientsDataFrame: DataFrame) {
-        self.id = recognizedTextWithoutLC.id
+        self.ids = [recognizedTextWithoutLC.id]
         self.recognizedTextWithoutLC = recognizedTextWithoutLC
         self.boundingBox = recognizedTextWithoutLC.boundingBox
         self.rect = recognizedTextWithoutLC.rect

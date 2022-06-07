@@ -297,6 +297,7 @@ extension ClassifierController {
         }
         for recognizedText in recognizedTextsWithoutLC {
             if let box = boxes.first(where: { $0.rect == recognizedText.rect }) {
+                box.ids.append(recognizedText.id)
                 box.recognizedTextWithoutLC = recognizedText
             } else {
                 boxes.append(Box(recognizedTextWithoutLC: recognizedText, nutrientsDataFrame: observationsDataFrame))
@@ -304,6 +305,7 @@ extension ClassifierController {
         }
         for recognizedText in recognizedTextsWithFastRecognition {
             if let box = boxes.first(where: { $0.rect == recognizedText.rect }) {
+                box.ids.append(recognizedText.id)
                 box.recognizedTextWithFastRecognition = recognizedText
             } else {
                 boxes.append(Box(recognizedTextWithFastRecognition: recognizedText, nutrientsDataFrame: observationsDataFrame))

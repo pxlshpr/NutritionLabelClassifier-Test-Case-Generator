@@ -54,7 +54,7 @@ struct BoxDetailsView: View {
     }
     
     init(boxId: UUID) {
-        if let box = ClassifierController.shared.boxes.first(where: { $0.id == boxId }) {
+        if let box = ClassifierController.shared.boxes.first(where: { $0.ids.contains(boxId) }) {
             self._box = .constant(box)
         } else {
             self._box = .constant(ClassifierController.shared.boxes[0])

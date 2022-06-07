@@ -308,7 +308,7 @@ struct ListView: View {
     func cell(for index: Int) -> some View {
 //        if let index = vm.filteredBoxes.firstIndex(where: { $0.id == box.id }) {
         Button {
-            boxIdBeingPresented = classifierController.filteredBoxes[index].id
+            boxIdBeingPresented = classifierController.filteredBoxes[index].ids.first
         } label: {
             BoxCell(box: $classifierController.filteredBoxes[index])
                 .id(classifierController.refreshBool)
@@ -448,6 +448,6 @@ extension ClassifierController {
 
 extension Output.Nutrients.Row {
     var box: Box? {
-        ClassifierController.shared.boxes.first(where: { $0.id == attributeId })
+        ClassifierController.shared.boxes.first(where: { $0.ids.contains(attributeId) })
     }
 }

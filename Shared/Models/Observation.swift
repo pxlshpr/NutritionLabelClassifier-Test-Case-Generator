@@ -50,7 +50,7 @@ struct Observation {
 
 extension ClassifierController {
     func box(withId id: UUID) -> Box? {
-        boxes.first { $0.id == id }
+        boxes.first { $0.ids.contains(id) }
     }
     
     func rectForBox(withId id: UUID) -> CGRect? {

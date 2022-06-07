@@ -27,11 +27,9 @@ extension Box {
         }
         
         for row in output.nutrients.rows {
-            if row.attributeId == self.id
-                || row.value1Id == self.id
-                || row.value2Id == self.id {
-                return row
-            }
+            if ids.contains(row.attributeId) { return row }
+            if let id = row.value1Id, ids.contains(id) { return row }
+            if let id = row.value2Id, ids.contains(id) { return row }
         }
         return nil
     }
@@ -52,29 +50,29 @@ extension Box {
     }
 
     var relatedAttribute: Attribute? {
-        guard let row = nutrientRow,
-              row.attributeId != self.id
-        else { return nil }
+        guard let row = nutrientRow, !ids.contains(row.attributeId) else { return nil }
         return row.attribute
     }
     
     var relatedValue1: Value? {
-        guard let row = nutrientRow,
-              row.value1Id != self.id
-        else { return nil }
+        guard let row = nutrientRow else { return nil }
+        if let id = row.value1Id {
+            guard !ids.contains(id) else { return nil }
+        }
         return row.value1
     }
     
     var relatedValue2: Value? {
-        guard let row = nutrientRow,
-              row.value2Id != self.id
-        else { return nil }
+        guard let row = nutrientRow else { return nil }
+        if let id = row.value2Id {
+            guard !ids.contains(id) else { return nil }
+        }
         return row.value2
     }
 }
 
 extension ClassifierController {
     static func box(with id: UUID) -> Box? {
-        shared.boxes.first(where: { $0.id == id })
+        shared.boxes.first(where: { $0.ids.contains(id) })
     }
 }
