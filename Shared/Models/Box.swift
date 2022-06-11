@@ -151,7 +151,7 @@ class Box: ObservableObject, Identifiable {
 
 //        if let row = nutrientsDataFrame.rows.first(where: {
 //            guard let valueText = $0["value1"] as? ValueText else { return false }
-//            return valueText.textId == recognizedTextWithoutLC.id
+//            return valueText.text.id == recognizedTextWithoutLC.id
 //        }), let valueText = row["value1"] as? ValueText
 //        {
 //            value1 = valueText.value
@@ -213,19 +213,19 @@ extension DataFrame {
     func rowWhereValue1IsFromRecognizedText(with id: UUID) -> DataFrame.Rows.Element? {
         rows.first(where: {
             guard let valueWithId = $0["value1"] as? ValueText else { return false }
-            return valueWithId.textId == id
+            return valueWithId.text.id == id
         })
     }
     func rowWhereValue2IsFromRecognizedText(with id: UUID) -> DataFrame.Rows.Element? {
         rows.first(where: {
             guard let valueWithId = $0["value2"] as? ValueText else { return false }
-            return valueWithId.textId == id
+            return valueWithId.text.id == id
         })
     }
     func rowWhereAttributeIsFromRecognizedText(with id: UUID) -> DataFrame.Rows.Element? {
         rows.first(where: {
             guard let attributeWithId = $0["attribute"] as? AttributeText else { return false }
-            return attributeWithId.textId == id
+            return attributeWithId.text.id == id
         })
     }
 }

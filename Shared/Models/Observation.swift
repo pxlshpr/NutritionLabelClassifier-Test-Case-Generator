@@ -24,17 +24,17 @@ struct Observation {
 
     var boxes: [Box] {
         let ids = [
-            attributeText?.textId,
-            value1Text?.textId,
-            value2Text?.textId,
-            doubleText?.textId,
-            stringText?.textId,
-            unitText?.textId,
-            headerText?.textId,
-            doubleText?.attributeTextId,
-            stringText?.attributeTextId,
-            unitText?.attributeTextId,
-            headerText?.attributeTextId
+            attributeText?.text.id,
+            value1Text?.text.id,
+            value2Text?.text.id,
+            doubleText?.text.id,
+            stringText?.text.id,
+            unitText?.text.id,
+            headerText?.text.id,
+            doubleText?.attributeText.id,
+            stringText?.attributeText.id,
+            unitText?.attributeText.id,
+            headerText?.attributeText.id
         ].compactMap { $0 }
         return ids
             .compactMap { ClassifierController.shared.box(withId: $0) }

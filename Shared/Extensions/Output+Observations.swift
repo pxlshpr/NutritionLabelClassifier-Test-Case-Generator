@@ -33,42 +33,42 @@ extension Output {
             if let double = headerServing.amount {
                 return Observation(
                     attribute: .headerServingAmount,
-                    doubleText: DoubleText(double: double, textId: headerText.textId, attributeTextId: headerText.attributeTextId)
+                    doubleText: DoubleText(double: double, text: headerText.text, attributeText: headerText.attributeText)
                 )
             }
         case .headerServingUnit:
             if let unit = headerServing.unit {
                 return Observation(
                     attribute: .headerServingUnit,
-                    unitText: UnitText(unit: unit, textId: headerText.textId, attributeTextId: headerText.attributeTextId)
+                    unitText: UnitText(unit: unit, text: headerText.text, attributeText: headerText.attributeText)
                 )
             }
         case .headerServingUnitSize:
             if let string = headerServing.unitName {
                 return Observation(
                     attribute: .headerServingUnitSize,
-                    stringText: StringText(string: string, textId: headerText.textId, attributeTextId: headerText.attributeTextId)
+                    stringText: StringText(string: string, text: headerText.text, attributeText: headerText.attributeText)
                 )
             }
         case .headerServingEquivalentAmount:
             if let double = headerServing.equivalentSize?.amount {
                 return Observation(
                     attribute: .headerServingEquivalentAmount,
-                    doubleText: DoubleText(double: double, textId: headerText.textId, attributeTextId: headerText.attributeTextId)
+                    doubleText: DoubleText(double: double, text: headerText.text, attributeText: headerText.attributeText)
                 )
             }
         case .headerServingEquivalentUnit:
             if let unit = headerServing.equivalentSize?.unit {
                 return Observation(
                     attribute: .headerServingEquivalentUnit,
-                    unitText: UnitText(unit: unit, textId: headerText.textId, attributeTextId: headerText.attributeTextId)
+                    unitText: UnitText(unit: unit, text: headerText.text, attributeText: headerText.attributeText)
                 )
             }
         case .headerServingEquivalentUnitSize:
             if let string = headerServing.equivalentSize?.unitName {
                 return Observation(
                     attribute: .headerServingEquivalentUnitSize,
-                    stringText: StringText(string: string, textId: headerText.textId, attributeTextId: headerText.attributeTextId)
+                    stringText: StringText(string: string, text: headerText.text, attributeText: headerText.attributeText)
                 )
             }
         default:
