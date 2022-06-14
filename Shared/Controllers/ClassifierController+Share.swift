@@ -122,9 +122,15 @@ extension ClassifierController {
     
     func writeTestCaseFiles() {
         /// Create the `DataFrame`s for the `recognizedText`s (used as input by the test suite)
-        let recognizedTextsWithLCDataFrame = recognizedTextsWithLC.dataFrame
-        let recognizedTextsWithoutLCDataFrame = recognizedTextsWithoutLC.dataFrame
-        let recognizedTextsWithFastRecognitionDataFrame = recognizedTextsWithFastRecognition.dataFrame
+        let textsWithLanguageCorrectionDataFrame = recognizedTextsWithLC
+            .filter { !$0.string.isEmpty }
+            .dataFrame
+        let textsWithoutLanguageCorrectionDataFrame = recognizedTextsWithoutLC
+            .filter { !$0.string.isEmpty }
+            .dataFrame
+        let textsWithFastRecognitionDataFrame = recognizedTextsWithFastRecognition
+            .filter { !$0.string.isEmpty }
+            .dataFrame
 
         /// Create the `DataFrame` for the expectations
         let expectationsDataFrame = expectationsDataFrame()
@@ -143,9 +149,9 @@ extension ClassifierController {
             try imageData.write(to: imageUrl(uuid: uuid))
             
             try expectationsDataFrame.writeCSV(to: expectationsUrl)
-            try recognizedTextsWithLCDataFrame.writeCSV(to: recognizedTextsWithLCUrl)
-            try recognizedTextsWithoutLCDataFrame.writeCSV(to: recognizedTextsWithoutLCUrl)
-            try recognizedTextsWithFastRecognitionDataFrame.writeCSV(to: recognizedTextsWithFastRecognitionUrl)
+            try textsWithLanguageCorrectionDataFrame.writeCSV(to: recognizedTextsWithLCUrl)
+            try textsWithoutLanguageCorrectionDataFrame.writeCSV(to: recognizedTextsWithoutLCUrl)
+            try textsWithFastRecognitionDataFrame.writeCSV(to: recognizedTextsWithFastRecognitionUrl)
             print("Wrote to: \(expectationsUrl)")
         } catch {
             print("Error creating Test Case File: \(error)")
